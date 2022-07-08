@@ -8,14 +8,15 @@ set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
 
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
+add_subdirectory(${EXTERNAL_PATH}/Lua)
 
 file(GLOB VINENGINE_HPP CONFIGURE_DEPENDS "include/*.hpp")
 file(GLOB VINENGINE_CPP CONFIGURE_DEPENDS "src/*.cpp")
 
-glad_add_library(glad_library STATIC API gl:core=4.6)
+glad_add_library(glad_library STATIC API gl:core=4.6 vulkan=1.1)
 
 add_executable(vin_engine ${VINENGINE_HPP} ${VINENGINE_CPP})
 
 target_include_directories(vin_engine PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-target_link_libraries(vin_engine glad_library glfw)
+target_link_libraries(vin_engine glad_library glfw lua_static)
