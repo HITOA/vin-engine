@@ -5,3 +5,6 @@
 	path = 3rdparty/glad
 	url = https://github.com/Dav1dde/glad.git
 	branch = glad2
+[submodule "3rdparty/Lua"]
+	path = 3rdparty/Lua
+	url = https://github.com/walterschell/Lua.git
