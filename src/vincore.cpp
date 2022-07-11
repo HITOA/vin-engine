@@ -6,8 +6,9 @@
 #include <stdexcept>
 #include <ecs.hpp>
 #include <component.hpp>
+#include <logger.hpp>
 
-namespace Vin {
+namespace Vin::Core {
 
 	struct GlfwWindowDeleter {
 		void operator()(GLFWwindow* p) {
@@ -72,18 +73,12 @@ namespace Vin {
 		_isInit = true;
 	}
 
-	void RenderEntity(EntityId entityId, Component::Renderable& dummy) {
-
-	}
-
 	void Run()
 	{
 		while (!glfwWindowShouldClose(_window.get())) {
 
 			if (_update)
 				_update();
-
-			EntityManager::ForEach(RenderEntity);
 
 			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -106,6 +101,58 @@ namespace Vin {
 	void SetUpdateCallback(std::function<void()> callback)
 	{
 		_update = callback;
+	}
+
+	bool CheckForShaderCompilationErr(unsigned int shaderId) {
+		int result;
+		char infoLog[512];
+		glGetShaderiv(shaderId, GL_COMPILE_STATUS, &result);
+		if (!result) {
+			glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
+			Logger::Warn("Shader compilation error : {}", infoLog);
+			return false;
+		}
+	}
+
+	bool CheckForProgramCompilationErr(unsigned int programId) {
+		int result;
+		char infoLog[512];
+		glGetProgramiv(programId, GL_COMPILE_STATUS, &result);
+		if (!result) {
+			glGetProgramInfoLog(programId, 512, NULL, infoLog);
+			Logger::Warn("Program compilation error : {}", infoLog);
+			return false;
+		}
+	}
+
+	unsigned int CompileShader(const char* vSrc, const char* fSrc)
+	{
+		unsigned int vertexShader;
+		vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertexShader, 1, &vSrc, NULL);
+		glCompileShader(vertexShader);
+		if (!CheckForShaderCompilationErr(vertexShader))
+			return -1;
+
+		unsigned int fragmentShader;
+		fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragmentShader, 1, &vSrc, NULL);
+		glCompileShader(fragmentShader);
+		if (!CheckForShaderCompilationErr(fragmentShader))
+			return -1;
+
+		unsigned int shaderProgram;
+		shaderProgram = glCreateProgram();
+		glAttachShader(shaderProgram, vertexShader);
+		glAttachShader(shaderProgram, fragmentShader);
+		glLinkProgram(shaderProgram);
+		if (!CheckForProgramCompilationErr(shaderProgram))
+			return -1;
+
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+
+		return shaderProgram;
 	}
 
 }
