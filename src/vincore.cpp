@@ -93,7 +93,7 @@ namespace Vin::Core {
 		if (!_isInit)
 			return;
 
-		glfwTerminate();
+		//glfwTerminate();
 
 		_isInit = false;
 	}
