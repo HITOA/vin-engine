@@ -1,6 +1,7 @@
 #include <psf.hpp>
 #include <physfs.h>
 #include <logger.hpp>
+#include <linit.hpp>
 
 namespace Vin::Psf {
 	namespace {
@@ -70,10 +71,53 @@ namespace Vin::Psf {
 	}
 	
 	namespace LLib {
+		typedef struct LoadPsf {
+			PHYSFS_file* f;  /* file being read */
+			char buff[BUFSIZ];  /* area for reading file */
+		} LoadPsf;
+
+
+		static const char* getPsf(lua_State* L, void* ud, size_t* size) {
+			LoadPsf* lf = (LoadPsf*)ud;
+			(void)L;
+
+			if (PHYSFS_eof(lf->f)) return NULL;
+			*size = PHYSFS_readBytes(lf->f, lf->buff, BUFSIZ);
+
+			return lf->buff;
+		}
+
+		static int checkload(lua_State* L, int stat, const char* filename) {
+			if (stat == 0) {
+				lua_pushstring(L, filename);
+				return 2;
+			}
+			else
+				return luaL_error(L, "error loading module '%s' from file '%s':\n\t%s",
+					lua_tostring(L, 1), filename, lua_tostring(L, -1));
+		}
+
 		int searcher_psf(lua_State* L) {
 			const char* name = luaL_checkstring(L, 1);
-			printf("Module loaded : %s\n", name);
-			return 1;
+			std::string filename{ name };
+			filename += ".lua";
+
+			if (!Vin::Psf::Exists(filename.c_str())) {
+				lua_pushfstring(L, "no module '%s' in game archive.", name);
+				return 1;
+			}
+			
+			LoadPsf lf;
+			int fnameindex = lua_gettop(L) + 1;
+			lua_pushfstring(L, "@%s", filename);
+
+			lf.f = PHYSFS_openRead(filename.c_str());
+
+			int status = lua_load(L, getPsf, &lf, name, NULL);
+
+			lua_remove(L, fnameindex);
+
+			return checkload(L, status, filename.c_str());
 		}
 
 		int psf_llib(lua_State* L)
