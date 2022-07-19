@@ -7,6 +7,7 @@
 #include <ecs.hpp>
 #include <component.hpp>
 #include <logger.hpp>
+#include <linit.hpp>
 
 namespace Vin::Core {
 
@@ -25,7 +26,7 @@ namespace Vin::Core {
 	}
 
 	void GlfwErrorCallback(int errcode, const char* description) {
-		printf("Err %i : %s", errcode, description);
+		Logger::Err("Err {}: {}", errcode, description);
 	}
 
 	void InitGlfw() {
@@ -76,12 +77,10 @@ namespace Vin::Core {
 	void Run()
 	{
 		while (!glfwWindowShouldClose(_window.get())) {
-
-			if (_update)
-				_update();
-
 			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			LLib::vin_invoke(Vin::Lua::GetCtx(), "vin_update");
 
 			glfwSwapBuffers(_window.get());
 			glfwPollEvents();
@@ -155,4 +154,95 @@ namespace Vin::Core {
 		return shaderProgram;
 	}
 
+	namespace LLib {
+		int vin_invoke(lua_State* L, const char* eventname) {
+			lua_getglobal(L, VINLUA_LIBNAME);
+			if (!lua_istable(L, -1))
+				return 0;
+
+			lua_getfield(L, -1, "event");
+			if (!lua_istable(L, -1))
+				return 0;
+
+			lua_getfield(L, -1, eventname);
+			if (!lua_istable(L, -1))
+				return 0;
+
+			size_t size = lua_rawlen(L, -1);
+
+			for (int i = 0; i <= size; i++) {
+				if (lua_rawgeti(L, 4, i) == LUA_TFUNCTION)
+					lua_pcall(L, 0, 0, 0);
+			}
+
+			lua_settop(L, 1);
+		}
+
+		static int vin_start(lua_State* L) {
+			const char* wTitle = luaL_checkstring(L, 1);
+			int wWidth = luaL_checkinteger(L, 2);
+			int wHeight = luaL_checkinteger(L, 3);
+
+			if (Vin::Core::_isInit)
+				return 1;
+
+			Vin::Core::Init(wTitle, wWidth, wHeight);
+			Vin::Core::Run();
+
+			return 0;
+		}
+
+		static void vin_create_event(lua_State* L, const char* eventname) {
+			lua_createtable(L, 1, 0);
+			lua_setfield(L, -2, eventname);
+		}
+
+		static int vin_register(lua_State* L) {
+
+			if (lua_gettop(L) != 2 || !lua_isfunction(L, -1))
+				return 0;
+
+			const char* eventname = luaL_checkstring(L, 1);
+			
+			lua_getglobal(L, VINLUA_LIBNAME);
+			if (!lua_istable(L, -1))
+				return 0;
+
+			lua_getfield(L, -1, "event");
+			if (!lua_istable(L, -1))
+				return 0;
+
+			lua_getfield(L, -1, eventname);
+			if (!lua_istable(L, -1)) {
+				lua_pop(L, 1); //pop false lua get field result
+				vin_create_event(L, eventname);
+				lua_getfield(L, -1, eventname);
+			}
+
+			size_t size = lua_rawlen(L, -1);
+
+			lua_pushvalue(L, -4);
+			lua_rawseti(L, -2, size + 1);
+
+			return 0;
+		}
+
+		static const luaL_Reg vin_funcs[] = {
+			{"start", vin_start},
+			{"register", vin_register},
+			{NULL, NULL}
+		};
+
+		void vin_create_event_table(lua_State* L) {
+			lua_createtable(L, 1, 0);
+			lua_setfield(L, -2, "event");
+		}
+
+		int vin_llib(lua_State* L)
+		{
+			luaL_newlib(L, vin_funcs);
+			vin_create_event_table(L);
+			return 1;
+		}
+	}
 }

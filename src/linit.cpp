@@ -83,4 +83,9 @@ namespace Vin::Lua {
 		return true;
 	}
 
+	lua_State* GetCtx()
+	{
+		return _ls;
+	}
+
 }

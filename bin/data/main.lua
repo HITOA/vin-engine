@@ -1,5 +1,5 @@
 print("Import work, i guess.");
 
-function DoSomething(a) {
-    print(a);
-}
+function update()
+    print("pute");
+end

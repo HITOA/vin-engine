@@ -1,5 +1,27 @@
 require "main"
 
-print("Lua is working!");
-config("Test project", 600, 400);
---DoSomething("test");
+print("Lua is working!")
+
+function anotherfunc()
+    print("chien")
+end
+
+vin.register("vin_update", update) --register update function
+vin.register("vin_update", anotherfunc)
+vin.start("test", 600, 400);
+
+print(vin)
+print(vin.event)
+print(vin.vin_update)
+print(#vin.event)
+print(vin.event[0])
+print(vin.event.vin_update)
+print(#vin.event.vin_update)
+print(vin.event.vin_update[0])
+print(vin.event.vin_update[1])
+print(package.searchers)
+print(package.searchers[1])
+
+vin.event.vin_update[1]();
+
+print("End of init.lua");

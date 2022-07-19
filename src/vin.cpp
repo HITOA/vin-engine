@@ -31,6 +31,7 @@ namespace Vin {
 		Lua::Init();
 
 		Lua::LoadLibrary(PSFLUA_LIBNAME, Psf::LLib::psf_llib);
+		Lua::LoadLibrary(VINLUA_LIBNAME, Core::LLib::vin_llib);
 
 		InitVincore();
 

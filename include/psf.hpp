@@ -10,7 +10,7 @@ namespace Vin::Psf {
 	std::vector<char> ReadFile(const char* filename);
 
 	namespace LLib {
-#define PSFLUA_LIBNAME "PSFLLIB"
+#define PSFLUA_LIBNAME "psf"
 		int psf_llib(lua_State* L);
 	}
 }
