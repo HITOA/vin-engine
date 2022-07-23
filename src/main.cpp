@@ -15,8 +15,8 @@ int main(int argc, char* argv[]) {
 		Vin::Logger::Log("Vin initialized.");
 
 		Vin::Vin* app = Vin::CreateApp();
-		app->Init("init.lua");
-		app->Run();
+
+		Vin::Run(app);
 
 		Vin::DestroyApp(app);
 		Vin::Terminate();

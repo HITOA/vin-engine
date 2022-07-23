@@ -6,9 +6,9 @@ function anotherfunc()
     print("chien")
 end
 
+vin.init("opengl");
 vin.register("vin_update", update) --register update function
 vin.register("vin_update", anotherfunc)
-vin.start("test", 600, 400);
 
 print(vin)
 print(vin.event)

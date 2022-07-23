@@ -1,6 +1,8 @@
 #include "lualib.hpp"
 #include <logger.hpp>
+#include <functional>
 
+#pragma region LlibPhysfs
 const char* Vin::Llib::Physfs::GetPhysfs(lua_State* ls, void* ud, size_t* size)
 {
 	LoadPhysfs* lf = (LoadPhysfs*)ud;
@@ -14,7 +16,7 @@ const char* Vin::Llib::Physfs::GetPhysfs(lua_State* ls, void* ud, size_t* size)
 
 int Vin::Llib::Physfs::LuaLoadFromFile(lua_State* ls, const char* filename)
 {
-	LoadPhysfs lf{0};
+	LoadPhysfs lf{ 0 };
 
 	if (PHYSFS_exists(filename) == 0) {
 		Logger::Err("file {} not founds.", filename);
@@ -65,3 +67,118 @@ int Vin::Llib::Physfs::LlibPhysfs(lua_State* ls)
 
 	return 0;
 }
+#pragma endregion
+
+#pragma region LlibVin
+
+namespace Vin::Llib::Vin {
+	Vin* GetApp(lua_State* ls) {
+		lua_getglobal(ls, "app");
+		if (!lua_islightuserdata(ls, -1))
+			return nullptr;
+
+		Vin* app = (Vin*)lua_touserdata(ls, -1);
+
+		lua_pop(ls, 1);
+
+		return app;
+	}
+
+	int InitVin(lua_State* ls) {
+		Vin* app = GetApp(ls);
+
+		if (app == nullptr)
+			return 1;
+
+		const char* apiname = luaL_checkstring(ls, 1);
+
+		if (strcmp(apiname, "opengl") == 0) {
+			app->engine = new Engine(RenderingAPI::OPENGL);
+			return 0;
+		}
+
+		app->engine = new Engine(RenderingAPI::NONE);
+		return 0;
+	}
+
+	void CreateEvent(lua_State* ls, const char* eventname) {
+		lua_createtable(ls, 1, 0);
+		lua_setfield(ls, -2, eventname);
+	}
+
+	int RegisterVin(lua_State* ls) {
+		if (lua_gettop(ls) != 2 || !lua_isfunction(ls, -1))
+			return 0;
+
+		const char* eventname = luaL_checkstring(ls, 1);
+
+		lua_getglobal(ls, LLIB_VIN_NAME);
+		if (!lua_istable(ls, -1))
+			return 0;
+
+		lua_getfield(ls, -1, "event");
+		if (!lua_istable(ls, -1))
+			return 0;
+
+		lua_getfield(ls, -1, eventname);
+		if (!lua_istable(ls, -1)) {
+			lua_pop(ls, 1); //pop false lua get field result
+			CreateEvent(ls, eventname);
+			lua_getfield(ls, -1, eventname);
+		}
+
+		size_t size = lua_rawlen(ls, -1);
+
+		lua_pushvalue(ls, -4);
+		lua_rawseti(ls, -2, size + 1);
+
+		return 0;
+	}
+
+	void CreateEventTable(lua_State* ls) {
+		lua_createtable(ls, 1, 0);
+		lua_setfield(ls, -2, "event");
+	}
+}
+
+int Vin::Llib::Vin::InvokeEvent(lua_State* ls, const char* eventname)
+{
+	lua_getglobal(ls, LLIB_VIN_NAME);
+	if (!lua_istable(ls, -1))
+		return 0;
+
+	lua_getfield(ls, -1, "event");
+	if (!lua_istable(ls, -1))
+		return 0;
+
+	lua_getfield(ls, -1, eventname);
+	if (!lua_istable(ls, -1))
+		return 0;
+
+	size_t size = lua_rawlen(ls, -1);
+
+	for (int i = 0; i <= size; i++) {
+		if (lua_rawgeti(ls, 4, i) == LUA_TFUNCTION)
+			lua_pcall(ls, 0, 0, 0);
+	}
+
+	lua_settop(ls, 1);
+
+	return 0;
+}
+
+int Vin::Llib::Vin::LlibVin(lua_State* ls)
+{
+	static const luaL_Reg vin_funcs[] = {
+		{"init", InitVin},
+		{"register", RegisterVin},
+		{NULL, NULL}
+	};
+
+	luaL_newlib(ls, vin_funcs);
+	CreateEventTable(ls);
+
+	return 1;
+}
+
+#pragma endregion

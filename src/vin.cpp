@@ -3,6 +3,7 @@
 #include <physfs.h>
 #include <logger.hpp>
 #include <lualib.hpp>
+#include <functional>
 
 namespace Vin {
     bool Initialize()
@@ -34,19 +35,55 @@ namespace Vin {
 		PHYSFS_deinit();
 	}
 
+	void InitLua(Vin* app) {
+		app->luaState = LuaInterface::CreateLuaState();
+
+		lua_pushglobaltable(app->luaState);
+		lua_pushlightuserdata(app->luaState, app);
+		lua_setfield(app->luaState, -2, "app");
+
+		LuaInterface::OpenLibs(app->luaState, (luaL_Reg*)LuaInterface::luaDefaultLibs);
+
+		LuaInterface::OpenLib(app->luaState, { LLIB_PHYSFS_NAME, Llib::Physfs::LlibPhysfs });
+		LuaInterface::OpenLib(app->luaState, { LLIB_VIN_NAME, Llib::Vin::LlibVin });
+
+	}
+
+	void TerminateLua(Vin* app) {
+		LuaInterface::DestroyLuaState(app->luaState);
+	}
+
 	Vin* CreateApp()
 	{
 		Vin* app = new Vin{};
+
+		app->luaentry = "init.lua";
+
+		InitLua(app);
 
 		return app;
 	}
 
 	void DestroyApp(Vin* app)
 	{
+		TerminateLua(app);
+
 		delete app;
 	}
 
-	void Vin::Init(const char* luaentry)
+	void Run(Vin* app)
+	{
+		if (Llib::Physfs::LuaLoadFromFile(app->luaState, app->luaentry) != 0) {
+			Logger::Err("Lua error: {}", LuaInterface::GetLastError(app->luaState));
+			return;
+		}
+		if (LuaInterface::Run(app->luaState, 0, 0) != 0) {
+			Logger::Err("Lua error: {}", LuaInterface::GetLastError(app->luaState));
+			return;
+		}
+	}
+
+	/*void Vin::Init(const char* luaentry)
 	{
 		this->luaentry = luaentry;
 		InitLua();
@@ -72,5 +109,18 @@ namespace Vin {
 
 		LuaInterface::OpenLib(luaState.get(), { LLIB_PHYSFS_NAME, Llib::Physfs::LlibPhysfs });
 	}
+
+	int Vin::LlibVin(lua_State* ls)
+	{
+		static const luaL_Reg vin_funcs[] = {
+			{"register", std::bind(&Vin::LuaRegister, this)},
+			{NULL, NULL}
+		};
+	}
+
+	int Vin::LuaRegister(lua_State* ls)
+	{
+
+	}*/
 
 }
