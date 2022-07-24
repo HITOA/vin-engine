@@ -83,6 +83,10 @@ namespace Vin {
 		}
 	}
 
+	void Process(Vin* app)
+	{
+	}
+
 	/*void Vin::Init(const char* luaentry)
 	{
 		this->luaentry = luaentry;

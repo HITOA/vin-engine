@@ -6,9 +6,11 @@ function anotherfunc()
     print("chien")
 end
 
-vin.init("opengl");
+vin.init("opengl")
+--vin.setwindowsize(1000, 1000)
 vin.register("vin_update", update) --register update function
 vin.register("vin_update", anotherfunc)
+vin.run()
 
 print(vin)
 print(vin.event)

@@ -22,6 +22,21 @@ void Vin::Engine::Run()
 	GameLoop();
 }
 
+Vin::Renderer* Vin::Engine::GetRenderer()
+{
+	return renderer.get();
+}
+
+Vin::Window* Vin::Engine::GetWindow()
+{
+	return window.get();
+}
+
+void Vin::Engine::SetProcessCallback(std::function<void()> callback)
+{
+	processcallback = callback;
+}
+
 bool Vin::Engine::CreateRenderer(RenderingAPI renderingApi)
 {
 	switch (renderingApi)
@@ -38,8 +53,11 @@ bool Vin::Engine::CreateRenderer(RenderingAPI renderingApi)
 
 void Vin::Engine::GameLoop()
 {
-	while (window->ShouldClose()) {
+	while (!window->ShouldClose()) {
 		renderer->Clear();
+
+		if (processcallback)
+			processcallback();
 
 		window->SwapBuffer();
 		glfwPollEvents();

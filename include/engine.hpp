@@ -4,6 +4,7 @@
 
 #include <renderer.hpp>
 #include <window.hpp>
+#include <functional>
 
 namespace Vin {
 	enum class RenderingAPI {
@@ -18,6 +19,11 @@ namespace Vin {
 
 		void Run();
 
+		Renderer* GetRenderer();
+		Window* GetWindow();
+
+		void SetProcessCallback(std::function<void()> callback);
+
 	private:
 		bool CreateRenderer(RenderingAPI renderingApi);
 		void GameLoop();
@@ -26,6 +32,8 @@ namespace Vin {
 		uint64_t frameDrawn{0};
 
 		uint32_t targetFps{60};
+
+		std::function<void()> processcallback{};
 
 		std::unique_ptr<Renderer> renderer{};
 		std::unique_ptr<Window> window{};

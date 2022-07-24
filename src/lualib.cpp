@@ -1,6 +1,7 @@
 #include "lualib.hpp"
 #include <logger.hpp>
 #include <functional>
+#include <vin.hpp>
 
 #pragma region LlibPhysfs
 const char* Vin::Llib::Physfs::GetPhysfs(lua_State* ls, void* ud, size_t* size)
@@ -94,10 +95,14 @@ namespace Vin::Llib::Vin {
 
 		if (strcmp(apiname, "opengl") == 0) {
 			app->engine = new Engine(RenderingAPI::OPENGL);
+			app->engine->SetProcessCallback([app]() {
+					InvokeEvent(app->luaState, "vin_update");
+				});
 			return 0;
 		}
 
 		app->engine = new Engine(RenderingAPI::NONE);
+
 		return 0;
 	}
 
@@ -135,6 +140,31 @@ namespace Vin::Llib::Vin {
 		return 0;
 	}
 
+	int SetWindowSizeVin(lua_State* ls) {
+		Vin* app = GetApp(ls);
+
+		if (app == nullptr)
+			return 1;
+
+		int width = luaL_checkinteger(ls, 1);
+		int height = luaL_checkinteger(ls, 2);
+
+		app->engine->GetWindow()->SetWindowSize(width, height);
+
+		return 0;
+	}
+
+	int RunVin(lua_State* ls) {
+		Vin* app = GetApp(ls);
+
+		if (app == nullptr)
+			return 1;
+
+		app->engine->Run();
+
+		return 0;
+	}
+
 	void CreateEventTable(lua_State* ls) {
 		lua_createtable(ls, 1, 0);
 		lua_setfield(ls, -2, "event");
@@ -157,12 +187,12 @@ int Vin::Llib::Vin::InvokeEvent(lua_State* ls, const char* eventname)
 
 	size_t size = lua_rawlen(ls, -1);
 
-	for (int i = 0; i <= size; i++) {
-		if (lua_rawgeti(ls, 4, i) == LUA_TFUNCTION)
+	for (int i = 1; i <= size; i++) {
+		if (lua_rawgeti(ls, 3, i) == LUA_TFUNCTION)
 			lua_pcall(ls, 0, 0, 0);
 	}
 
-	lua_settop(ls, 1);
+	lua_settop(ls, 0);
 
 	return 0;
 }
@@ -172,6 +202,8 @@ int Vin::Llib::Vin::LlibVin(lua_State* ls)
 	static const luaL_Reg vin_funcs[] = {
 		{"init", InitVin},
 		{"register", RegisterVin},
+		{"setwindowsize", SetWindowSizeVin},
+		{"run", RunVin},
 		{NULL, NULL}
 	};
 
