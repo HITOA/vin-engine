@@ -1,30 +1,50 @@
 cmake_minimum_required(VERSION 3.2)
 project(vin)
 
-set(CMAKE_CXX_STANDARD 20)
-
-if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.12.25835)
-    set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest")
-    set(CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std:c++latest")
-endif()
-
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
 
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
+add_subdirectory(${EXTERNAL_PATH}/googletest)
 add_subdirectory(${EXTERNAL_PATH}/Lua)
 add_subdirectory(${EXTERNAL_PATH}/physfs)
 
-file(GLOB VINENGINE_HPP CONFIGURE_DEPENDS "include/*.hpp")
-file(GLOB VINENGINE_CPP CONFIGURE_DEPENDS "src/*.cpp")
+glad_add_library(glad_library STATIC API vulkan=1.2)
 
-glad_add_library(glad_library STATIC API gl:core=4.6 vulkan=1.1)
+add_library(vin_engine STATIC 
+	include/core.hpp
+	include/event.hpp
+	include/vin.hpp
 
-add_executable(vin_engine ${VINENGINE_HPP} ${VINENGINE_CPP})
+	src/entrypoint.cpp
+	src/event.cpp
+	src/vin.cpp
+)
 
 target_include_directories(vin_engine PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-target_link_libraries(vin_engine glad_library glfw lua_static physfs-static)
+target_link_libraries(
+	vin_engine 
+	glad_library 
+	glfw 
+	lua_static 
+	physfs-static 
+	GTest::gtest_main
+)
+
+target_precompile_headers(vin_engine PUBLIC include/vinpch.hpp)
 
 file(COPY ${CMAKE_SOURCE_DIR}/bin/data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+add_executable(vin_test 
+	test/main.cpp 
+	test/test.hpp
+)
+
+target_link_libraries(
+  vin_test
+  vin_engine
+  GTest::gtest_main
+)

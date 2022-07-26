@@ -11,3 +11,6 @@
 [submodule "3rdparty/physfs"]
 	path = 3rdparty/physfs
 	url = https://github.com/icculus/physfs.git
+[submodule "3rdparty/googletest"]
+	path = 3rdparty/googletest
+	url = https://github.com/google/googletest.git

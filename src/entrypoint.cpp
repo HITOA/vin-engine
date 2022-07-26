@@ -1,0 +1,13 @@
+#include "vin.hpp"
+
+extern Vin::Application* Vin::CreateApp();
+extern void Vin::DestroyApp(Vin::Application* app);
+
+int main(int argc, char* argv[]) {
+
+	Vin::Application* app = Vin::CreateApp();
+
+	Vin::DestroyApp(app);
+
+	return 0;
+}

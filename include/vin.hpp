@@ -1,24 +1,20 @@
 #pragma once
 
-#include <memory>
-
-#include <engine.hpp>
-#include <luainterface.hpp>
-
-#define LLIB_VIN_NAME "vin"
+int main(int argc, char* argv[]);
 
 namespace Vin {
-
-	struct Vin {
-		const char* luaentry{ "" };
-		Engine* engine{};
-		lua_State* luaState{};
+	struct ApplicationInfo {
+		const char* name{ "Application" };
 	};
 
-	bool Initialize();
-	void Terminate();
-	Vin* CreateApp();
-	void DestroyApp(Vin* app);
-	void Run(Vin* app);
-	void Process(Vin* app);
+	class Application {
+	public:
+		Application(const ApplicationInfo& info);
+		virtual ~Application();
+	private:
+		ApplicationInfo m_ApplicationInfo;
+	};
+
+	Application* CreateApp();
+	void DestroyApp(Application* app);
 }
