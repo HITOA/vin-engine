@@ -1,5 +1,4 @@
 #include <vin.hpp>
-#include <event.hpp>
 
 #include <gtest/gtest.h>
 #include "test.hpp"
@@ -9,10 +8,10 @@ public:
 	TestApp(const Vin::ApplicationInfo& info) : Application{ info } {}
 };
 
-int main(int argc, char* argv[]) {
-	testing::InitGoogleTest(&argc, argv);
-	RUN_ALL_TESTS();
-}
+//int main(int argc, char* argv[]) {
+	//testing::InitGoogleTest(&argc, argv);
+	//RUN_ALL_TESTS();
+//}
 
 Vin::Application* Vin::CreateApp() {
 	Vin::ApplicationInfo info{};

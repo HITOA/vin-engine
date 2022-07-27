@@ -1,7 +1,8 @@
 #pragma once
 
-#include <core.hpp>
 #include <vinpch.hpp>
+
+#include <core.hpp>
 
 namespace Vin {
 
@@ -53,6 +54,6 @@ namespace Vin {
 	protected:
 		void Dispatch(const Event& e);
 	private:
-		std::vector<EventListener*> listeners{};
+		std::vector<EventListener*> m_listeners{};
 	};
 }

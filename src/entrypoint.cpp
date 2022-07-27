@@ -7,6 +7,8 @@ int main(int argc, char* argv[]) {
 
 	Vin::Application* app = Vin::CreateApp();
 
+	app->Run();
+
 	Vin::DestroyApp(app);
 
 	return 0;

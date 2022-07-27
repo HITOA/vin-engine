@@ -17,10 +17,14 @@ add_library(vin_engine STATIC
 	include/core.hpp
 	include/event.hpp
 	include/vin.hpp
+	include/window.hpp
 
 	src/entrypoint.cpp
 	src/event.cpp
 	src/vin.cpp
+
+	src/platform/windows/window_windows.hpp
+	src/platform/windows/window_windows.cpp
 )
 
 target_include_directories(vin_engine PUBLIC ${CMAKE_SOURCE_DIR}/include)
