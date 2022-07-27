@@ -4,12 +4,15 @@
 
 #include <core.hpp>
 
+#define EVENT(type, category) type, category, #type
+
 namespace Vin {
 
 	enum class EventType {
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
-		KeyPressed, KeyReleased, KeyHold
+		KeyPressed, KeyReleased, KeyHold, KeyTyped,
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
 	enum EventCategory {
@@ -30,15 +33,29 @@ namespace Vin {
 		const void* data;
 
 	public:
-		Event(EventType type, int category, const char* eventName, void* data) :
+		Event(EventType type, int category, const char* eventName) :
 			type{ type },
 			category{ category },
 			eventName{ eventName },
-			data{ data } {};
+			data{ nullptr } {};
+
+		~Event() {
+			DestroyData();
+		}
 	public:
 		template<typename T>
 		inline constexpr const T& GetData() const {
 			return *(const T*)data;
+		}
+
+		template<typename T, typename... Args>
+		inline void CreateData(Args&&... args) {
+			data = new T{ args... };
+		}
+
+		inline void DestroyData() {
+			if (data != nullptr)
+				delete data;
 		}
 	};
 

@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <gtest/gtest.h>
-#include <event.hpp>
+#include <events/event.hpp>
 
 class Dispatcher : public Vin::EventDispatcher {
 public:
@@ -10,8 +10,7 @@ public:
 		Vin::Event e{
 			Vin::EventType::KeyPressed,
 			Vin::EventCategory::EventCategoryInput | Vin::EventCategory::EventCategoryKeyboard,
-			"Key Pressed",
-			nullptr
+			"Key Pressed"
 		};
 
 		Dispatch(e);

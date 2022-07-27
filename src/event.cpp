@@ -1,4 +1,4 @@
-#include "event.hpp"
+#include "events/event.hpp"
 
 bool Vin::EventListener::CheckCategory(int category)
 {

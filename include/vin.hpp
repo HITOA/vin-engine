@@ -11,7 +11,7 @@ namespace Vin {
 		const char* name{ "Application" };
 	};
 
-	class Application : public EventListener {
+	class Application : public EventListener, EventDispatcher {
 	public:
 		Application(const ApplicationInfo& info);
 		virtual ~Application();

@@ -15,9 +15,12 @@ glad_add_library(glad_library STATIC API vulkan=1.2)
 
 add_library(vin_engine STATIC 
 	include/core.hpp
-	include/event.hpp
 	include/vin.hpp
 	include/window.hpp
+
+	include/events/event.hpp
+	include/events/application_event.hpp
+	include/events/input_event.hpp
 
 	src/entrypoint.cpp
 	src/event.cpp

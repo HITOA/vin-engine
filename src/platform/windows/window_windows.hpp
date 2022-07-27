@@ -8,6 +8,8 @@
 #include <GLFW/glfw3.h>
 
 namespace Vin {
+
+
 	class WindowsWindow : public Window {
 	public:
 		WindowsWindow(const WindowInfo& info);
@@ -21,6 +23,13 @@ namespace Vin {
 		int Getheight() const final;
 
 		void* GetNativeWindow() const final;
+
+		friend void WindowResizeCallback(GLFWwindow* window, int width, int height);
+		friend void WindowCloseCallback(GLFWwindow* window);
+		friend void WindowKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		friend void WindowMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+		friend void WindowMouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset);
+		friend void WindowMouseMoveCallback(GLFWwindow* window, double xPos, double yPos);
 
 	private:
 		void Init(const WindowInfo& info);

@@ -1,5 +1,7 @@
 #include "vin.hpp"
 
+#include<events/input_event.hpp>
+
 Vin::Application::Application(const ApplicationInfo& info) : m_ApplicationInfo{ info }, m_Running{ false }
 {
 	m_Window = CreateWindow(WindowInfo{ info.name });
@@ -13,7 +15,11 @@ Vin::Application::~Application()
 
 void Vin::Application::OnEvent(const Event& e)
 {
+	Dispatch(e);
 
+	if (e.type == EventType::MouseMoved) {
+		printf("Mouse Pos : %f, %f\n", e.GetData<WindowMouseMoveInfo>().xPos, e.GetData<WindowMouseMoveInfo>().yPos);
+	}
 }
 
 void Vin::Application::Run()
