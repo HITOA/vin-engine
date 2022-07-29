@@ -6,6 +6,7 @@
 #include <window.hpp>
 
 #include <GLFW/glfw3.h>
+#include <renderer/graphicscontext.hpp>
 
 namespace Vin {
 
@@ -37,6 +38,7 @@ namespace Vin {
 
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		struct WindowsWindowData {
 			const char* title;

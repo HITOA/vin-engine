@@ -3,6 +3,7 @@
 #include <vinpch.hpp>
 
 #include <window.hpp>
+#include <timer.hpp>
 
 int main(int argc, char* argv[]);
 
@@ -26,6 +27,8 @@ namespace Vin {
 		ApplicationInfo m_ApplicationInfo;
 		Window* m_Window;
 		bool m_Running;
+		VinTimer m_Timer;
+
 	};
 
 	Application* CreateApp();

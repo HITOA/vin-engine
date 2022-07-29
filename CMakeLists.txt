@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.2)
 project(vin)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DVIN_DEBUG")
+
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
@@ -11,12 +13,16 @@ add_subdirectory(${EXTERNAL_PATH}/googletest)
 add_subdirectory(${EXTERNAL_PATH}/Lua)
 add_subdirectory(${EXTERNAL_PATH}/physfs)
 
-glad_add_library(glad_library STATIC API vulkan=1.2)
+glad_add_library(glad_library STATIC API gl:core=4.6)
 
 add_library(vin_engine STATIC 
 	include/core.hpp
+	include/assert.hpp
 	include/vin.hpp
 	include/window.hpp
+	include/timer.hpp
+
+	include/renderer/graphicscontext.hpp
 
 	include/events/event.hpp
 	include/events/application_event.hpp
@@ -25,9 +31,13 @@ add_library(vin_engine STATIC
 	src/entrypoint.cpp
 	src/event.cpp
 	src/vin.cpp
+	src/timer.cpp
 
 	src/platform/windows/window_windows.hpp
 	src/platform/windows/window_windows.cpp
+
+	src/opengl/graphicscontext_opengl.hpp
+	src/opengl/graphicscontext_opengl.cpp
 )
 
 target_include_directories(vin_engine PUBLIC ${CMAKE_SOURCE_DIR}/include)

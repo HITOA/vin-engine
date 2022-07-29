@@ -5,7 +5,7 @@
 #include <events/application_event.hpp>
 #include <events/input_event.hpp>
 
-#include <gtest/gtest.h>
+#include <assert.hpp>
 
 static bool _isGlfwInit = false;
 
@@ -107,7 +107,7 @@ Vin::WindowsWindow::~WindowsWindow()
 void Vin::WindowsWindow::OnUpdate()
 {
 	glfwPollEvents();
-	glfwSwapBuffers(m_Window);
+	m_Context->SwapBuffer();
 }
 
 const char* Vin::WindowsWindow::GetTitle() const
@@ -138,14 +138,16 @@ void Vin::WindowsWindow::Init(const WindowInfo& info)
 
 	if (!_isGlfwInit) {
 		int status = glfwInit();
-		ASSERT_EQ(status, GLFW_TRUE) << "Glfw failed initialization";
+		VIN_ASSERT(status == GLFW_TRUE, "Glfw failed initialization.");
 
 		glfwSetErrorCallback(GlfwErrorCallback);
 	}
 
 	m_Window = glfwCreateWindow(info.width, info.height, info.title, nullptr, nullptr);
-	glfwMakeContextCurrent(m_Window);
 	glfwSetWindowUserPointer(m_Window, this);
+
+	m_Context = CreateGraphicsContext(m_Window);
+	m_Context->Init();
 
 	glfwSetWindowSizeCallback(m_Window, WindowResizeCallback);
 	glfwSetWindowCloseCallback(m_Window, WindowCloseCallback);
@@ -157,6 +159,7 @@ void Vin::WindowsWindow::Init(const WindowInfo& info)
 
 void Vin::WindowsWindow::Terminate()
 {
+	DestroyGraphicsContext(m_Context);
 	glfwDestroyWindow(m_Window);
 }
 
