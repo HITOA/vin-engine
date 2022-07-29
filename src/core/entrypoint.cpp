@@ -1,4 +1,4 @@
-#include "vin.hpp"
+#include "application.hpp"
 
 extern Vin::Application* Vin::CreateApp();
 extern void Vin::DestroyApp(Vin::Application* app);

@@ -2,7 +2,7 @@
 
 #ifdef VIN_RENDERER_OPENGL
 
-#include "assert.hpp"
+#include "core/assert.hpp"
 #include <glad/gl.h>
 
 Vin::OpenGLContext::OpenGLContext(GLFWwindow* window) : m_Window{ window }

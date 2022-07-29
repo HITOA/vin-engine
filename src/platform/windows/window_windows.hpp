@@ -1,12 +1,12 @@
-#include <vinpch.hpp>
-#include <core.hpp>
+#include "vinpch.hpp"
+#include "core/core.hpp"
 
 #ifdef VIN_PLATFORM_WINDOWS
 
-#include <window.hpp>
+#include "core/window.hpp"
 
 #include <GLFW/glfw3.h>
-#include <renderer/graphicscontext.hpp>
+#include "renderer/graphicscontext.hpp"
 
 namespace Vin {
 

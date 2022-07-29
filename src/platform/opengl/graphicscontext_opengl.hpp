@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core.hpp>
-#include <renderer/graphicscontext.hpp>
+#include "core/core.hpp"
+#include "renderer/graphicscontext.hpp"
 
 #ifdef VIN_RENDERER_OPENGL
 

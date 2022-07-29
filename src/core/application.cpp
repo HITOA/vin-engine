@@ -1,6 +1,6 @@
-#include "vin.hpp"
+#include "application.hpp"
 
-#include<events/input_event.hpp>
+#include "core/events/inputevent.hpp"
 
 Vin::Application::Application(const ApplicationInfo& info) : m_ApplicationInfo{ info }, m_Running{ false }, m_Timer{}
 {

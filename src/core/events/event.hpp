@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vinpch.hpp>
+#include "vinpch.hpp"
 
-#include <core.hpp>
+#include "core/core.hpp"
 
 #define EVENT(type, category) type, category, #type
 

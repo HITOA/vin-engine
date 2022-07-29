@@ -1,8 +1,5 @@
 #include <vin.hpp>
 
-#include <gtest/gtest.h>
-#include "test.hpp"
-
 class TestApp : public Vin::Application {
 public:
 	TestApp(const Vin::ApplicationInfo& info) : Application{ info } {}

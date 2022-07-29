@@ -1,9 +1,10 @@
 #pragma once
 
-#include <vinpch.hpp>
+#include "vinpch.hpp"
 
-#include <window.hpp>
-#include <timer.hpp>
+#include "core/window.hpp"
+#include "core/timer.hpp"
+#include "core/events/event.hpp"
 
 int main(int argc, char* argv[]);
 

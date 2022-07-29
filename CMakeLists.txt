@@ -16,31 +16,30 @@ add_subdirectory(${EXTERNAL_PATH}/physfs)
 glad_add_library(glad_library STATIC API gl:core=4.6)
 
 add_library(vin_engine STATIC 
-	include/core.hpp
-	include/assert.hpp
-	include/vin.hpp
-	include/window.hpp
-	include/timer.hpp
+	src/core/application.cpp
+	src/core/application.hpp
+	src/core/assert.hpp
+	src/core/entrypoint.cpp
+	src/core/timer.cpp
+	src/core/timer.hpp
+	src/core/window.hpp
 
-	include/renderer/graphicscontext.hpp
+	src/core/events/applicationevent.hpp
+	src/core/events/event.cpp
+	src/core/events/event.hpp
+	src/core/events/inputevent.hpp
+	
+	src/platform/opengl/graphicscontext_opengl.cpp
+	src/platform/opengl/graphicscontext_opengl.hpp
 
-	include/events/event.hpp
-	include/events/application_event.hpp
-	include/events/input_event.hpp
-
-	src/entrypoint.cpp
-	src/event.cpp
-	src/vin.cpp
-	src/timer.cpp
-
-	src/platform/windows/window_windows.hpp
 	src/platform/windows/window_windows.cpp
+	src/platform/windows/window_windows.hpp
 
-	src/opengl/graphicscontext_opengl.hpp
-	src/opengl/graphicscontext_opengl.cpp
+	src/renderer/graphicscontext.hpp	
+	
+	src/vin.hpp
+	src/vinpch.hpp
 )
-
-target_include_directories(vin_engine PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
 target_link_libraries(
 	vin_engine 
@@ -51,13 +50,11 @@ target_link_libraries(
 	GTest::gtest_main
 )
 
-target_precompile_headers(vin_engine PUBLIC include/vinpch.hpp)
-
-file(COPY ${CMAKE_SOURCE_DIR}/bin/data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+target_precompile_headers(vin_engine PUBLIC src/vinpch.hpp)
+target_include_directories(vin_engine PUBLIC src)
 
 add_executable(vin_test 
-	test/main.cpp 
-	test/test.hpp
+	test/main.cpp
 )
 
 target_link_libraries(

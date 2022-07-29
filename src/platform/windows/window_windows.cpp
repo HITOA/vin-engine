@@ -2,10 +2,10 @@
 
 #ifdef VIN_PLATFORM_WINDOWS
 
-#include <events/application_event.hpp>
-#include <events/input_event.hpp>
+#include "core/events/applicationevent.hpp"
+#include "core/events/inputevent.hpp"
 
-#include <assert.hpp>
+#include "core/assert.hpp"
 
 static bool _isGlfwInit = false;
 

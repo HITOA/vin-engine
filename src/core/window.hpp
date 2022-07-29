@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vinpch.hpp>
+#include "vinpch.hpp"
 
-#include <events/event.hpp>
+#include "core/events/event.hpp"
 
 namespace Vin {
 	struct WindowInfo {
