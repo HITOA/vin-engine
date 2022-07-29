@@ -12,11 +12,11 @@ Install jinj2 package : ```pip install jinj2```
 Generate with cmake : ```cmake -B"./build" .```   
 
 ## Source
-A lot of usefule source for developing a game engine :
+A lot of useful source for developing a game engine :
 
 Game Programming Patterns (Robert Nystrom) : https://gameprogrammingpatterns.com/contents.html  
 Learn Vulkan : https://vulkan-tutorial.com/  
-Leann Opengl : https://learnopengl.com/  
+Learn Opengl : https://learnopengl.com/  
 Godot Engine Repos (Most readable source code for game engine probably) : https://github.com/godotengine/godot  
 The Cherno (Especially his game engine series) : https://www.youtube.com/c/TheChernoProject  
 Chili Tomato Noodle : https://www.youtube.com/c/ChiliTomatoNoodle  
