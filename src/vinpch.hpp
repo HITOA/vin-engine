@@ -1,7 +1,8 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include <iostream>
+#include <ctime>
+#include <memory>
 
+#include <string>
 #include <vector>

@@ -16,7 +16,6 @@ namespace Vin {
 	class Application : public EventListener, EventDispatcher {
 	public:
 		Application(const ApplicationInfo& info);
-		virtual ~Application();
 
 	public:
 		void OnEvent(const Event& e);
@@ -26,7 +25,7 @@ namespace Vin {
 
 	private:
 		ApplicationInfo m_ApplicationInfo;
-		Window* m_Window;
+		std::unique_ptr<Window> m_Window;
 		bool m_Running;
 		VinTimer m_Timer;
 

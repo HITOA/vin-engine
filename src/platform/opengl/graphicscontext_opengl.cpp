@@ -15,20 +15,18 @@ void Vin::OpenGLContext::Init()
 	glfwMakeContextCurrent(m_Window);
 	glfwSwapInterval(0);
 	int status = gladLoadGL(glfwGetProcAddress);
-	VIN_ASSERT(!status, "Glad failed initialization.")
+	VIN_ASSERT(status, "Glad failed initialization.")
 }
 
 void Vin::OpenGLContext::SwapBuffer()
 {
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glfwSwapBuffers(m_Window);
 }
 
-Vin::GraphicsContext* Vin::CreateGraphicsContext(void* window) {
-	return new OpenGLContext((GLFWwindow*)window);
-}
-
-void Vin::DestroyGraphicsContext(GraphicsContext* ctx) {
-	delete ctx;
+std::unique_ptr<Vin::GraphicsContext> Vin::CreateGraphicsContext(void* window) {
+	return std::make_unique<Vin::OpenGLContext>((GLFWwindow*)window);
 }
 
 #endif // VIN_RENDERER_OPENGL

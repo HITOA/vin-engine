@@ -1,16 +1,14 @@
 #include "application.hpp"
 
 #include "core/events/inputevent.hpp"
+#include "core/logger.hpp"
 
 Vin::Application::Application(const ApplicationInfo& info) : m_ApplicationInfo{ info }, m_Running{ false }, m_Timer{}
 {
+	Logger::Log("App \"%s\" started.", info.name);
+
 	m_Window = CreateWindow(WindowInfo{ info.name });
 	m_Window->RegisterListener(this);
-}
-
-Vin::Application::~Application()
-{
-	DestroyWindow(m_Window);
 }
 
 void Vin::Application::OnEvent(const Event& e)

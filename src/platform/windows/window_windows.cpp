@@ -159,18 +159,12 @@ void Vin::WindowsWindow::Init(const WindowInfo& info)
 
 void Vin::WindowsWindow::Terminate()
 {
-	DestroyGraphicsContext(m_Context);
 	glfwDestroyWindow(m_Window);
 }
 
-Vin::Window* Vin::CreateWindow(const WindowInfo& info)
+std::unique_ptr<Vin::Window> Vin::CreateWindow(const WindowInfo& info)
 {
-	return new WindowsWindow{ info };
-}
-
-void Vin::DestroyWindow(Window* window)
-{
-	delete window;
+	return std::make_unique<WindowsWindow>(info);
 }
 
 #endif // VIN_PLATFORM_WINDOWS

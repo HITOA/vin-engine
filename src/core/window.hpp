@@ -28,6 +28,5 @@ namespace Vin {
 		virtual void* GetNativeWindow() const = 0;
 	};
 
-	Window* CreateWindow(const WindowInfo& info = WindowInfo{});
-	void DestroyWindow(Window* window);
+	std::unique_ptr<Window> CreateWindow(const WindowInfo& info = WindowInfo{});
 }

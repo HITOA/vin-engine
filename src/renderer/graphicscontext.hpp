@@ -8,7 +8,6 @@ namespace Vin {
 		virtual void SwapBuffer() = 0;
 	};
 
-	GraphicsContext* CreateGraphicsContext(void* window);
-	void DestroyGraphicsContext(GraphicsContext* ctx);
+	std::unique_ptr<GraphicsContext> CreateGraphicsContext(void* window);
 
 }

@@ -20,6 +20,8 @@ add_library(vin_engine STATIC
 	src/core/application.hpp
 	src/core/assert.hpp
 	src/core/entrypoint.cpp
+	src/core/logger.cpp
+	src/core/logger.hpp
 	src/core/timer.cpp
 	src/core/timer.hpp
 	src/core/window.hpp
