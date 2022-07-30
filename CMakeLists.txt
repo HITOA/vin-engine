@@ -37,7 +37,12 @@ add_library(vin_engine STATIC
 	src/platform/windows/window_windows.cpp
 	src/platform/windows/window_windows.hpp
 
-	src/renderer/graphicscontext.hpp	
+	src/renderer/buffer.hpp
+	src/renderer/framebuffer.hpp
+	src/renderer/graphicscontext.hpp
+	src/renderer/renderingapi.hpp
+	src/renderer/shader.hpp
+	src/renderer/vertexarray.hpp	
 	
 	src/vin.hpp
 	src/vinpch.hpp
