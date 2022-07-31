@@ -33,15 +33,22 @@ add_library(vin_engine STATIC
 	
 	src/platform/opengl/graphicscontext_opengl.cpp
 	src/platform/opengl/graphicscontext_opengl.hpp
+	src/platform/opengl/program_opengl.cpp
+	src/platform/opengl/program_opengl.hpp
+	src/platform/opengl/renderer_opengl.cpp
+	src/platform/opengl/renderer_opengl.hpp
 
 	src/platform/windows/window_windows.cpp
 	src/platform/windows/window_windows.hpp
 
 	src/renderer/buffer.hpp
 	src/renderer/framebuffer.hpp
+	src/renderer/graphicscontext.cpp
 	src/renderer/graphicscontext.hpp
-	src/renderer/renderingapi.hpp
-	src/renderer/shader.hpp
+	src/renderer/renderer.cpp
+	src/renderer/renderer.hpp
+	src/renderer/program.hpp
+	src/renderer/program.cpp
 	src/renderer/vertexarray.hpp	
 	
 	src/vin.hpp

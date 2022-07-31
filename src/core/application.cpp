@@ -2,10 +2,13 @@
 
 #include "core/events/inputevent.hpp"
 #include "core/logger.hpp"
+#include "renderer/renderer.hpp"
 
 Vin::Application::Application(const ApplicationInfo& info) : m_ApplicationInfo{ info }, m_Running{ false }, m_Timer{}
 {
 	Logger::Log("App \"%s\" started.", info.name);
+
+	Renderer::Init();
 
 	m_Window = CreateWindow(WindowInfo{ info.name });
 	m_Window->RegisterListener(this);
@@ -26,6 +29,7 @@ void Vin::Application::Run()
 	while (m_Running) {
 		double start = m_Timer.GetElapsedMiliSecond();
 
+		Renderer::Clear(0.5, 0.2, 0.2, 1);
 		m_Window->OnUpdate();
 	}
 }

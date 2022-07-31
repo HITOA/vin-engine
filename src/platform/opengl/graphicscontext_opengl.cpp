@@ -1,7 +1,5 @@
 #include "graphicscontext_opengl.hpp"
 
-#ifdef VIN_RENDERER_OPENGL
-
 #include "core/assert.hpp"
 #include <glad/gl.h>
 
@@ -22,9 +20,3 @@ void Vin::OpenGLContext::SwapBuffer()
 {
 	glfwSwapBuffers(m_Window);
 }
-
-std::unique_ptr<Vin::GraphicsContext> Vin::CreateGraphicsContext(void* window) {
-	return std::make_unique<Vin::OpenGLContext>((GLFWwindow*)window);
-}
-
-#endif // VIN_RENDERER_OPENGL

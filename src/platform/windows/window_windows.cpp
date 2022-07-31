@@ -146,7 +146,7 @@ void Vin::WindowsWindow::Init(const WindowInfo& info)
 	m_Window = glfwCreateWindow(info.width, info.height, info.title, nullptr, nullptr);
 	glfwSetWindowUserPointer(m_Window, this);
 
-	m_Context = CreateGraphicsContext(m_Window);
+	m_Context = GraphicsContext::Create(m_Window);
 	m_Context->Init();
 
 	glfwSetWindowSizeCallback(m_Window, WindowResizeCallback);
