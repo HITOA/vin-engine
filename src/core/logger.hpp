@@ -2,6 +2,8 @@
 
 #include <vinpch.hpp>
 
+#include <fmt/core.h>
+
 namespace Vin {
 
     class Logger {
@@ -10,39 +12,24 @@ namespace Vin {
 
         static void RemoveLogOutputStream(std::ostream* out);
 
+        static void AddDefaultLogOutputStream();
+
         static void Write(const char* msg);
-        static void LogI(const char* msg);
-        static void WarnI(const char* msg);
-        static void ErrI(const char* msg);
+        static void WriteHeader(const char* header, const char* msg);
         
         template<typename... Args>
         static inline void Log(const char* format, Args... args) {
-            char* buff = (char*)malloc(512);
-            if (buff == nullptr)
-                return;
-            sprintf(buff, format, args...);
-            LogI(buff);
-            free(buff);
+            WriteHeader("Info", fmt::format(format, args...).data());
         }
 
         template<typename... Args>
         static inline void Warn(const char* format, Args... args) {
-            char* buff = (char*)malloc(512);
-            if (buff == nullptr)
-                return;
-            sprintf(buff, format, args...);
-            WarnI(buff);
-            free(buff);
+            WriteHeader("Warning", fmt::format(format, args...).data());
         }
 
         template<typename... Args>
         static inline void Err(const char* format, Args... args) {
-            char* buff = (char*)malloc(512);
-            if (buff == nullptr)
-                return;
-            sprintf(buff, format, args...);
-            ErrI(buff);
-            free(buff);
+            WriteHeader("ERROR", fmt::format(format, args...).data());
         }
     private:
         static std::vector<std::ostream*> m_LogOutputs;

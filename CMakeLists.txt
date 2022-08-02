@@ -7,6 +7,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
 
+add_subdirectory(${EXTERNAL_PATH}/fmt)
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
 add_subdirectory(${EXTERNAL_PATH}/googletest)
@@ -22,6 +23,9 @@ add_library(vin_engine STATIC
 	src/core/entrypoint.cpp
 	src/core/logger.cpp
 	src/core/logger.hpp
+	src/core/module.cpp
+	src/core/module.hpp
+	src/core/task.hpp
 	src/core/timer.cpp
 	src/core/timer.hpp
 	src/core/window.hpp
@@ -62,6 +66,7 @@ target_link_libraries(
 	lua_static 
 	physfs-static 
 	GTest::gtest_main
+	fmt
 )
 
 target_precompile_headers(vin_engine PUBLIC src/vinpch.hpp)

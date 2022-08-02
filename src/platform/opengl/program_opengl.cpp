@@ -73,7 +73,7 @@ bool Vin::OpenGLProgram::CheckForShaderCompilationErr(unsigned int shaderId)
 	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &result);
 	if (!result) {
 		glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
-		Logger::Err("Shader compilation error : %s", infoLog);
+		Logger::Err("Shader compilation error : {}", infoLog);
 		return false;
 	}
 }
@@ -85,7 +85,7 @@ bool Vin::OpenGLProgram::CheckForProgramCompilationErr(unsigned int programId)
 	glGetProgramiv(programId, GL_COMPILE_STATUS, &result);
 	if (!result) {
 		glGetProgramInfoLog(programId, 512, NULL, infoLog);
-		Logger::Err("Program compilation error : %s", infoLog);
+		Logger::Err("Program compilation error : {}", infoLog);
 		return false;
 	}
 }

@@ -18,6 +18,11 @@ void Vin::Logger::RemoveLogOutputStream(std::ostream* out)
     m_LogOutputs.erase(it);
 }
 
+void Vin::Logger::AddDefaultLogOutputStream()
+{
+    m_LogOutputs.push_back(&std::cout);
+}
+
 void Vin::Logger::Write(const char* msg)
 {
     for (auto& oLogStream : m_LogOutputs) {
@@ -25,44 +30,9 @@ void Vin::Logger::Write(const char* msg)
     }
 }
 
-void Vin::Logger::LogI(const char* msg)
+void Vin::Logger::WriteHeader(const char* header, const char* msg)
 {
-    static const char* format = "[Info][%02d:%02d:%02d] : %s\n";
     time_t t = time(NULL);
     tm* tm = localtime(&t);
-    size_t buffsize = 512;
-    char* buff = (char*)malloc(buffsize);
-    if (buff == nullptr)
-        return;
-    sprintf(buff, format, tm->tm_hour, tm->tm_min, tm->tm_sec, msg);
-    Write(buff);
-    free(buff);
-}
-
-void Vin::Logger::WarnI(const char* msg)
-{
-    static const char* format = "[Warning][%02d:%02d:%02d] : %s\n";
-    time_t t = time(NULL);
-    tm* tm = localtime(&t);
-    size_t buffsize = 512;
-    char* buff = (char*)malloc(buffsize);
-    if (buff == nullptr)
-        return;
-    sprintf(buff, format, tm->tm_hour, tm->tm_min, tm->tm_sec, msg);
-    Write(buff);
-    free(buff);
-}
-
-void Vin::Logger::ErrI(const char* msg)
-{
-    static const char* format = "[ERROR][%02d:%02d:%02d] : %s\n";
-    time_t t = time(NULL);
-    tm* tm = localtime(&t);
-    size_t buffsize = 512;
-    char* buff = (char*)malloc(buffsize);
-    if (buff == nullptr)
-        return;
-    sprintf(buff, format, tm->tm_hour, tm->tm_min, tm->tm_sec, msg);
-    Write(buff);
-    free(buff);
+    Write(fmt::format("[{}][{}:{}:{}] : {}\n", header, tm->tm_hour, tm->tm_min, tm->tm_sec, msg).data());
 }
