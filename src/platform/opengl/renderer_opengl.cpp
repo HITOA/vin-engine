@@ -1,6 +1,40 @@
 #include "renderer_opengl.hpp"
 
+#include "core/core.hpp"
+#include "core/assert.hpp"
+#include "core/logger.hpp"
+
 #include <glad/gl.h>
+
+void OpenGLMessageCallback(
+	unsigned source,
+	unsigned type,
+	unsigned id,
+	unsigned severity,
+	int length,
+	const char* message,
+	const void* userParam)
+{
+	switch (severity)
+	{
+	case GL_DEBUG_SEVERITY_HIGH:         Vin::Logger::Err(message); return;
+	case GL_DEBUG_SEVERITY_MEDIUM:       Vin::Logger::Warn(message); return;
+	case GL_DEBUG_SEVERITY_LOW:          Vin::Logger::Log(message); return;
+	case GL_DEBUG_SEVERITY_NOTIFICATION: Vin::Logger::Log(message); return;
+	}
+
+	VIN_ASSERT(false, "Unknown severity level!");
+}
+
+void Vin::OpenGLRenderingApi::Init()
+{
+#ifdef VIN_DEBUG
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+	glDebugMessageCallback(OpenGLMessageCallback, nullptr);
+#endif
+}
 
 void Vin::OpenGLRenderingApi::SetViewport(int x, int y, int width, int height)
 {

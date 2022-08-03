@@ -15,6 +15,11 @@ void Vin::Renderer::Init()
 	s_renderingapi = new OpenGLRenderingApi{};
 }
 
+void Vin::Renderer::InitApi()
+{
+	s_renderingapi->Init();
+}
+
 void Vin::Renderer::Terminate()
 {
 	delete s_renderingapi;

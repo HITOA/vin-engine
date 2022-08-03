@@ -7,6 +7,9 @@
 namespace Vin {
 	class OpenGLProgram : public Program {
 	public:
+		OpenGLProgram();
+		~OpenGLProgram();
+
 		void Bind() final;
 		void Unbind() final;
 

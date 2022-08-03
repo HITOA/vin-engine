@@ -1,6 +1,6 @@
 #include <vin.hpp>
 
-#include <renderer/program.hpp>
+#include <renderer/rendering.hpp>
 
 class TestModule : public Vin::Module {
 	void OnStart() {
@@ -26,14 +26,25 @@ class TestModule : public Vin::Module {
 		program->AddShader(Vin::ShaderType::FragmentShader, fragmentShaderSource);
 
 		program->CompileProgram();
+
+		float vertices[] = {
+			-0.5f, -0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f,
+			 0.0f,  0.5f, 0.0f
+		};
+
+		std::unique_ptr<Vin::VertexBuffer> vbo = Vin::VertexBuffer::Create(sizeof(float) * 9);
+
+		vbo->SetData(&vertices, sizeof(float) * 9, 0);
+
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
-		Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
+		//Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
 	}
 
 	void OnUpdate(Vin::TimeStep ts) {
-		Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
+		//Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
 	}
 };
 

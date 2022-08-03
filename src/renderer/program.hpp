@@ -4,7 +4,7 @@
 
 namespace Vin {
 	enum class ShaderType {
-		Unknown,
+		Unknown = 0,
 		ComputeShader,
 		VertexShader,
 		TessControl,
@@ -15,6 +15,8 @@ namespace Vin {
 
 	class Program {
 	public:
+		virtual ~Program() {};
+
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 

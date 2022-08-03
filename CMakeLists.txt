@@ -35,6 +35,8 @@ add_library(vin_engine STATIC
 	src/core/events/event.hpp
 	src/core/events/inputevent.hpp
 	
+	src/platform/opengl/buffer_opengl.cpp
+	src/platform/opengl/buffer_opengl.hpp
 	src/platform/opengl/graphicscontext_opengl.cpp
 	src/platform/opengl/graphicscontext_opengl.hpp
 	src/platform/opengl/program_opengl.cpp
@@ -45,12 +47,14 @@ add_library(vin_engine STATIC
 	src/platform/windows/window_windows.cpp
 	src/platform/windows/window_windows.hpp
 
+	src/renderer/buffer.cpp
 	src/renderer/buffer.hpp
 	src/renderer/framebuffer.hpp
 	src/renderer/graphicscontext.cpp
 	src/renderer/graphicscontext.hpp
 	src/renderer/renderer.cpp
 	src/renderer/renderer.hpp
+	src/renderer/rendering.hpp
 	src/renderer/program.hpp
 	src/renderer/program.cpp
 	src/renderer/vertexarray.hpp	

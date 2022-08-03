@@ -12,6 +12,7 @@ namespace Vin {
 
 	public:
 		static void Init();
+		static void InitApi();
 		static void Terminate();
 		static Api GetApi();
 
@@ -24,6 +25,7 @@ namespace Vin {
 
 		static class RenderingApi {
 		public:
+			virtual void Init() = 0;
 			virtual void SetViewport(int x, int y, int width, int height) = 0;
 			virtual void Clear(float r, float g, float b, float a) = 0;
 		} *s_renderingapi;

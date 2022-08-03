@@ -12,6 +12,8 @@ Vin::Application::Application(const ApplicationInfo& info) : m_ApplicationInfo{ 
 
 	m_Window = CreateWindow(WindowInfo{ info.name });
 	m_Window->RegisterListener(this);
+
+	Renderer::InitApi();
 }
 
 void Vin::Application::OnEvent(const Event& e)

@@ -5,6 +5,19 @@
 
 #include "glad/gl.h"
 
+Vin::OpenGLProgram::OpenGLProgram()
+{
+	m_ProgramId = glCreateProgram();
+	for (auto shaderId : m_Shaders)
+		glDeleteShader(shaderId);
+	m_Shaders.clear();
+}
+
+Vin::OpenGLProgram::~OpenGLProgram()
+{
+	glDeleteProgram(m_ProgramId);
+}
+
 void Vin::OpenGLProgram::Bind()
 {
 	glUseProgram(m_ProgramId);
@@ -29,20 +42,16 @@ bool Vin::OpenGLProgram::AddShader(ShaderType type, const char* src)
 
 bool Vin::OpenGLProgram::CompileProgram()
 {
-	unsigned int programId;
-	programId = glCreateProgram();
-
 	for (auto shaderId : m_Shaders)
-		glAttachShader(programId, shaderId);
+		glAttachShader(m_ProgramId, shaderId);
 
-	glLinkProgram(programId);
-	if (!CheckForProgramCompilationErr(programId))
+	glLinkProgram(m_ProgramId);
+	if (!CheckForProgramCompilationErr(m_ProgramId))
 		return false;
 
 	for (auto shaderId : m_Shaders)
 		glDeleteShader(shaderId);
 
-	m_ProgramId = programId;
 	m_IsComplete = true;
 	m_Shaders.clear();
 	return true;
@@ -80,9 +89,9 @@ bool Vin::OpenGLProgram::CheckForShaderCompilationErr(unsigned int shaderId)
 
 bool Vin::OpenGLProgram::CheckForProgramCompilationErr(unsigned int programId)
 {
-	int result;
+	int result{ 0 };
 	char infoLog[512];
-	glGetProgramiv(programId, GL_COMPILE_STATUS, &result);
+	glGetProgramiv(programId, GL_LINK_STATUS, &result);
 	if (!result) {
 		glGetProgramInfoLog(programId, 512, NULL, infoLog);
 		Logger::Err("Program compilation error : {}", infoLog);
