@@ -3,9 +3,10 @@
 #include <renderer/rendering.hpp>
 
 class TestModule : public Vin::Module {
-	std::unique_ptr<Vin::Program> program;
-	std::unique_ptr<Vin::VertexBuffer> vbo;
-	std::unique_ptr<Vin::VertexArray> vao;
+	std::shared_ptr<Vin::Program> program;
+	std::shared_ptr<Vin::VertexBuffer> vbo;
+	std::shared_ptr<Vin::IndexBuffer> ibo;
+	std::shared_ptr<Vin::VertexArray> vao;
 
 	void OnStart() {
 		Vin::Logger::Log("Module is working.");
@@ -32,14 +33,19 @@ class TestModule : public Vin::Module {
 		program->CompileProgram();
 
 		float vertices[] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.0f,  0.5f, 0.0f
+			 0.5f,  0.5f, 0.0f,  // top right
+			 0.5f, -0.5f, 0.0f,  // bottom right
+			-0.5f, -0.5f, 0.0f,  // bottom left
+			-0.5f,  0.5f, 0.0f   // top left 
+		};
+		unsigned int indices[] = {  // note that we start from 0!
+			0, 1, 3,   // first triangle
+			1, 2, 3    // second triangle
 		};
 
-		vbo = Vin::VertexBuffer::Create(sizeof(float) * 9);
+		vbo = Vin::VertexBuffer::Create(sizeof(float) * 12);
 
-		vbo->SetData(&vertices, sizeof(float) * 9, 0);
+		vbo->SetData(&vertices, sizeof(float) * 12, 0);
 
 		Vin::BufferLayout layout{ Vin::BufferElementType::Float3 };
 
@@ -47,21 +53,25 @@ class TestModule : public Vin::Module {
 
 		vbo->SetBufferLayout(layout);
 
+		ibo = Vin::IndexBuffer::Create(Vin::BufferIndexType::UnsignedInt32);
+
+		ibo->SetData(&indices, 6);
+
 		vao = Vin::VertexArray::Create();
 
 		vao->AddVertexBuffer(vbo);
-
+		vao->SetIndexBuffer(ibo);
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
 		Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
-		Vin::Renderer::Clear(0.2, 0.2, 0.2, 1);
-		program->Bind();
-		Vin::Renderer::DrawArrays(vao, 3);
 	}
 
 	void OnUpdate(Vin::TimeStep ts) {
 		Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
+		Vin::Renderer::Clear(0.2, 0.2, 0.2, 1);
+		program->Bind();
+		Vin::Renderer::DrawIndexed(vao);
 	}
 };
 

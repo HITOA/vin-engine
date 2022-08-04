@@ -26,7 +26,8 @@ namespace Vin {
 
 		static void SetViewport(int x, int y, int width, int height);
 		static void Clear(float r, float g, float b, float a);
-		static void DrawArrays(const std::unique_ptr<VertexArray>& vertexArray, size_t verticiesCount);
+		static void DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount);
+		static void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount = 0);
 	private:
 		static Api s_api;
 	protected:
@@ -37,7 +38,8 @@ namespace Vin {
 			virtual void Init() = 0;
 			virtual void SetViewport(int x, int y, int width, int height) = 0;
 			virtual void Clear(float r, float g, float b, float a) = 0;
-			virtual void DrawArrays(const std::unique_ptr<VertexArray>& vertexArray, size_t verticiesCount) = 0;
+			virtual void DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount) = 0;
+			virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount) = 0;
 		} *s_renderingapi;
 	};
 }

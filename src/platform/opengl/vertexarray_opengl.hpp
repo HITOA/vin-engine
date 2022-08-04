@@ -7,14 +7,17 @@ namespace Vin {
 		OpenGLVertexArray();
 		~OpenGLVertexArray();
 
-		void Bind();
-		void Unbind();
+		void Bind() const;
+		void Unbind() const;
 
-		void AddVertexBuffer(const std::unique_ptr<VertexBuffer>& vertexBuffer);
+		void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer);
+		void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer);
 
+		const std::shared_ptr<IndexBuffer>& GetIndexBuffer() const;
 	private:
 		unsigned int m_VertexArrayId;
 		size_t m_AttribIndex{ 0 };
+		std::shared_ptr<IndexBuffer> m_IndexBuffer;
 	};
 
 }

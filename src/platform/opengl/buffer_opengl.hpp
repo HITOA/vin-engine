@@ -20,4 +20,23 @@ namespace Vin {
 		unsigned int m_BufferId;
 		BufferLayout m_Layout;
 	};
+
+	class OpenGLIndexBuffer : public IndexBuffer {
+	public:
+		OpenGLIndexBuffer(BufferIndexType m_Type);
+		~OpenGLIndexBuffer();
+
+		void Bind() const;
+		void Unbind() const;
+
+		size_t GetCount() const;
+		BufferIndexType GetIndexType() const;
+
+		void SetData(void* data, size_t count);
+
+	private:
+		unsigned int m_BufferId;
+		size_t m_Count;
+		BufferIndexType m_Type;
+	};
 }

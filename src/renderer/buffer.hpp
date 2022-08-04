@@ -10,6 +10,12 @@ namespace Vin {
 		Int, Int2, Int3, Int4
 	};
 
+	enum class BufferIndexType {
+		None = 0,
+		UnsignedInt16,
+		UnsignedInt32
+	};
+
 	static size_t GetBufferElementTypeSize(BufferElementType type) {
 		switch (type) {
 		case BufferElementType::Float: return sizeof(float);
@@ -21,6 +27,15 @@ namespace Vin {
 		case BufferElementType::Int2: return sizeof(int) * 2;
 		case BufferElementType::Int3: return sizeof(int) * 3;
 		case BufferElementType::Int4: return sizeof(int) * 4;
+		}
+
+		return 0;
+	}
+
+	static size_t GetBufferIndexTypeSize(BufferIndexType type) {
+		switch (type) {
+		case BufferIndexType::UnsignedInt16: return sizeof(short);
+		case BufferIndexType::UnsignedInt32: return sizeof(int);
 		}
 
 		return 0;
@@ -80,11 +95,18 @@ namespace Vin {
 
 		virtual void SetData(void* data, size_t size, size_t offset) = 0;
 
-		static std::unique_ptr<VertexBuffer> Create(size_t size);
+		static std::shared_ptr<VertexBuffer> Create(size_t size);
 	};
 
 	class IndexBuffer : public Buffer{
 	public:
 		virtual ~IndexBuffer() {};
+
+		virtual size_t GetCount() const = 0;
+		virtual BufferIndexType GetIndexType() const = 0;
+
+		virtual void SetData(void* data, size_t count) = 0;
+
+		static std::shared_ptr<IndexBuffer> Create(BufferIndexType type);
 	};
 }

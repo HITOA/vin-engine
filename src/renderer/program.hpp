@@ -24,6 +24,9 @@ namespace Vin {
 		virtual bool CompileProgram() = 0;
 		virtual bool IsShaderComplete() = 0;
 
-		static std::unique_ptr<Program> Create();
+		//virtual void SetInt() = 0;
+		//virtual void SetFloat() = 0;
+
+		static std::shared_ptr<Program> Create();
 	};
 }
