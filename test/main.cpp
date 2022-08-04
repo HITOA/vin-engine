@@ -3,6 +3,9 @@
 #include <renderer/rendering.hpp>
 
 class TestModule : public Vin::Module {
+	std::unique_ptr<Vin::Program> program;
+	std::unique_ptr<Vin::VertexBuffer> vbo;
+
 	void OnStart() {
 		Vin::Logger::Log("Module is working.");
 
@@ -20,7 +23,7 @@ class TestModule : public Vin::Module {
 			"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 			"}\n";
 
-		std::unique_ptr<Vin::Program> program = Vin::Program::Create();
+		program = Vin::Program::Create();
 
 		program->AddShader(Vin::ShaderType::VertexShader, vertexShaderSource);
 		program->AddShader(Vin::ShaderType::FragmentShader, fragmentShaderSource);
@@ -33,9 +36,15 @@ class TestModule : public Vin::Module {
 			 0.0f,  0.5f, 0.0f
 		};
 
-		std::unique_ptr<Vin::VertexBuffer> vbo = Vin::VertexBuffer::Create(sizeof(float) * 9);
+		vbo = Vin::VertexBuffer::Create(sizeof(float) * 9);
 
 		vbo->SetData(&vertices, sizeof(float) * 9, 0);
+
+		Vin::BufferLayout layout{ Vin::BufferElementType::Float3 };
+
+		Vin::Logger::Log("Layout stride is : {}", layout.GetStride());
+
+		vbo->SetBufferLayout(layout);
 
 	}
 

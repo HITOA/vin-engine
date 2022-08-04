@@ -16,14 +16,24 @@ Vin::OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	glDeleteBuffers(1, &m_BufferId);
 }
 
-void Vin::OpenGLVertexBuffer::Bind()
+void Vin::OpenGLVertexBuffer::Bind() const
 {
 	glBindBuffer(GL_ARRAY_BUFFER, m_BufferId);
 }
 
-void Vin::OpenGLVertexBuffer::Unbind()
+void Vin::OpenGLVertexBuffer::Unbind() const
 {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Vin::OpenGLVertexBuffer::SetBufferLayout(const BufferLayout& layout)
+{
+	m_Layout = layout;
+}
+
+const Vin::BufferLayout& Vin::OpenGLVertexBuffer::GetBufferLayout() const
+{
+	return m_Layout;
 }
 
 void Vin::OpenGLVertexBuffer::SetData(void* data, size_t size, size_t offset)
