@@ -5,6 +5,7 @@
 class TestModule : public Vin::Module {
 	std::unique_ptr<Vin::Program> program;
 	std::unique_ptr<Vin::VertexBuffer> vbo;
+	std::unique_ptr<Vin::VertexArray> vao;
 
 	void OnStart() {
 		Vin::Logger::Log("Module is working.");
@@ -20,7 +21,7 @@ class TestModule : public Vin::Module {
 			"out vec4 FragColor;\n"
 			"void main()\n"
 			"{\n"
-			"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+			"	FragColor = vec4(1.0f, 0.2f, 0.5f, 1.0f);\n"
 			"}\n";
 
 		program = Vin::Program::Create();
@@ -46,14 +47,21 @@ class TestModule : public Vin::Module {
 
 		vbo->SetBufferLayout(layout);
 
+		vao = Vin::VertexArray::Create();
+
+		vao->AddVertexBuffer(vbo);
+
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
-		//Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
+		Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
+		Vin::Renderer::Clear(0.2, 0.2, 0.2, 1);
+		program->Bind();
+		Vin::Renderer::DrawArrays(vao, 3);
 	}
 
 	void OnUpdate(Vin::TimeStep ts) {
-		//Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
+		Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
 	}
 };
 

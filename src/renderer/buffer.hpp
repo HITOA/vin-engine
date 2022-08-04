@@ -51,6 +51,10 @@ namespace Vin {
 
 		size_t GetStride() const { return m_Stride; }
 
+		std::vector<BufferElement>::iterator begin() { return m_Layout.begin(); }
+		std::vector<BufferElement>::iterator end() { return m_Layout.end(); }
+		std::vector<BufferElement>::const_iterator begin() const { return m_Layout.begin(); }
+		std::vector<BufferElement>::const_iterator end() const { return m_Layout.end(); }
 		std::vector<BufferElement>::const_iterator cbegin() const { return m_Layout.cbegin(); }
 		std::vector<BufferElement>::const_iterator cend() const { return m_Layout.cend(); }
 

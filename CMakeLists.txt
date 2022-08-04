@@ -43,6 +43,8 @@ add_library(vin_engine STATIC
 	src/platform/opengl/program_opengl.hpp
 	src/platform/opengl/renderer_opengl.cpp
 	src/platform/opengl/renderer_opengl.hpp
+	src/platform/opengl/vertexarray_opengl.cpp
+	src/platform/opengl/vertexarray_opengl.hpp
 
 	src/platform/windows/window_windows.cpp
 	src/platform/windows/window_windows.hpp
@@ -57,6 +59,7 @@ add_library(vin_engine STATIC
 	src/renderer/rendering.hpp
 	src/renderer/program.hpp
 	src/renderer/program.cpp
+	src/renderer/vertexarray.cpp	
 	src/renderer/vertexarray.hpp	
 	
 	src/vin.hpp

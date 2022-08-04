@@ -42,3 +42,9 @@ void Vin::Renderer::Clear(float r, float g, float b, float a)
 	VIN_ASSERT(s_renderingapi != nullptr, "Rendering api is not initialized.");
 	s_renderingapi->Clear(r, g, b, a);
 }
+
+void Vin::Renderer::DrawArrays(const std::unique_ptr<VertexArray>& vertexArray, size_t verticiesCount)
+{
+	VIN_ASSERT(s_renderingapi != nullptr, "Rendering api is not initialized.");
+	s_renderingapi->DrawArrays(vertexArray, verticiesCount);
+}
