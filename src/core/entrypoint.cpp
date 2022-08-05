@@ -1,5 +1,5 @@
 #include "application.hpp"
-#include "core/logger.hpp"
+#include "core/logger/logger.hpp"
 
 extern Vin::Application* Vin::CreateApp();
 extern void Vin::DestroyApp(Vin::Application* app);

@@ -1,7 +1,7 @@
 #include "application.hpp"
 
 #include "core/events/inputevent.hpp"
-#include "core/logger.hpp"
+#include "core/logger/logger.hpp"
 #include "renderer/renderer.hpp"
 
 Vin::Application::Application(const ApplicationInfo& info) : m_ApplicationInfo{ info }, m_Running{ false }, m_Timer{}

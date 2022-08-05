@@ -1,7 +1,7 @@
 #include "program_opengl.hpp"
 
 #include "core/assert.hpp"
-#include "core/logger.hpp"
+#include "core/logger/logger.hpp"
 
 #include "glad/gl.h"
 
@@ -85,6 +85,7 @@ bool Vin::OpenGLProgram::CheckForShaderCompilationErr(unsigned int shaderId)
 		Logger::Err("Shader compilation error : {}", infoLog);
 		return false;
 	}
+	return true;
 }
 
 bool Vin::OpenGLProgram::CheckForProgramCompilationErr(unsigned int programId)
@@ -97,4 +98,5 @@ bool Vin::OpenGLProgram::CheckForProgramCompilationErr(unsigned int programId)
 		Logger::Err("Program compilation error : {}", infoLog);
 		return false;
 	}
+	return true;
 }

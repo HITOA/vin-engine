@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.2)
 project(vin)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DVIN_DEBUG")
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DVIN_DEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DVIN_DEBUG")
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
@@ -21,8 +27,6 @@ add_library(vin_engine STATIC
 	src/core/application.hpp
 	src/core/assert.hpp
 	src/core/entrypoint.cpp
-	src/core/logger.cpp
-	src/core/logger.hpp
 	src/core/module.cpp
 	src/core/module.hpp
 	src/core/task.hpp
@@ -34,6 +38,13 @@ add_library(vin_engine STATIC
 	src/core/events/event.cpp
 	src/core/events/event.hpp
 	src/core/events/inputevent.hpp
+
+
+	src/core/logger/logger.cpp
+	src/core/logger/logger.hpp
+	src/core/logger/vectorfmt.hpp
+
+	src/core/math/vector.hpp
 	
 	src/platform/opengl/buffer_opengl.cpp
 	src/platform/opengl/buffer_opengl.hpp

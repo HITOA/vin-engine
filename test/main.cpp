@@ -1,6 +1,7 @@
 #include <vin.hpp>
 
 #include <renderer/rendering.hpp>
+#include <core/math/vector.hpp>
 
 class TestModule : public Vin::Module {
 	std::shared_ptr<Vin::Program> program;
@@ -61,14 +62,27 @@ class TestModule : public Vin::Module {
 
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
+
+		Vin::Vector2<float> vec2{ 2, 3 };
+
+		Vin::Logger::Log("{}", vec2);
+
+		vec2 = vec2.yx;
+		Vin::Vector4<float> vec4 = vec2.xxxx;
+
+		vec4.w = -1;
+		vec2 = vec4.wx;
+
+		Vin::Logger::Log("{}", vec2);
+		Vin::Logger::Log("{}", sizeof(Vin::Vector2<float>));
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
-		Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
+		//Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
 	}
 
 	void OnUpdate(Vin::TimeStep ts) {
-		Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
+		//Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
 		Vin::Renderer::Clear(0.2, 0.2, 0.2, 1);
 		program->Bind();
 		Vin::Renderer::DrawIndexed(vao);

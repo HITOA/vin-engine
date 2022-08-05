@@ -2,7 +2,7 @@
 
 #include "core/core.hpp"
 #include "core/assert.hpp"
-#include "core/logger.hpp"
+#include "core/logger/logger.hpp"
 
 #include <glad/gl.h>
 

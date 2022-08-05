@@ -4,6 +4,8 @@
 
 #include <fmt/core.h>
 
+#include "vectorfmt.hpp"
+
 namespace Vin {
 
     class Logger {
