@@ -33,13 +33,13 @@ class TestModule : public Vin::Module {
 
 		program->CompileProgram();
 
-		float vertices[] = {
-			 0.5f,  0.5f, 0.0f,  // top right
-			 0.5f, -0.5f, 0.0f,  // bottom right
-			-0.5f, -0.5f, 0.0f,  // bottom left
-			-0.5f,  0.5f, 0.0f   // top left 
+		Vin::Vector3<float> vertices[] = {
+			{0.5f,  0.5f, 0.0f},  // top right
+			{0.5f, -0.5f, 0.0f},  // bottom right
+			{-0.5f, -0.5f, 0.0f},  // bottom left
+			{-0.5f,  0.5f, 0.0f}   // top left 
 		};
-		unsigned int indices[] = {  // note that we start from 0!
+		unsigned short indices[] = {  // note that we start from 0!
 			0, 1, 3,   // first triangle
 			1, 2, 3    // second triangle
 		};
@@ -54,7 +54,7 @@ class TestModule : public Vin::Module {
 
 		vbo->SetBufferLayout(layout);
 
-		ibo = Vin::IndexBuffer::Create(Vin::BufferIndexType::UnsignedInt32);
+		ibo = Vin::IndexBuffer::Create(Vin::BufferIndexType::UnsignedInt16);
 
 		ibo->SetData(&indices, 6);
 
@@ -63,18 +63,30 @@ class TestModule : public Vin::Module {
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
 
-		Vin::Vector2<float> vec2{ 2, 3 };
+		Vin::Vector3<float> vec3{ 3, 5, 2 };
 
-		Vin::Logger::Log("{}", vec2);
+		vec3.x = 4;
+		vec3.x += 12;
+		vec3.x = vec3.x + vec3.y + (vec3.zz + vec3.xy).x;
+		vec3.x *= 4;
 
-		vec2 = vec2.yx;
-		Vin::Vector4<float> vec4 = vec2.xxxx;
+		if (vec3.x > 4)
+			vec3.x = 4;
 
-		vec4.w = -1;
-		vec2 = vec4.wx;
+		vec3.z = vec3.y;
 
-		Vin::Logger::Log("{}", vec2);
-		Vin::Logger::Log("{}", sizeof(Vin::Vector2<float>));
+		vec3 = vec3.xzx;
+
+		Vin::Vector2<float> vec2 = vec3.yz;
+
+		vec2 += vec2.xx / vec3.xz;
+
+		Vin::Vector4<float> vec4 = vec3.xxxz + vec2.xyxy;
+		vec4 += vec3.zzzz;
+
+		Vin::Logger::Log("Sizeof Vec3 : {}", sizeof(Vin::Vector3<float>));
+		Vin::Logger::Log("Vec2 : {}", vec2);
+		Vin::Logger::Log("Vec4 : {}", vec4);
 	}
 
 	void OnProcess(Vin::TimeStep ts) {

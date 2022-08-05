@@ -21,9 +21,84 @@ namespace Vin {
 			return data[i1];
 		}
 
-		T& operator=(const T& v) {
-			data[i1] = v;
-			return data[i1];
+		//Assignment
+
+		SwizzleProxy1<T, count, i1>& operator=(const T& rhs) {
+			data[i1] = rhs;
+			return *this;
+		}
+
+
+		SwizzleProxy1<T, count, i1>& operator+=(const T& rhs) {
+			data[i1] += rhs;
+			return *this;
+		}
+
+		SwizzleProxy1<T, count, i1>& operator-=(const T& rhs) {
+			data[i1] -= rhs;
+			return *this;
+		}
+
+		SwizzleProxy1<T, count, i1>& operator*=(const T& rhs) {
+			data[i1] *= rhs;
+			return *this;
+		}
+
+		SwizzleProxy1<T, count, i1>& operator/=(const T& rhs) {
+			data[i1] /= rhs;
+			return *this;
+		}
+
+		//Increment
+
+		SwizzleProxy1<T, count, i1>& operator++() {
+			data[i1]++;
+			return *this;
+		}
+
+		SwizzleProxy1<T, count, i1> operator++(int) {
+			SwizzleProxy1<T, count, i1> old = *this;
+			operator++();
+			return old;
+		}
+
+		//Decrement
+
+		SwizzleProxy1<T, count, i1>& operator--() {
+			data[i1]--;
+			return *this;
+		}
+
+		SwizzleProxy1<T, count, i1> operator--(int) {
+			SwizzleProxy1<T, count, i1> old = *this;
+			operator--();
+			return old;
+		}
+
+		//Arithmetic
+
+		friend SwizzleProxy1<T, count, i1> operator+(
+			SwizzleProxy1<T, count, i1> lhs, const T& rhs) {
+			lhs += rhs;
+			return lhs;
+		}
+
+		friend SwizzleProxy1<T, count, i1> operator-(
+			SwizzleProxy1<T, count, i1> lhs, const T& rhs) {
+			lhs -= rhs;
+			return lhs;
+		}
+
+		friend SwizzleProxy1<T, count, i1> operator*(
+			SwizzleProxy1<T, count, i1> lhs, const T& rhs) {
+			lhs *= rhs;
+			return lhs;
+		}
+
+		friend SwizzleProxy1<T, count, i1> operator/(
+			SwizzleProxy1<T, count, i1> lhs, const T& rhs) {
+			lhs /= rhs;
+			return lhs;
 		}
 	};
 
@@ -605,6 +680,64 @@ namespace Vin {
 		Vector2() : Vector{} {};
 		Vector2(const T& v) : Vector{ v } {};
 		Vector2(const T& x, const T& y) : Vector{ x, y } {};
+
+		//Assignment
+
+		Vector2<T>& operator=(const Vector2<T>& rhs) {
+			this->x = rhs.x;
+			this->y = rhs.y;
+			return *this;
+		}
+
+		Vector2<T>& operator+=(const Vector2<T>& rhs) {
+			this->x += rhs.x;
+			this->y += rhs.y;
+			return *this;
+		}
+
+		Vector2<T>& operator-=(const Vector2<T>& rhs) {
+			this->x -= rhs.x;
+			this->y -= rhs.y;
+			return *this;
+		}
+
+		Vector2<T>& operator*=(const Vector2<T>& rhs) {
+			this->x *= rhs.x;
+			this->y *= rhs.y;
+			return *this;
+		}
+
+		Vector2<T>& operator/=(const Vector2<T>& rhs) {
+			this->x /= rhs.x;
+			this->y /= rhs.y;
+			return *this;
+		}
+
+		//Arithmetic
+
+		friend Vector2<T> operator+(
+			Vector2<T> lhs, const Vector2<T>& rhs) {
+			lhs += rhs;
+			return lhs;
+		}
+
+		friend Vector2<T> operator-(
+			Vector2<T> lhs, const Vector2<T>& rhs) {
+			lhs -= rhs;
+			return lhs;
+		}
+
+		friend Vector2<T> operator*(
+			Vector2<T> lhs, const Vector2<T>& rhs) {
+			lhs *= rhs;
+			return lhs;
+		}
+
+		friend Vector2<T> operator/(
+			Vector2<T> lhs, const Vector2<T>& rhs) {
+			lhs /= rhs;
+			return lhs;
+		}
 	};
 
 	template<typename T>
@@ -612,6 +745,70 @@ namespace Vin {
 		Vector3() : Vector{} {};
 		Vector3(const T& v) : Vector{ v } {};
 		Vector3(const T& x, const T& y, const T& z) : Vector{ x, y, z } {};
+
+
+		//Assignment
+
+		Vector3<T>& operator=(const Vector3<T>& rhs) {
+			this->x = rhs.x;
+			this->y = rhs.y;
+			this->z = rhs.z;
+			return *this;
+		}
+
+		Vector3<T>& operator+=(const Vector3<T>& rhs) {
+			this->x += rhs.x;
+			this->y += rhs.y;
+			this->z += rhs.z;
+			return *this;
+		}
+
+		Vector3<T>& operator-=(const Vector3<T>& rhs) {
+			this->x -= rhs.x;
+			this->y -= rhs.y;
+			this->z -= rhs.z;
+			return *this;
+		}
+
+		Vector3<T>& operator*=(const Vector3<T>& rhs) {
+			this->x *= rhs.x;
+			this->y *= rhs.y;
+			this->z *= rhs.z;
+			return *this;
+		}
+
+		Vector3<T>& operator/=(const Vector3<T>& rhs) {
+			this->x /= rhs.x;
+			this->y /= rhs.y;
+			this->z /= rhs.z;
+			return *this;
+		}
+
+		//Arithmetic
+
+		friend Vector3<T> operator+(
+			Vector3<T> lhs, const Vector3<T>& rhs) {
+			lhs += rhs;
+			return lhs;
+		}
+
+		friend Vector3<T> operator-(
+			Vector3<T> lhs, const Vector3<T>& rhs) {
+			lhs -= rhs;
+			return lhs;
+		}
+
+		friend Vector3<T> operator*(
+			Vector3<T> lhs, const Vector3<T>& rhs) {
+			lhs *= rhs;
+			return lhs;
+		}
+
+		friend Vector3<T> operator/(
+			Vector3<T> lhs, const Vector3<T>& rhs) {
+			lhs /= rhs;
+			return lhs;
+		}
 	};
 
 	template<typename T>
@@ -619,6 +816,75 @@ namespace Vin {
 		Vector4() : Vector{} {};
 		Vector4(const T& v) : Vector{ v } {};
 		Vector4(const T& x, const T& y, const T& z, const T& w) : Vector{ x, y, z, w } {};
+
+
+		//Assignment
+
+		Vector4<T>& operator=(const Vector4<T>& rhs) {
+			this->x = rhs.x;
+			this->y = rhs.y;
+			this->z = rhs.z;
+			this->w = rhs.w;
+			return *this;
+		}
+
+		Vector4<T>& operator+=(const Vector4<T>& rhs) {
+			this->x += rhs.x;
+			this->y += rhs.y;
+			this->z += rhs.z;
+			this->w += rhs.w;
+			return *this;
+		}
+
+		Vector4<T>& operator-=(const Vector4<T>& rhs) {
+			this->x -= rhs.x;
+			this->y -= rhs.y;
+			this->z -= rhs.z;
+			this->w -= rhs.w;
+			return *this;
+		}
+
+		Vector4<T>& operator*=(const Vector4<T>& rhs) {
+			this->x *= rhs.x;
+			this->y *= rhs.y;
+			this->z *= rhs.z;
+			this->w *= rhs.w;
+			return *this;
+		}
+
+		Vector4<T>& operator/=(const Vector4<T>& rhs) {
+			this->x /= rhs.x;
+			this->y /= rhs.y;
+			this->z /= rhs.z;
+			this->w /= rhs.w;
+			return *this;
+		}
+
+		//Arithmetic
+
+		friend Vector4<T> operator+(
+			Vector4<T> lhs, const Vector4<T>& rhs) {
+			lhs += rhs;
+			return lhs;
+		}
+
+		friend Vector4<T> operator-(
+			Vector4<T> lhs, const Vector4<T>& rhs) {
+			lhs -= rhs;
+			return lhs;
+		}
+
+		friend Vector4<T> operator*(
+			Vector4<T> lhs, const Vector4<T>& rhs) {
+			lhs *= rhs;
+			return lhs;
+		}
+
+		friend Vector4<T> operator/(
+			Vector4<T> lhs, const Vector4<T>& rhs) {
+			lhs /= rhs;
+			return lhs;
+		}
 	};
 
 }
