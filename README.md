@@ -1,7 +1,9 @@
 # vin-engine
 A custom game engine made with passion. currently working on it.  
-First made for Visual Novel, but i hope i'll be able to continue afterward for a more complete engine.
-
+First made for Visual Novel, but i hope i'll be able to continue afterward for a more complete engine.  
+  
+Currently work in progress.  
+  
 ## Building VIN 
 To build VIN you will need CMAKE and PYTHON.  
 Install both if not already installed.  
