@@ -64,6 +64,8 @@ class TestModule : public Vin::Module {
 		vao->SetIndexBuffer(ibo);
 
 		Vin::Vector3<float> vec3{ 3, 5, 2 };
+		Vin::Vector3<float> vec0{ 0 };
+		Vin::Vector3<float> vec11{ 11 };
 
 		vec3.x = 4;
 		vec3.x += 12;
@@ -84,8 +86,13 @@ class TestModule : public Vin::Module {
 		Vin::Vector4<float> vec4 = vec3.xxxz + vec2.xyxy;
 		vec4 += vec3.zzzz;
 
-		Vin::Logger::Log("Sizeof Vec3 : {}", sizeof(Vin::Vector3<float>));
-		Vin::Logger::Log("Vec2 : {}", vec2);
+		Vin::Vector3<float>::Add(vec3, vec2.xxy, vec3);
+
+		Vin::Vector3<float>::Ceil(vec3);
+		Vin::Vector3<float>::Clamp(vec3, vec0, vec11);
+
+		Vin::Logger::Log("Vec2 : {}", vec2);		
+		Vin::Logger::Log("Vec3 : {}", vec3);
 		Vin::Logger::Log("Vec4 : {}", vec4);
 	}
 

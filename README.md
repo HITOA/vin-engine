@@ -20,3 +20,4 @@ Learn Opengl : https://learnopengl.com/
 Godot Engine Repos (Most readable source code for game engine probably) : https://github.com/godotengine/godot  
 The Cherno (Especially his game engine series) : https://www.youtube.com/c/TheChernoProject  
 Chili Tomato Noodle : https://www.youtube.com/c/ChiliTomatoNoodle  
+MonoGame Repos (For the math part) : https://github.com/MonoGame/MonoGame/tree/develop/MonoGame.Framework

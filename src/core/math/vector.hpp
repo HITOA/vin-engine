@@ -1,4 +1,8 @@
 #pragma once
+#pragma unroll
+
+
+#include "mathhelper.hpp"
 
 namespace Vin {
 
@@ -12,6 +16,43 @@ namespace Vin {
 	struct Vector4;
 
 	typedef Vector3<float> Color;
+
+	template<typename T, size_t size>
+	struct VectorMath {
+		static T Add(const T& v1, const T& v2) {
+			return v1 + v2;
+		}
+
+		static void Add(const T& v1, const T& v2, T& out) {
+			out = v1 + v2;
+		}
+
+		//Every for loop must be unroll by the compiler
+
+		static void Ceil(T& v) {
+			for (size_t i = 0; i < size; i++) {
+				Vin::Ceil(v.data[i]);
+			}
+		}
+
+		static void Floor(T& v) {
+			for (size_t i = 0; i < size; i++) {
+				Vin::Floor(v.data[i]);
+			}
+		}
+
+		static void Round(T& v) {
+			for (size_t i = 0; i < size; i++) {
+				Vin::Round(v.data[i]);
+			}
+		}
+
+		static void Clamp(T& v, T m, T M) {
+			for (size_t i = 0; i < size; i++) {
+				Vin::Clamp(v.data[i], m.data[i], M.data[i]);
+			}
+		}
+	};
 
 	template<typename T, size_t count, unsigned int i1>
 	struct SwizzleProxy1 {
@@ -676,7 +717,7 @@ namespace Vin {
 	};
 
 	template<typename T>
-	struct Vector2 : Vector<T, 2> {
+	struct Vector2 : Vector<T, 2>, VectorMath<Vector2<T>, 2> {
 		Vector2() : Vector{} {};
 		Vector2(const T& v) : Vector{ v } {};
 		Vector2(const T& x, const T& y) : Vector{ x, y } {};
@@ -741,11 +782,10 @@ namespace Vin {
 	};
 
 	template<typename T>
-	struct Vector3 : Vector<T, 3> {
+	struct Vector3 : Vector<T, 3>, VectorMath<Vector3<T>, 3> {
 		Vector3() : Vector{} {};
 		Vector3(const T& v) : Vector{ v } {};
 		Vector3(const T& x, const T& y, const T& z) : Vector{ x, y, z } {};
-
 
 		//Assignment
 
@@ -812,11 +852,10 @@ namespace Vin {
 	};
 
 	template<typename T>
-	struct Vector4 : Vector<T, 4> {
+	struct Vector4 : Vector<T, 4>, VectorMath<Vector4<T>, 4> {
 		Vector4() : Vector{} {};
 		Vector4(const T& v) : Vector{ v } {};
 		Vector4(const T& x, const T& y, const T& z, const T& w) : Vector{ x, y, z, w } {};
-
 
 		//Assignment
 
@@ -886,5 +925,4 @@ namespace Vin {
 			return lhs;
 		}
 	};
-
 }
