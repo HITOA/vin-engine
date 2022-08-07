@@ -45,6 +45,7 @@ add_library(vin_engine STATIC
 	src/core/logger/vectorfmt.hpp
 
 	src/core/math/mathhelper.hpp
+	src/core/math/matrix.hpp
 	src/core/math/vector.hpp
 	
 	src/platform/opengl/buffer_opengl.cpp

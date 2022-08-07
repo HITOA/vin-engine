@@ -16,13 +16,27 @@ namespace Vin {
 		bool AddShader(ShaderType type, const char* src) final;
 		bool CompileProgram() final;
 		bool IsShaderComplete() final;
+
+		int GetField(const char* name) final;
+
+		void SetFloat(int location, float value) final;
+		void SetFloat2(int location, float* values) final;
+		void SetFloat3(int location, float* values) final;
+		void SetFloat4(int location, float* values) final;
+		void SetFloats(int location, float* values, size_t count) final;
+		void SetInt(int location, int value) final;
+		void SetInt2(int location, int* values) final;
+		void SetInt3(int location, int* values) final;
+		void SetInt4(int location, int* values) final;
+		void SetInts(int location, int* values, size_t count) final;
+
 	private:
 		int ParseShaderType(ShaderType type);
 		bool CheckForShaderCompilationErr(unsigned int shaderId);
 		bool CheckForProgramCompilationErr(unsigned int programId);
 	private:
-		unsigned int m_ProgramId{0};
-		bool m_IsComplete{false};
+		unsigned int m_ProgramId{ 0 };
+		bool m_IsComplete{ false };
 		std::vector<unsigned int> m_Shaders{};
 	};
 }

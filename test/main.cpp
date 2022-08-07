@@ -21,9 +21,10 @@ class TestModule : public Vin::Module {
 
 		const char* fragmentShaderSource = "#version 330 core\n"
 			"out vec4 FragColor;\n"
+			"uniform vec3 color;\n"
 			"void main()\n"
 			"{\n"
-			"	FragColor = vec4(1.0f, 0.2f, 0.5f, 1.0f);\n"
+			"	FragColor = vec4(color.xyz, 1.0f);\n"
 			"}\n";
 
 		program = Vin::Program::Create();
@@ -63,48 +64,21 @@ class TestModule : public Vin::Module {
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
 
-		Vin::Vector3<float> vec3{ 3, 5, 2 };
-		Vin::Vector3<float> vec0{ 0 };
-		Vin::Vector3<float> vec11{ 11 };
+		Vin::Color color{ 0.4, 0.9, 0.3 };
 
-		vec3.x = 4;
-		vec3.x += 12;
-		vec3.x = vec3.x + vec3.y + (vec3.zz + vec3.xy).x;
-		vec3.x *= 4;
-
-		if (vec3.x > 4)
-			vec3.x = 4;
-
-		vec3.z = vec3.y;
-
-		vec3 = vec3.xzx;
-
-		Vin::Vector2<float> vec2 = vec3.yz;
-
-		vec2 += vec2.xx / vec3.xz;
-
-		Vin::Vector4<float> vec4 = vec3.xxxz + vec2.xyxy;
-		vec4 += vec3.zzzz;
-
-		Vin::Vector3<float>::Add(vec3, vec2.xxy, vec3);
-
-		Vin::Vector3<float>::Ceil(vec3);
-		Vin::Vector3<float>::Clamp(vec3, vec0, vec11);
-
-		Vin::Logger::Log("Vec2 : {}", vec2);		
-		Vin::Logger::Log("Vec3 : {}", vec3);
-		Vin::Logger::Log("Vec4 : {}", vec4);
+		program->SetFloat3("color", color.data);
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
-		//Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
+		Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
 	}
 
 	void OnUpdate(Vin::TimeStep ts) {
-		//Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
+		Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
 		Vin::Renderer::Clear(0.2, 0.2, 0.2, 1);
 		program->Bind();
 		Vin::Renderer::DrawIndexed(vao);
+
 	}
 };
 

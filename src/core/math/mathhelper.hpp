@@ -26,15 +26,8 @@ namespace Vin {
 	inline void Round<double>(double& v) { v = round(v); }
 
 	template<typename T>
-	inline void Clamp(T& v, T m, T M) {}
-	template<>
-	inline void Clamp<float>(float& v, float m, float M) {
-		const float t = v < m ? m : v;
-		v = t > M ? M : t;
-	}
-	template<>
-	inline void Clamp<double>(double& v, double m, double M) {
-		const double t = v < m ? m : v;
+	inline void Clamp(T& v, T m, T M) {
+		const T t = v < m ? m : v;
 		v = t > M ? M : t;
 	}
 
