@@ -29,6 +29,8 @@ namespace Vin {
 		void SetInt3(int location, int* values) final;
 		void SetInt4(int location, int* values) final;
 		void SetInts(int location, int* values, size_t count) final;
+		void SetMat3(int location, float* values) final;
+		void SetMat4(int location, float* values) final;
 
 	private:
 		int ParseShaderType(ShaderType type);

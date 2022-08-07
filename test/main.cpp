@@ -9,6 +9,8 @@ class TestModule : public Vin::Module {
 	std::shared_ptr<Vin::IndexBuffer> ibo;
 	std::shared_ptr<Vin::VertexArray> vao;
 
+	double t = 0;
+
 	void OnStart() {
 		Vin::Logger::Log("Module is working.");
 
@@ -40,9 +42,9 @@ class TestModule : public Vin::Module {
 			{-0.5f, -0.5f, 0.0f},  // bottom left
 			{-0.5f,  0.5f, 0.0f}   // top left 
 		};
-		unsigned short indices[] = {  // note that we start from 0!
-			0, 1, 3,   // first triangle
-			1, 2, 3    // second triangle
+		unsigned short indices[] = {
+			0, 1, 3,
+			1, 2, 3 
 		};
 
 		vbo = Vin::VertexBuffer::Create(sizeof(float) * 12);
@@ -75,6 +77,12 @@ class TestModule : public Vin::Module {
 
 	void OnUpdate(Vin::TimeStep ts) {
 		Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
+
+		t += 1 * ts.GetSecond();
+		t = t > 1 ? 0 : t;
+
+		program->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
+
 		Vin::Renderer::Clear(0.2, 0.2, 0.2, 1);
 		program->Bind();
 		Vin::Renderer::DrawIndexed(vao);

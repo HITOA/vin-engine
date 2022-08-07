@@ -127,6 +127,18 @@ void Vin::OpenGLProgram::SetInts(int location, int* values, size_t count)
 	glUniform1iv(location, count, values);
 }
 
+void Vin::OpenGLProgram::SetMat3(int location, float* values)
+{
+	glUseProgram(m_ProgramId);
+	glUniformMatrix3fv(location, 1, GL_FALSE, values);
+}
+
+void Vin::OpenGLProgram::SetMat4(int location, float* values)
+{
+	glUseProgram(m_ProgramId);
+	glUniformMatrix4fv(location, 1, GL_FALSE, values);
+}
+
 int Vin::OpenGLProgram::ParseShaderType(ShaderType type)
 {
 	switch (type) {

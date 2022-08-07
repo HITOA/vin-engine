@@ -56,6 +56,12 @@ namespace Vin {
 		virtual void SetInts(int location, int* values, size_t count) = 0;
 		virtual void SetInts(const char* name, int* values, size_t count) { SetInts(GetField(name), values, count); };
 
+		virtual void SetMat3(int location, float* values) = 0;
+		virtual void SetMat3(const char* name, float* values) { SetMat3(GetField(name), values); };
+
+		virtual void SetMat4(int location, float* values) = 0;
+		virtual void SetMat4(const char* name, float* values) { SetMat4(GetField(name), values); };
+
 		static std::shared_ptr<Program> Create();
 	};
 }

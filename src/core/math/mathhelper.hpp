@@ -1,5 +1,7 @@
 #pragma once
 
+#include "vinpch.hpp"
+
 #include <cmath>
 
 namespace Vin {
