@@ -2,6 +2,7 @@
 
 #include <renderer/rendering.hpp>
 #include <core/math/vector.hpp>
+#include <core/math/matrix.hpp>
 
 class TestModule : public Vin::Module {
 	std::shared_ptr<Vin::Program> program;
@@ -69,14 +70,44 @@ class TestModule : public Vin::Module {
 		Vin::Color color{ 0.4, 0.9, 0.3 };
 
 		program->SetFloat3("color", color.data);
+
+		/*Vin::Matrix<float, 3, 3> identity{
+			1.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 1.0f };
+
+		Vin::Matrix<float, 3, 3> mat{
+			1.0f, 1.0f, 0.0f,
+			0.0f, 1.0f, 0.0f,
+			0.0f, 1.0f, 1.0f };
+		
+		Vin::Logger::Log("Mattrix : {}", identity - mat);
+		Vin::Logger::Log("Mattrix : {}", identity - 4.0f);
+
+		Vin::Matrix<float, 2, 2> v1{
+			1.0f, 2.0f,
+			3.0f, 4.0f
+		};
+		Vin::Matrix<float, 2, 2> v2{
+			5.0f, 6.0f,
+			7.0f, 8.0f
+		};
+
+		Vin::Logger::Log("Mattrix : {}", v1 * v2);*/
+	
+		Vin::Matrix3x3<float> v3{ 2.0f };
+
+		v3(0, 0) = 1;
+
+		Vin::Logger::Log("Mattrix : {}", (Vin::Matrix<float, 3, 3>)v3);
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
-		Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
+		//Vin::Logger::Log("Process rate : {} ps", round(1000 / ts.GetMillisecond()));
 	}
 
 	void OnUpdate(Vin::TimeStep ts) {
-		Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
+		//Vin::Logger::Log("Update rate : {} ps", round(1000 / ts.GetMillisecond()));
 
 		t += 1 * ts.GetSecond();
 		t = t > 1 ? 0 : t;

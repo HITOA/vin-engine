@@ -42,6 +42,7 @@ add_library(vin_engine STATIC
 
 	src/core/logger/logger.cpp
 	src/core/logger/logger.hpp
+	src/core/logger/matrixfmt.hpp
 	src/core/logger/vectorfmt.hpp
 
 	src/core/math/mathhelper.hpp

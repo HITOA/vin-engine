@@ -7,30 +7,36 @@
 namespace Vin {
 	
 	template<typename T>
-	inline void Ceil(T& v) {}
+	inline T Ceil(T v) { return T{}; }
 	template<>
-	inline void Ceil<double>(double& v) { v = ceil(v); }
+	inline double Ceil<double>(double v) { return ceil(v); }
 	template<>
-	inline void Ceil<float>(float& v) { v = ceilf(v); }
+	inline float Ceil<float>(float v) { return ceilf(v); }
 
 	template<typename T>
-	inline void Floor(T& v) {}
+	inline T Floor(T v) { return T{}; }
 	template<>
-	inline void Floor<float>(float& v) { v = floorf(v); }
+	inline double Floor<double>(double v) { return floor(v); }
 	template<>
-	inline void Floor<double>(double& v) { v = floor(v); }
+	inline float Floor<float>(float v) { return floorf(v); }
 
 	template<typename T>
-	inline void Round(T& v) {}
+	inline T Round(T v) { return T{}; }
 	template<>
-	inline void Round<float>(float& v) { v = roundf(v); }
+	inline double Round<double>(double v) { return round(v); }
 	template<>
-	inline void Round<double>(double& v) { v = round(v); }
+	inline float Round<float>(float v) { return roundf(v); }
 
 	template<typename T>
-	inline void Clamp(T& v, T m, T M) {
+	inline T Clamp(T v, T m, T M) {
 		const T t = v < m ? m : v;
-		v = t > M ? M : t;
+		return t > M ? M : t;
 	}
 
+	template<typename T>
+	inline T Sqrt(T v) { return T{}; }
+	template<>
+	inline double Sqrt<double>(double v) { return sqrt(v); }
+	template<>
+	inline float Sqrt<float>(float v) { return sqrtf(v); }
 }

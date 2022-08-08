@@ -5,6 +5,7 @@
 #include <fmt/core.h>
 
 #include "vectorfmt.hpp"
+#include "matrixfmt.hpp"
 
 namespace Vin {
 

@@ -6,6 +6,9 @@
 
 namespace Vin {
 
+	template<typename T, size_t size>
+	struct Vector {};
+
 	template<typename T>
 	struct Vector2;
 
@@ -29,28 +32,44 @@ namespace Vin {
 
 		//Every for loop must be unroll by the compiler
 
-		static void Ceil(T& v) {
+		static T Ceil(T& v) {
+			T vr{};
 			for (size_t i = 0; i < size; i++) {
-				Vin::Ceil(v.data[i]);
+				vr.data[i] = Vin::Ceil(v.data[i]);
 			}
+			return vr;
 		}
 
-		static void Floor(T& v) {
+		static T Floor(T& v) {
+			T vr{};
 			for (size_t i = 0; i < size; i++) {
-				Vin::Floor(v.data[i]);
+				vr.data[i] = Vin::Floor(v.data[i]);
 			}
+			return vr;
 		}
 
-		static void Round(T& v) {
+		static T Round(T& v) {
+			T vr{};
 			for (size_t i = 0; i < size; i++) {
-				Vin::Round(v.data[i]);
+				vr.data[i] = Vin::Round(v.data[i]);
 			}
+			return vr;
 		}
 
-		static void Clamp(T& v, T m, T M) {
+		static T Clamp(T& v, T m, T M) {
+			T vr{};
 			for (size_t i = 0; i < size; i++) {
-				Vin::Clamp(v.data[i], m.data[i], M.data[i]);
+				vr.data[i] = Vin::Clamp(v.data[i], m.data[i], M.data[i]);
 			}
+			return vr;
+		}
+
+		template<typename R>
+		static R Dot(Vector<R, size> v1, Vector<R, size> v2) {
+			R r{};
+			for (size_t i = 0; i < size; i++)
+				r += v1.data[i] * v2.data[i];
+			return r;
 		}
 	};
 
@@ -68,7 +87,6 @@ namespace Vin {
 			data[i1] = rhs;
 			return *this;
 		}
-
 
 		SwizzleProxy1<T, count, i1>& operator+=(const T& rhs) {
 			data[i1] += rhs;
@@ -184,9 +202,6 @@ namespace Vin {
 			return vec4;
 		}
 	};
-
-	template<typename T, size_t size>
-	struct Vector {};
 
 	template<typename T>
 	struct Vector<T, 2> {
@@ -722,6 +737,13 @@ namespace Vin {
 		Vector2(const T& v) : Vector{ v } {};
 		Vector2(const T& x, const T& y) : Vector{ x, y } {};
 
+		//Func
+
+		T Length() const {
+			T length = Sqrt<T>(x * x + y * y);
+			return length;
+		}
+
 		//Assignment
 
 		Vector2<T>& operator=(const Vector2<T>& rhs) {
@@ -779,6 +801,12 @@ namespace Vin {
 			lhs /= rhs;
 			return lhs;
 		}
+
+		Vector2<T> operator-() const {
+			Vector2<T> v{ *this };
+			v *= -1;
+			return v;
+		}
 	};
 
 	template<typename T>
@@ -786,6 +814,19 @@ namespace Vin {
 		Vector3() : Vector{} {};
 		Vector3(const T& v) : Vector{ v } {};
 		Vector3(const T& x, const T& y, const T& z) : Vector{ x, y, z } {};
+
+		Vector3<T> Cross(Vector3<T>& v1, Vector3<T>& v2) {
+			Vector3<T> r{};
+			r.x = v1.y * v2.z - v1.z * v2.y;
+			r.y = v1.z * v2.x - v1.x * v2.z;
+			r.z = v1.x * v2.y - v1.y * v2.x;
+			return r;
+		}
+
+		T Length() const {
+			T length = Sqrt<T>(x * x + y * y + z * z);
+			return length;
+		}
 
 		//Assignment
 
@@ -849,6 +890,12 @@ namespace Vin {
 			lhs /= rhs;
 			return lhs;
 		}
+
+		Vector3<T> operator-() const {
+			Vector3<T> v{ *this };
+			v *= -1;
+			return v;
+		}
 	};
 
 	template<typename T>
@@ -856,6 +903,11 @@ namespace Vin {
 		Vector4() : Vector{} {};
 		Vector4(const T& v) : Vector{ v } {};
 		Vector4(const T& x, const T& y, const T& z, const T& w) : Vector{ x, y, z, w } {};
+
+		T Length() const {
+			T length = Sqrt<T>(x * x + y * y + z * z + w * w);
+			return length;
+		}
 
 		//Assignment
 
@@ -923,6 +975,12 @@ namespace Vin {
 			Vector4<T> lhs, const Vector4<T>& rhs) {
 			lhs /= rhs;
 			return lhs;
+		}
+
+		Vector4<T> operator-() const {
+			Vector4<T> v{ *this };
+			v *= -1;
+			return v;
 		}
 	};
 }
