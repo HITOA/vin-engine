@@ -45,17 +45,29 @@ namespace Vin {
 			return *this;
 		}
 
+		Matrix2x4<T>& operator*=(T rhs) {
+			for (size_t i = 0; i < rows * cols; i++)
+				data[i] *= rhs;
+			return *this;
+		}
+
 		//Arithmetic
 
-		friend Matrix2x4<T>operator+(
+		friend Matrix2x4<T> operator+(
 			Matrix2x4<T> lhs, const Matrix2x4<T>& rhs) {
 			lhs += rhs;
 			return lhs;
 		}
 
-		friend Matrix2x4<T>operator-(
+		friend Matrix2x4<T> operator-(
 			Matrix2x4<T> lhs, const Matrix2x4<T>& rhs) {
 			lhs += rhs;
+			return lhs;
+		}
+
+		friend Matrix2x4<T> operator*(
+			Matrix2x4<T> lhs, T rhs) {
+			lhs *= rhs;
 			return lhs;
 		}
 	};

@@ -16,7 +16,7 @@ namespace Vin {
 			T v5, T v6, T v7, T v8, 
 			T v9, T v10, T v11, T v12,
 			T v13, T v14, T v15, T v16) :
-			Matrix{ v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v12, v13, v14, v15, v16 } {}
+			Matrix{ v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16 } {}
 		Matrix4x4(const Matrix<T, rows, cols>& rhs) : Matrix{} {
 			memcpy(data, rhs.data, rows * cols * sizeof(T));
 		}
@@ -47,17 +47,29 @@ namespace Vin {
 			return *this;
 		}
 
+		Matrix4x4<T>& operator*=(T rhs) {
+			for (size_t i = 0; i < rows * cols; i++)
+				data[i] *= rhs;
+			return *this;
+		}
+
 		//Arithmetic
 
-		friend Matrix4x4<T>operator+(
+		friend Matrix4x4<T> operator+(
 			Matrix4x4<T> lhs, const Matrix4x4<T>& rhs) {
 			lhs += rhs;
 			return lhs;
 		}
 
-		friend Matrix4x4<T>operator-(
+		friend Matrix4x4<T> operator-(
 			Matrix4x4<T> lhs, const Matrix4x4<T>& rhs) {
 			lhs += rhs;
+			return lhs;
+		}
+
+		friend Matrix4x4<T> operator*(
+			Matrix4x4<T> lhs, T rhs) {
+			lhs *= rhs;
 			return lhs;
 		}
 	};

@@ -6,7 +6,10 @@
 namespace Vin {
 
 	template<typename T, size_t size>
-	struct Vector {};
+	struct Vector {
+		using type = Vector<T, size>;
+	};
+
 	template<typename T>
 	struct Vector2;
 	template<typename T>

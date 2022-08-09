@@ -104,6 +104,21 @@ class TestModule : public Vin::Module {
 		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 2, 3>)v7);
 		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 3, 4>)v8);
 		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 2, 4>)v9);
+
+		Vin::Matrix4x4<float> v10{ 
+			2, 0, 0, 3,
+			0, 2, 0, 3,
+			0, 0, 2, 3,
+			0, 0, 0, 1 };
+
+		Vin::Vector4<float> vec4{ 10, 23, 3, 1 };
+
+		Vin::Logger::Log("Transform matrix : {}", (Vin::Matrix<float, 4, 4>)v10);
+		Vin::Logger::Log("Vector4 : {}", vec4);
+
+		auto r = v10 * vec4;
+
+		Vin::Logger::Log("Result : {}", r);
 	}
 
 	void OnProcess(Vin::TimeStep ts) {

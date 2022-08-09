@@ -5,6 +5,8 @@
 namespace Vin {
 	template<typename T>
 	struct Vector<T, 2> {
+		using type = Vector2<T>;
+
 		union {
 			T data[2];
 
