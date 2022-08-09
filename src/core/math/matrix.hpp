@@ -1,44 +1,23 @@
 #pragma once
 
-#include "vinpch.hpp"
-#include "core/assert.hpp"
-#include "vector.hpp"
+#include "matrix2x2.hpp"
+#include "matrix2x3.hpp"
+#include "matrix2x4.hpp"
+#include "matrix3x2.hpp"
+#include "matrix3x3.hpp"
+#include "matrix3x4.hpp"
+#include "matrix4x2.hpp"
+#include "matrix4x3.hpp"
+#include "matrix4x4.hpp"
 
-namespace Vin {
+template<typename T, size_t m1, size_t n1, size_t n2>
+auto operator*(const Vin::Matrix<T, m1, n1>& lhs, const Vin::Matrix<T, n1, n2>& rhs) {
+	Vin::Matrix<T, m1, n2>::MatrixType::type result{};
 
-	template<typename T, size_t m, size_t n>
-	struct Matrix {
-		T data[m * n];
+	for (size_t y = 0; y < m1; y++)
+		for (size_t x = 0; x < n2; x++)
+			for (size_t i = 0; i < n1; i++)
+				result.data[x + y * n2] += lhs.data[i + y * n1] * rhs.data[x + i * n2];
 
-		Matrix() : data{ 0 } {}
-		template<typename... Args>
-		Matrix(T v1, Args... vs) : data{ v1, vs... } {}
-	};
-
-	template<typename T>
-	struct Matrix3x3 : Matrix<T, 3, 3> {
-		Matrix3x3() : Matrix{} {}
-		Matrix3x3(T v) : Matrix{} {
-			for (size_t i = 0; i < 9; i++)
-				data[i] = v;
-		}
-		Matrix3x3(
-			T v1, T v2, T v3,
-			T v4, T v5, T v6,
-			T v7, T v8, T v9) : 
-			Matrix{v1, v2, v3, v4, v5, v6, v7, v8, v9} {}
-
-		T& operator()(size_t m, size_t n) {
-			return data[m + n * 3];
-		}
-
-		T operator()(size_t m, size_t n) const {
-			return data[m + n * 3];
-		}
-
-		Matrix3x3<T>& operator=(const Matrix3x3<T>& rhs) {
-			memcpy(data, rhs.data, sizeof(T) * 9);
-			return *this;
-		}
-	};
+	return result;
 }

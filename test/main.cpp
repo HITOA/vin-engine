@@ -71,42 +71,39 @@ class TestModule : public Vin::Module {
 
 		program->SetFloat3("color", color.data);
 
-		/*Vin::Matrix<float, 3, 3> identity{
-			1.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 1.0f };
-
-		Vin::Matrix<float, 3, 3> mat{
-			1.0f, 1.0f, 0.0f,
-			0.0f, 1.0f, 0.0f,
-			0.0f, 1.0f, 1.0f };
-		
-		Vin::Logger::Log("Mattrix : {}", identity - mat);
-		Vin::Logger::Log("Mattrix : {}", identity - 4.0f);
-
-		Vin::Matrix<float, 2, 2> v1{
-			1.0f, 2.0f,
-			3.0f, 4.0f
-		};
-		Vin::Matrix<float, 2, 2> v2{
-			5.0f, 6.0f,
-			7.0f, 8.0f
-		};
-
-		Vin::Logger::Log("Mattrix : {}", v1 * v2);*/
-
-		Vin::Matrix3x3<float> v1{ 
+		Vin::Matrix3x3<float> v1{
 			1.0f, 0.0f, 0.0f, 
 			0.0f, 1.0f, 0.0f, 
 			0.0f, 0.0f, 1.0f };
 		Vin::Matrix3x3<float> v2 = v1;
 		Vin::Matrix3x3<float> v3{ 2 };
+		Vin::Matrix<float, 3, 3> v4{};
+
+		v4.data[3] = 3;
+
+		Vin::Matrix3x3<float> v5{ v4 };
+		
+		decltype(v4)::MatrixType::type v6{ v4 };
 
 		v2(0, 0) = 4;
+		v2 += v1;
 
-		Vin::Logger::Log("Mattrix : {}", (Vin::Matrix<float, 3, 3>)v1);
-		Vin::Logger::Log("Mattrix : {}", (Vin::Matrix<float, 3, 3>)v2);
-		Vin::Logger::Log("Mattrix : {}", (Vin::Matrix<float, 3, 3>)v3);
+		v1 += 24;
+
+		Vin::Matrix2x3<float> v7{ 2, 3, 0, 0, 4, 5 };
+		Vin::Matrix3x4<float> v8{ 2, 0, 4, 0, 0, 3, 0, 0, 0, 0, 5, 0 };
+
+		auto v9 = v7 * v8;
+
+		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 3, 3>)v1);
+		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 3, 3>)v2);
+		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 3, 3>)v3);
+		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 3, 3>)v4);
+		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 3, 3>)v5);
+		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 3, 3>)v6);
+		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 2, 3>)v7);
+		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 3, 4>)v8);
+		Vin::Logger::Log("Matrix : {}", (Vin::Matrix<float, 2, 4>)v9);
 	}
 
 	void OnProcess(Vin::TimeStep ts) {

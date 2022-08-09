@@ -9,6 +9,8 @@ set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DVIN_DEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DVIN_DEBUG")
 
+set(CMAKE_CXX_STANDARD 11)
+
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
@@ -47,6 +49,16 @@ add_library(vin_engine STATIC
 
 	src/core/math/mathhelper.hpp
 	src/core/math/matrix.hpp
+	src/core/math/matrix_base.hpp
+	src/core/math/matrix2x2.hpp
+	src/core/math/matrix2x3.hpp
+	src/core/math/matrix2x4.hpp
+	src/core/math/matrix3x2.hpp
+	src/core/math/matrix3x3.hpp
+	src/core/math/matrix3x4.hpp
+	src/core/math/matrix4x2.hpp
+	src/core/math/matrix4x3.hpp
+	src/core/math/matrix4x4.hpp
 	src/core/math/vector.hpp
 	src/core/math/vector_base.hpp
 	src/core/math/vector2.hpp

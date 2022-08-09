@@ -19,13 +19,13 @@ struct fmt::formatter<Vin::Matrix<float, M, N>> {
 	auto format(const Vin::Matrix<float, M, N>& mat, FormatContext& ctx) const -> decltype(ctx.out()) {
 		std::string r{"\n"};
 
-		for (size_t n = 0; n < N; n++) {
+		for (size_t y = 0; y < M; y++) {
 			r += "\t[";
-			for (size_t m = 0; m < M; m++) {
+			for (size_t x = 0; x < N; x++) {
 				if (presentation == 'f')
-					r += fmt::format("{:.1f}, ", mat.data[m + n * M]);
+					r += fmt::format("{:.1f}, ", mat.data[x + y * N]);
 				else
-					r += fmt::format("{:.1e}, ", mat.data[m + n * M]);
+					r += fmt::format("{:.1e}, ", mat.data[x + y * N]);
 			}
 			r = r.substr(0, r.size() - 2);
 			r += "]\n";
