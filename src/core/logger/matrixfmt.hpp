@@ -23,9 +23,9 @@ struct fmt::formatter<Vin::Matrix<float, M, N>> {
 			r += "\t[";
 			for (size_t m = 0; m < M; m++) {
 				if (presentation == 'f')
-					r += fmt::format("{:.1f}, ", mat(m, n));
+					r += fmt::format("{:.1f}, ", mat.data[m + n * M]);
 				else
-					r += fmt::format("{:.1e}, ", mat(m, n));
+					r += fmt::format("{:.1e}, ", mat.data[m + n * M]);
 			}
 			r = r.substr(0, r.size() - 2);
 			r += "]\n";

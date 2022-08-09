@@ -94,11 +94,18 @@ class TestModule : public Vin::Module {
 		};
 
 		Vin::Logger::Log("Mattrix : {}", v1 * v2);*/
-	
-		Vin::Matrix3x3<float> v3{ 2.0f };
 
-		v3(0, 0) = 1;
+		Vin::Matrix3x3<float> v1{ 
+			1.0f, 0.0f, 0.0f, 
+			0.0f, 1.0f, 0.0f, 
+			0.0f, 0.0f, 1.0f };
+		Vin::Matrix3x3<float> v2 = v1;
+		Vin::Matrix3x3<float> v3{ 2 };
 
+		v2(0, 0) = 4;
+
+		Vin::Logger::Log("Mattrix : {}", (Vin::Matrix<float, 3, 3>)v1);
+		Vin::Logger::Log("Mattrix : {}", (Vin::Matrix<float, 3, 3>)v2);
 		Vin::Logger::Log("Mattrix : {}", (Vin::Matrix<float, 3, 3>)v3);
 	}
 

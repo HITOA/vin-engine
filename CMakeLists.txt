@@ -48,6 +48,10 @@ add_library(vin_engine STATIC
 	src/core/math/mathhelper.hpp
 	src/core/math/matrix.hpp
 	src/core/math/vector.hpp
+	src/core/math/vector_base.hpp
+	src/core/math/vector2.hpp
+	src/core/math/vector3.hpp
+	src/core/math/vector4.hpp
 	
 	src/platform/opengl/buffer_opengl.cpp
 	src/platform/opengl/buffer_opengl.hpp
