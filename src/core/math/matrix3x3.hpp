@@ -6,6 +6,8 @@ namespace Vin {
 
 	template<typename T>
 	struct Matrix3x3 : Matrix<T, 3, 3> {
+		static const Matrix3x3<T> identity;
+
 		Matrix3x3() : Matrix{} {}
 		Matrix3x3(T v) : Matrix{} {
 			for (size_t i = 0; i < rows * cols; i++)
@@ -72,4 +74,7 @@ namespace Vin {
 			return lhs;
 		}
 	};
+
+	template<typename T>
+	const  Matrix3x3<T> Matrix3x3<T>::identity = Matrix3x3<T>{ 1, 0, 0, 0, 1, 0, 0, 0, 1 };
 }

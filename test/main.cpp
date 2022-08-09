@@ -118,7 +118,13 @@ class TestModule : public Vin::Module {
 
 		auto r = v10 * vec4;
 
+		Vin::Matrix4x4<float> v11{};
+
 		Vin::Logger::Log("Result : {}", r);
+		Vin::Logger::Log("Transform matrix : {}", (Vin::Matrix<float, 4, 4>)v11);
+		Vin::Logger::Log("Transform matrix : {}", (Vin::Matrix<float, 2, 2>)Vin::Matrix2x2<float>::identity);
+		Vin::Logger::Log("Transform matrix : {}", (Vin::Matrix<float, 3, 3>)Vin::Matrix3x3<float>::identity);
+		Vin::Logger::Log("Transform matrix : {}", (Vin::Matrix<float, 4, 4>)Vin::Matrix4x4<float>::identity);
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
@@ -133,7 +139,7 @@ class TestModule : public Vin::Module {
 
 		program->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
 
-		Vin::Renderer::Clear(0.2, 0.2, 0.2, 1);
+		Vin::Renderer::Clear(0, 0, 0, 0.0f);
 		program->Bind();
 		Vin::Renderer::DrawIndexed(vao);
 
