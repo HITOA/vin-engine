@@ -23,5 +23,5 @@ Godot Engine Repos (Most readable source code for game engine probably) : https:
 The Cherno (Especially his game engine series) : https://www.youtube.com/c/TheChernoProject  
 Chili Tomato Noodle : https://www.youtube.com/c/ChiliTomatoNoodle    
 MonoGame Repos : https://github.com/MonoGame/MonoGame/tree/develop/MonoGame.Framework    
-GLM Repos (Also for the math part) : https://github.com/g-truc/glm  
-Cell (JoeyDeVries) : https://github.com/JoeyDeVries/Cell
+GLM Repos : https://github.com/g-truc/glm    
+Cell (JoeyDeVries) : https://github.com/JoeyDeVries/Cell  
