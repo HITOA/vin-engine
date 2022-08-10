@@ -6,6 +6,10 @@
 
 namespace Vin {
 	
+	static constexpr double PI = 3.1415926535897931;
+	static constexpr double deg2rad = PI / 180.0;
+	static constexpr double rad2deg = 180.0 / PI;
+
 	template<typename T>
 	inline T Ceil(T v) { return T{}; }
 	template<>
@@ -39,4 +43,25 @@ namespace Vin {
 	inline double Sqrt<double>(double v) { return sqrt(v); }
 	template<>
 	inline float Sqrt<float>(float v) { return sqrtf(v); }
+
+	template<typename T>
+	inline T Cos(T v) { return T{}; }
+	template<> 
+	inline double Cos<double>(double v) { return cos(v); }
+	template<>
+	inline float Cos<float>(float v) { return cosf(v); }
+
+	template<typename T>
+	inline T Sin(T v) { return T{}; }
+	template<>
+	inline double Sin<double>(double v) { return sin(v); }
+	template<>
+	inline float Sin<float>(float v) { return sinf(v); }
+
+	template<typename T>
+	inline T Tan(T v) { return T{}; }
+	template<>
+	inline double Tan<double>(double v) { return tan(v); }
+	template<>
+	inline float Tan<float>(float v) { return tanf(v); }
 }

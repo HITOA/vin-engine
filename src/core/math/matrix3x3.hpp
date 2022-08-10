@@ -22,11 +22,11 @@ namespace Vin {
 			memcpy(data, rhs.data, rows * cols * sizeof(T));
 		}
 
-		T& operator()(size_t m, size_t n) {
-			return data[m + n * cols];
+		T& operator()(size_t c, size_t r) {
+			return data[r + c * cols];
 		}
-		T operator()(size_t m, size_t n) const {
-			return data[m + n * cols];
+		T operator()(size_t c, size_t r) const {
+			return data[r + c * cols];
 		}
 
 		//Assignment

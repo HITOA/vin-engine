@@ -143,6 +143,7 @@ namespace Vin {
 		Vector3() : Vector{} {};
 		Vector3(const T& v) : Vector{ v } {};
 		Vector3(const T& x, const T& y, const T& z) : Vector{ x, y, z } {};
+		Vector3(const Vector2<T>& xy, T z) : Vector{ xy.x, xy.y, z } {};
 
 		Vector3<T> Cross(Vector3<T>& v1, Vector3<T>& v2) {
 			Vector3<T> r{};

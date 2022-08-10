@@ -36,9 +36,7 @@ namespace Vin {
 
 		Matrix() : data{ 0 } {}
 		template<typename... Args>
-		Matrix(T v1, Args... vs) : data{ v1, vs... } {
-			printf("Truc random");
-		}
+		Matrix(T v1, Args... vs) : data{ v1, vs... } {}
 	};
 	
 	template<typename T, size_t m, size_t n>

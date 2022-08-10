@@ -47,6 +47,7 @@ add_library(vin_engine STATIC
 	src/core/logger/matrixfmt.hpp
 	src/core/logger/vectorfmt.hpp
 
+	src/core/math/math.hpp
 	src/core/math/mathhelper.hpp
 	src/core/math/matrix.hpp
 	src/core/math/matrix_base.hpp
@@ -59,6 +60,7 @@ add_library(vin_engine STATIC
 	src/core/math/matrix4x2.hpp
 	src/core/math/matrix4x3.hpp
 	src/core/math/matrix4x4.hpp
+	src/core/math/transform.hpp
 	src/core/math/vector.hpp
 	src/core/math/vector_base.hpp
 	src/core/math/vector2.hpp

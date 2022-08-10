@@ -363,6 +363,8 @@ namespace Vin {
 		Vector4() : Vector{} {};
 		Vector4(const T& v) : Vector{ v } {};
 		Vector4(const T& x, const T& y, const T& z, const T& w) : Vector{ x, y, z, w } {};
+		Vector4(const Vector2<T>& xy, T z, T w) : Vector{ xy.x, xy.y, z, w } {};
+		Vector4(const Vector3<T>& xyz, T w) : Vector{ xyz.x, xyz.y, xyz.z, w } {};
 
 		T Length() const {
 			T length = Sqrt<T>(x * x + y * y + z * z + w * w);
