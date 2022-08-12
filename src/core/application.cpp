@@ -3,17 +3,25 @@
 #include "core/events/inputevent.hpp"
 #include "core/logger/logger.hpp"
 #include "renderer/renderer.hpp"
+#include "core/filesystem/gamefilesystem.hpp"
 
 Vin::Application::Application(const ApplicationInfo& info) : m_ApplicationInfo{ info }, m_Running{ false }, m_Timer{}
 {
 	Logger::Log("App \"{}\" started.", info.name);
 
+	GameFilesystem::Init();
 	Renderer::Init();
 
 	m_Window = CreateWindow(WindowInfo{ info.name });
 	m_Window->RegisterListener(this);
 
 	Renderer::InitApi();
+}
+
+Vin::Application::~Application()
+{
+	Renderer::Terminate();
+	GameFilesystem::Terminate();
 }
 
 void Vin::Application::OnEvent(const Event& e)

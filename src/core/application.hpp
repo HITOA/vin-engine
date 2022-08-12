@@ -17,6 +17,7 @@ namespace Vin {
 	class Application : public EventListener, public EventDispatcher {
 	public:
 		Application(const ApplicationInfo& info);
+		~Application();
 
 	public:
 		void OnEvent(const Event& e);

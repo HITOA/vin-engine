@@ -2,6 +2,7 @@
 
 #include <renderer/rendering.hpp>
 #include <core/math/math.hpp>
+#include <core/filesystem/gamefilesystem.hpp>
 
 class TestModule : public Vin::Module {
 	std::shared_ptr<Vin::Program> program;
@@ -18,6 +19,10 @@ class TestModule : public Vin::Module {
 
 	void OnStart() {
 		Vin::Logger::Log("Module is working.");
+
+		Vin::GameFilesystem::Mount("./");
+
+		Vin::Logger::Log("File exists : {}", Vin::GameFilesystem::Exists("fs.glsl"));
 
 		const char* vertexShaderSource = "#version 330 core\n"
 			"layout (location = 0) in vec3 aPos;\n"

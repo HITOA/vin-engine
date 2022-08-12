@@ -4,6 +4,8 @@
 
 #include "platform/physfs/gamefilesystem_physfs.hpp"
 
+Vin::GameFilesystem::GameFilesystemApi* Vin::GameFilesystem::s_GameFilesystemApi = nullptr;
+
 void Vin::GameFilesystem::Init()
 {
 	if (s_GameFilesystemApi != nullptr)
