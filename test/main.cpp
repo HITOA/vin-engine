@@ -111,7 +111,7 @@ class TestModule : public Vin::Module {
 
 		program->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
 
-		Vin::Renderer::Clear(0, 0, 0, 0.0f);
+		Vin::Renderer::Clear(0.05, 0.025, 0, 0.1f);
 		program->Bind();
 		Vin::Renderer::DrawIndexed(vao);
 

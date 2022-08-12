@@ -41,6 +41,9 @@ add_library(vin_engine STATIC
 	src/core/events/event.hpp
 	src/core/events/inputevent.hpp
 
+	src/core/filesystem/filesystem.hpp
+	src/core/filesystem/gamefilesystem.cpp
+	src/core/filesystem/gamefilesystem.hpp
 
 	src/core/logger/logger.cpp
 	src/core/logger/logger.hpp
@@ -66,6 +69,9 @@ add_library(vin_engine STATIC
 	src/core/math/vector2.hpp
 	src/core/math/vector3.hpp
 	src/core/math/vector4.hpp
+
+	src/core/resources/resourcemanager.cpp
+	src/core/resources/resourcemanager.hpp
 	
 	src/platform/opengl/buffer_opengl.cpp
 	src/platform/opengl/buffer_opengl.hpp
@@ -77,6 +83,9 @@ add_library(vin_engine STATIC
 	src/platform/opengl/renderer_opengl.hpp
 	src/platform/opengl/vertexarray_opengl.cpp
 	src/platform/opengl/vertexarray_opengl.hpp
+
+	src/platform/physfs/gamefilesystem_physfs.cpp
+	src/platform/physfs/gamefilesystem_physfs.hpp
 
 	src/platform/windows/window_windows.cpp
 	src/platform/windows/window_windows.hpp
