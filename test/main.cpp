@@ -20,11 +20,9 @@ class TestModule : public Vin::Module {
 	void OnStart() {
 		Vin::Logger::Log("Module is working.");
 
-		Vin::GameFilesystem::Mount("./");
+		Vin::GameFilesystem::Mount("./bin");
 
-		Vin::Logger::Log("File exists : {}", Vin::GameFilesystem::Exists("fs.glsl"));
-
-		const char* vertexShaderSource = "#version 330 core\n"
+		/*const char* vertexShaderSource = "#version 330 core\n"
 			"layout (location = 0) in vec3 aPos;\n"
 			"uniform mat4 randommat;\n"
 			"void main()\n"
@@ -38,14 +36,38 @@ class TestModule : public Vin::Module {
 			"void main()\n"
 			"{\n"
 			"	FragColor = vec4(color, 1.0f);\n"
-			"}\n";
+			"}\n";*/
+
+		auto vsfile = Vin::GameFilesystem::Open("data/vs.glsl", Vin::FileMode::Read);
+		auto fsfile = Vin::GameFilesystem::Open("data/fs.glsl", Vin::FileMode::Read);
+
+		size_t vssize = vsfile->GetSize();
+		size_t fssize = fsfile->GetSize();
+
+		char* vertexShaderSource = (char*)malloc(vssize + 1);
+		char* fragmentShaderSource = (char*)malloc(fssize + 1);
+
+		vsfile->ReadBytes(vertexShaderSource, vssize);
+		fsfile->ReadBytes(fragmentShaderSource, fssize);
+
+		vertexShaderSource[vssize] = '\0';
+		fragmentShaderSource[fssize] = '\0';
+
+		Vin::Logger::Log("Vertex shader, size {} : {}", vssize, vertexShaderSource);
+		Vin::Logger::Log("Fragment shader, size {} : {}", fssize, fragmentShaderSource);
 
 		program = Vin::Program::Create();
 
 		program->AddShader(Vin::ShaderType::VertexShader, vertexShaderSource);
 		program->AddShader(Vin::ShaderType::FragmentShader, fragmentShaderSource);
 
+		delete vertexShaderSource;
+		delete fragmentShaderSource;
+
 		program->CompileProgram();
+
+		if (!program->IsShaderComplete())
+			abort();
 
 		Vin::Vector3<float> vertices[] = {
 			{1.0f,  1.0f, 0.0f},  // top right

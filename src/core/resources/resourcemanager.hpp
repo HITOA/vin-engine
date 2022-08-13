@@ -2,8 +2,6 @@
 
 namespace Vin {
 
-	class ResourceManager {
-
-	};
+	
 
 }

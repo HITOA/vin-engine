@@ -25,6 +25,8 @@ bool Vin::PhysfsGameFilesystemApi::Exists(const char* filepath)
 
 std::unique_ptr<Vin::GameFile> Vin::PhysfsGameFilesystemApi::Open(const char* filepath, FileMode mod)
 {
+	if (!Exists(filepath))
+		return nullptr;
 	return std::make_unique<PhysfsGameFile>(filepath, mod);
 }
 
