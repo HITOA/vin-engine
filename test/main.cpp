@@ -2,7 +2,9 @@
 
 #include <renderer/rendering.hpp>
 #include <core/math/math.hpp>
+#include <core/vinptr.hpp>
 #include <core/filesystem/gamefilesystem.hpp>
+#include <core/resources/resource.hpp>
 
 class TestModule : public Vin::Module {
 	std::shared_ptr<Vin::Program> program;
@@ -98,6 +100,17 @@ class TestModule : public Vin::Module {
 
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
+
+		Vin::Logger::Log("Type Id 1 : {}", Vin::ResourceTrait::GetId<int>());
+		Vin::Logger::Log("Type Id 1 : {}", Vin::ResourceTrait::GetId<short>());
+		Vin::Logger::Log("Type Id 1 : {}", Vin::ResourceTrait::GetId<Vin::Vector2<float>>());
+
+		Vin::Ref<Vin::Vector2<float>> ref = Vin::MakeRef<Vin::Vector2<float>>();
+
+		ref->x = 10;
+
+		Vin::Logger::Log("Test : {}", *ref.Get());
+
 	}
 
 	void OnProcess(Vin::TimeStep ts) {

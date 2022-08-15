@@ -28,15 +28,19 @@ add_subdirectory(${EXTERNAL_PATH}/physfs)
 glad_add_library(glad_library STATIC API gl:core=4.6)
 
 add_library(vin_engine STATIC 
+	src/core/allocator.hpp
 	src/core/application.cpp
 	src/core/application.hpp
 	src/core/assert.hpp
+	src/core/container.hpp
 	src/core/entrypoint.cpp
 	src/core/module.cpp
 	src/core/module.hpp
 	src/core/task.hpp
 	src/core/timer.cpp
 	src/core/timer.hpp
+	src/core/vinptr.cpp
+	src/core/vinptr.hpp
 	src/core/window.hpp
 
 	src/core/events/applicationevent.hpp
@@ -73,7 +77,8 @@ add_library(vin_engine STATIC
 	src/core/math/vector3.hpp
 	src/core/math/vector4.hpp
 
-	src/core/resources/resourcemanager.cpp
+	src/core/resources/resource.hpp
+	src/core/resources/resourceloader.hpp
 	src/core/resources/resourcemanager.hpp
 	
 	src/platform/opengl/buffer_opengl.cpp
