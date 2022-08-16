@@ -8,6 +8,8 @@ namespace Vin {
 
 	class Module {
 	public:
+		virtual ~Module() {};
+
 		virtual void OnStart() {};
 		virtual void OnStop() {};
 		virtual void OnProcess(TimeStep ts) {};
@@ -25,8 +27,8 @@ namespace Vin {
 		void OnUpdate(TimeStep ts);
 		void OnRender(TimeStep ts);
 
-		void AddModule(Module* mod);
+		void AddModule(eastl::unique_ptr<Module> mod);
 	private:
-		std::vector<Module*> m_Modules{};
+		eastl::fixed_vector<eastl::unique_ptr<Module>, 32, false> m_Modules{};
 	};
 }

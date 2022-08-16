@@ -40,8 +40,6 @@ add_library(vin_engine STATIC
 	src/core/task.hpp
 	src/core/timer.cpp
 	src/core/timer.hpp
-	src/core/vinptr.cpp
-	src/core/vinptr.hpp
 	src/core/window.hpp
 
 	src/core/events/applicationevent.hpp
@@ -79,7 +77,6 @@ add_library(vin_engine STATIC
 	src/core/math/vector4.hpp
 
 	src/core/resources/resource.hpp
-	src/core/resources/resourceloader.hpp
 	src/core/resources/resourcemanager.hpp
 	
 	src/platform/opengl/buffer_opengl.cpp

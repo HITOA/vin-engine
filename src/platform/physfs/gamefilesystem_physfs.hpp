@@ -33,7 +33,7 @@ namespace Vin {
 
 		void Mount(const char* path) final;
 		bool Exists(const char* filepath) final;
-		std::unique_ptr<GameFile> Open(const char* filepath, FileMode mod) final;
+		eastl::unique_ptr<GameFile> Open(const char* filepath, FileMode mod) final;
 		void Delete(const char* filepath) final;
 	};
 

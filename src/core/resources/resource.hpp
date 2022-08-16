@@ -1,50 +1,45 @@
 #pragma once
 
-/*#include "core/allocator.hpp"
-#include "core/vinptr.hpp"
+#include "vinpch.hpp"
+#include "core/filesystem/gamefilesystem.hpp"
 
 namespace Vin {
 	typedef unsigned int ResourceHandle;
-	typedef unsigned int ResourceTypeId;
+	typedef unsigned short ResourceTypeId;
 
-	struct ResourceTrait {
+	class ResourceTrait {
+	public:
+		static ResourceHandle GetNextHandle() {
+			return ++s_LastHandle;
+		}
 		template<typename T>
-		static constexpr ResourceTypeId GetTypeId() {
-			static ResourceTypeId id = ++lastId;
-			return lastId;
+		static ResourceTypeId GetTypeId() {
+			static ResourceTypeId typeId = ++s_LastTypeId;
+			return typeId;
 		}
 	private:
-		static ResourceTypeId lastId;
+		static ResourceHandle s_LastHandle;
+		static ResourceTypeId s_LastTypeId;
 	};
 
-	ResourceTypeId ResourceTrait::lastId{ 0 };
+	ResourceHandle ResourceTrait::s_LastHandle{ 0 };
+	ResourceTypeId ResourceTrait::s_LastTypeId{ 0 };
 
-	template<typename Allocator = DefaultAllocator>
 	class Resource {
 	public:
-		Resource() : m_RefCounter{ Allocator::New<RefCounter>() } {
-			m_RefCounter->Increment();
-		};
+		virtual ~Resource() {};
 
-		virtual ~Resource() {
-			m_RefCounter->Decrement();
-			if (m_RefCounter->Get() <= 0)
-				Allocator::Delete(m_RefCounter);
-		}
-
-		virtual void Load(const char* path) = 0;
+		virtual void Load(eastl::unique_ptr<GameFile> file) = 0;
 		virtual void Unload() = 0;
 
-		virtual Resource* Clone() = 0;
-
+		ResourceHandle GetHandle() {
+			return m_Handle;
+		}
 	private:
-		const char* m_Path;
 		ResourceHandle m_Handle;
 		ResourceTypeId m_TypeId;
-		RefCounter* m_RefCounter;
+		const char* m_Path;
 
-		template<typename U>
-		friend class ResourceManager;
+		friend class Resources;
 	};
 }
-*/

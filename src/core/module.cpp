@@ -2,37 +2,37 @@
 
 Vin::ModuleList::~ModuleList()
 {
-	for (auto mod : m_Modules)
-		delete mod;
+	for (auto it = m_Modules.begin(), itend = m_Modules.end(); it < m_Modules.end(); ++it)
+		it->~unique_ptr();
 
 	m_Modules.clear();
 }
 
 void Vin::ModuleList::OnStart() {
-	for (auto mod : m_Modules)
-		mod->OnStart();
+	for (auto it = m_Modules.begin(), itend = m_Modules.end(); it < m_Modules.end(); ++it)
+		(*it)->OnStart();
 }
 
 void Vin::ModuleList::OnStop() {
-	for (auto mod : m_Modules)
-		mod->OnStop();
+	for (auto it = m_Modules.begin(), itend = m_Modules.end(); it < m_Modules.end(); ++it)
+		(*it)->OnStop();
 }
 
 void Vin::ModuleList::OnProcess(TimeStep ts) {
-	for (auto mod : m_Modules)
-		mod->OnProcess(ts);
+	for (auto it = m_Modules.begin(), itend = m_Modules.end(); it < m_Modules.end(); ++it)
+		(*it)->OnProcess(ts);
 }
 
 void Vin::ModuleList::OnUpdate(TimeStep ts) {
-	for (auto mod : m_Modules)
-		mod->OnUpdate(ts);
+	for (auto it = m_Modules.begin(), itend = m_Modules.end(); it < m_Modules.end(); ++it)
+		(*it)->OnUpdate(ts);
 }
 
 void Vin::ModuleList::OnRender(TimeStep ts) {
-	for (auto mod : m_Modules)
-		mod->OnRender(ts);
+	for (auto it = m_Modules.begin(), itend = m_Modules.end(); it < m_Modules.end(); ++it)
+		(*it)->OnRender(ts);
 }
 
-void Vin::ModuleList::AddModule(Module* mod) {
-	m_Modules.push_back(mod);
+void Vin::ModuleList::AddModule(eastl::unique_ptr<Module> mod) {
+	m_Modules.push_back(eastl::move(mod));
 }

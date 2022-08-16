@@ -2,11 +2,14 @@
 
 #include <iostream>
 #include <ctime>
-#include <memory>
-#include <type_traits>
-#include <stdexcept>
 
-#include <string>
-#include <vector>
-#include <map>
-#include <unordered_map>
+#include <EASTL/type_traits.h>
+
+#include <EASTL/shared_ptr.h>
+#include <EASTL/weak_ptr.h>
+#include <EASTL/unique_ptr.h>
+
+#include <EASTL/fixed_vector.h>
+#include <EASTL/hash_map.h>
+
+#include <EASTL/string.h>

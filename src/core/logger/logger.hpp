@@ -35,6 +35,6 @@ namespace Vin {
             WriteHeader("ERROR", fmt::format(format, args...).data());
         }
     private:
-        static std::vector<std::ostream*> m_LogOutputs;
+        static eastl::fixed_vector<std::ostream*, 8, true> m_LogOutputs;
     };
 }

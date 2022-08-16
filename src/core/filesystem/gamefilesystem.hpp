@@ -32,14 +32,12 @@ namespace Vin {
 
 		template<typename T>
 		T ReadType() {
-			//Check size and handle validity
 			T result{};
 			ReadBytes((char*)(&result), sizeof(T));
 			return result;
 		}
 		template<typename T>
 		void WriteType(T value) {
-			//Check handle validity
 			WriteBytes((char*)(&value), sizeof(T));
 		}
 	};
@@ -57,7 +55,7 @@ namespace Vin {
 		 *
 		 * \return Return a valid file handle if success, -1 on failure.
 		 */
-		static std::unique_ptr<GameFile> Open(const char* filepath, FileMode mod);
+		static eastl::unique_ptr<GameFile> Open(const char* filepath, FileMode mod);
 		static void Delete(const char* filepath);
 
 	protected:
@@ -69,7 +67,7 @@ namespace Vin {
 
 			virtual void Mount(const char* path) = 0;
 			virtual bool Exists(const char* filepath) = 0;
-			virtual std::unique_ptr<GameFile> Open(const char* filepath, FileMode mod) = 0;
+			virtual eastl::unique_ptr<GameFile> Open(const char* filepath, FileMode mod) = 0;
 			virtual void Delete(const char* filepath) = 0;
 		} *s_GameFilesystemApi;
 	};

@@ -28,7 +28,7 @@ namespace Vin {
 		void SetProcessRate(double rate);
 		void SetUpdateRate(double rate);
 
-		void AddModule(Module* mod);
+		void AddModule(eastl::unique_ptr<Module> mod);
 		
 	private:
 		double GetMsPerProcess();

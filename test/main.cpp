@@ -2,15 +2,24 @@
 
 #include <renderer/rendering.hpp>
 #include <core/math/math.hpp>
-#include <core/vinptr.hpp>
 #include <core/filesystem/gamefilesystem.hpp>
-#include <core/resources/resource.hpp>
+#include <core/resources/resourcemanager.hpp>
+
+class Test : public Vin::Resource {
+public:
+	void Load(eastl::unique_ptr<Vin::GameFile> file) {
+
+	};
+	void Unload() {
+
+	};
+}; 
 
 class TestModule : public Vin::Module {
-	Vin::Ref<Vin::Program> program;
-	Vin::Ref<Vin::VertexBuffer> vbo;
-	Vin::Ref<Vin::IndexBuffer> ibo;
-	Vin::Ref<Vin::VertexArray> vao;
+	eastl::shared_ptr<Vin::Program> program;
+	eastl::shared_ptr<Vin::VertexBuffer> vbo;
+	eastl::shared_ptr<Vin::IndexBuffer> ibo;
+	eastl::shared_ptr<Vin::VertexArray> vao;
 
 	double t = 0;
 
@@ -101,16 +110,7 @@ class TestModule : public Vin::Module {
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
 
-		Vin::Logger::Log("Type Id 1 : {}", Vin::ResourceTrait::GetTypeId<int>());
-		Vin::Logger::Log("Type Id 1 : {}", Vin::ResourceTrait::GetTypeId<short>());
-		Vin::Logger::Log("Type Id 1 : {}", Vin::ResourceTrait::GetTypeId<Vin::Vector2<float>>());
-
-		Vin::Ref<Vin::Vector2<float>> ref = Vin::MakeRef<Vin::Vector2<float>>();
-
-		ref->x = 10;
-
-		Vin::Logger::Log("Test : {}", *ref.Get());
-
+		eastl::shared_ptr<Test> t = Vin::Resources::Load<Test>("data/fs.glsl");
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
@@ -161,7 +161,7 @@ class TestModule : public Vin::Module {
 class TestApp : public Vin::Application {
 public:
 	TestApp(const Vin::ApplicationInfo& info) : Application{ info } {
-		AddModule(new TestModule{});
+		AddModule(eastl::make_unique<TestModule>());
 
 		Vin::Renderer::SetViewport(0, 0, 600, 400);
 

@@ -31,7 +31,7 @@ bool Vin::GameFilesystem::Exists(const char* filepath)
 	s_GameFilesystemApi->Exists(filepath);
 }
 
-std::unique_ptr<Vin::GameFile> Vin::GameFilesystem::Open(const char* filepath, FileMode mod)
+eastl::unique_ptr<Vin::GameFile> Vin::GameFilesystem::Open(const char* filepath, FileMode mod)
 {
 	VIN_ASSERT(s_GameFilesystemApi != nullptr, "Game file system not initialized.");
 	return s_GameFilesystemApi->Open(filepath, mod);

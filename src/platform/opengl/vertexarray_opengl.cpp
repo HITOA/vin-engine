@@ -22,7 +22,7 @@ void Vin::OpenGLVertexArray::Unbind() const
 	glBindVertexArray(0);
 }
 
-void Vin::OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
+void Vin::OpenGLVertexArray::AddVertexBuffer(const eastl::shared_ptr<VertexBuffer>& vertexBuffer)
 {
 	glBindVertexArray(m_VertexArrayId);
 	vertexBuffer->Bind();
@@ -84,14 +84,14 @@ void Vin::OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>
 	}
 }
 
-void Vin::OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
+void Vin::OpenGLVertexArray::SetIndexBuffer(const eastl::shared_ptr<IndexBuffer>& indexBuffer)
 {
 	glBindVertexArray(m_VertexArrayId);
 	indexBuffer->Bind();
 	m_IndexBuffer = indexBuffer;
 }
 
-const std::shared_ptr<Vin::IndexBuffer>& Vin::OpenGLVertexArray::GetIndexBuffer() const
+const eastl::shared_ptr<Vin::IndexBuffer>& Vin::OpenGLVertexArray::GetIndexBuffer() const
 {
 	return m_IndexBuffer;
 }

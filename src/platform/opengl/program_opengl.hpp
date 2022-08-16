@@ -39,6 +39,6 @@ namespace Vin {
 	private:
 		unsigned int m_ProgramId{ 0 };
 		bool m_IsComplete{ false };
-		std::vector<unsigned int> m_Shaders{};
+		eastl::fixed_vector<unsigned int, 5, false> m_Shaders{};
 	};
 }
