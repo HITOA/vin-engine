@@ -58,6 +58,51 @@ namespace Vin {
 
 			return eastl::static_shared_pointer_cast<T>(resource);
 		}
+
+		static void Unload(ResourceHandle handle) {
+			if (s_Resources.find(handle) == s_Resources.end()) {
+				Logger::Err("Couldn't unload resource with handle {} : Resource does not exists.", handle);
+				return;
+			}
+
+			eastl::shared_ptr<Resource> resource = s_Resources[handle];
+
+			resource->Unload();
+
+			s_ResourcesPathe.erase(resource->m_Path);
+			s_Resources.erase(handle);
+		}
+
+		static void Unload(eastl::shared_ptr<Resource> resource) {
+			Unload(resource->m_Handle);
+		}
+
+		static void UnloadUnused() {
+			static constexpr size_t handlebuffsize = 512;
+			static ResourceHandle handlebuff[handlebuffsize]{};
+			size_t idx = 0;
+			for (auto& it : s_Resources) {
+				if (it.second.use_count() <= 1) {
+					handlebuff[idx] = it.first;
+					idx++;
+				}
+				if (idx >= handlebuffsize)
+					break;
+			}
+
+			for (size_t i = 0; i < idx; i++) {
+				eastl::shared_ptr<Resource> resource = s_Resources[handlebuff[i]];
+
+				resource->Unload();
+
+				s_ResourcesPathe.erase(resource->m_Path);
+				s_Resources.erase(resource->m_Handle);;
+			}
+		}
+
+		static size_t GetResourceCount() {
+			return s_Resources.size();
+		}
 	private:
 		static eastl::hash_map<ResourceHandle, eastl::shared_ptr<Resource>> s_Resources;
 		static eastl::hash_map<const char*, ResourceHandle> s_ResourcesPathe;

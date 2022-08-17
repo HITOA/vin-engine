@@ -76,6 +76,7 @@ add_library(vin_engine STATIC
 	src/core/math/vector3.hpp
 	src/core/math/vector4.hpp
 
+	src/core/resources/rawfile.hpp
 	src/core/resources/resource.hpp
 	src/core/resources/resourcemanager.hpp
 	
