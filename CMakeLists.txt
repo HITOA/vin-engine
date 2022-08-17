@@ -107,9 +107,10 @@ add_library(vin_engine STATIC
 	src/renderer/rendering.hpp
 	src/renderer/program.hpp
 	src/renderer/program.cpp
-	src/renderer/vertexarray.cpp	
-	src/renderer/vertexarray.hpp	
+	src/renderer/vertexarray.cpp
+	src/renderer/vertexarray.hpp
 	
+	src/fast_obj.h
 	src/vin.hpp
 	src/vinpch.hpp
 )
