@@ -2,15 +2,15 @@
 
 #include <renderer/rendering.hpp>
 #include <core/math/math.hpp>
-#include <core/vinptr.hpp>
 #include <core/filesystem/gamefilesystem.hpp>
-#include <core/resources/resource.hpp>
+#include <core/resources/resourcemanager.hpp>
+#include <core/resources/rawfile.hpp>
 
 class TestModule : public Vin::Module {
-	std::shared_ptr<Vin::Program> program;
-	std::shared_ptr<Vin::VertexBuffer> vbo;
-	std::shared_ptr<Vin::IndexBuffer> ibo;
-	std::shared_ptr<Vin::VertexArray> vao;
+	eastl::shared_ptr<Vin::Program> program;
+	eastl::shared_ptr<Vin::VertexBuffer> vbo;
+	eastl::shared_ptr<Vin::IndexBuffer> ibo;
+	eastl::shared_ptr<Vin::VertexArray> vao;
 
 	double t = 0;
 
@@ -40,36 +40,23 @@ class TestModule : public Vin::Module {
 			"	FragColor = vec4(color, 1.0f);\n"
 			"}\n";*/
 
-		auto vsfile = Vin::GameFilesystem::Open("data/vs.glsl", Vin::FileMode::Read);
-		auto fsfile = Vin::GameFilesystem::Open("data/fs.glsl", Vin::FileMode::Read);
+		eastl::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
+		eastl::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
 
-		size_t vssize = vsfile->GetSize();
-		size_t fssize = fsfile->GetSize();
+		if (vsfile && fsfile) {
+			program = Vin::Program::Create();
 
-		char* vertexShaderSource = (char*)malloc(vssize + 1);
-		char* fragmentShaderSource = (char*)malloc(fssize + 1);
+			program->AddShader(Vin::ShaderType::VertexShader, vsfile->GetData());
+			program->AddShader(Vin::ShaderType::FragmentShader, fsfile->GetData());
 
-		vsfile->ReadBytes(vertexShaderSource, vssize);
-		fsfile->ReadBytes(fragmentShaderSource, fssize);
+			program->CompileProgram();
 
-		vertexShaderSource[vssize] = '\0';
-		fragmentShaderSource[fssize] = '\0';
+			if (!program->IsShaderComplete())
+				Vin::Logger::Log("Program could not compile?");
+		}
 
-		Vin::Logger::Log("Vertex shader, size {} : {}", vssize, vertexShaderSource);
-		Vin::Logger::Log("Fragment shader, size {} : {}", fssize, fragmentShaderSource);
-
-		program = Vin::Program::Create();
-
-		program->AddShader(Vin::ShaderType::VertexShader, vertexShaderSource);
-		program->AddShader(Vin::ShaderType::FragmentShader, fragmentShaderSource);
-
-		delete vertexShaderSource;
-		delete fragmentShaderSource;
-
-		program->CompileProgram();
-
-		if (!program->IsShaderComplete())
-			abort();
+		Vin::Resources::Unload(vsfile);
+		Vin::Resources::Unload(fsfile);
 
 		Vin::Vector3<float> vertices[] = {
 			{1.0f,  1.0f, 0.0f},  // top right
@@ -100,17 +87,6 @@ class TestModule : public Vin::Module {
 
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
-
-		Vin::Logger::Log("Type Id 1 : {}", Vin::ResourceTrait::GetId<int>());
-		Vin::Logger::Log("Type Id 1 : {}", Vin::ResourceTrait::GetId<short>());
-		Vin::Logger::Log("Type Id 1 : {}", Vin::ResourceTrait::GetId<Vin::Vector2<float>>());
-
-		Vin::Ref<Vin::Vector2<float>> ref = Vin::MakeRef<Vin::Vector2<float>>();
-
-		ref->x = 10;
-
-		Vin::Logger::Log("Test : {}", *ref.Get());
-
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
@@ -161,7 +137,7 @@ class TestModule : public Vin::Module {
 class TestApp : public Vin::Application {
 public:
 	TestApp(const Vin::ApplicationInfo& info) : Application{ info } {
-		AddModule(new TestModule{});
+		AddModule(eastl::make_unique<TestModule>());
 
 		Vin::Renderer::SetViewport(0, 0, 600, 400);
 

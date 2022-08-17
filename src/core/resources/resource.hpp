@@ -1,40 +1,45 @@
 #pragma once
 
-#include "core/vinptr.hpp"
+#include "vinpch.hpp"
+#include "core/filesystem/gamefilesystem.hpp"
 
 namespace Vin {
 	typedef unsigned int ResourceHandle;
-	typedef unsigned int ResourceTypeId;
+	typedef unsigned short ResourceTypeId;
 
-	struct ResourceTrait {
+	class ResourceTrait {
+	public:
+		static ResourceHandle GetNextHandle() {
+			return ++s_LastHandle;
+		}
 		template<typename T>
-		static constexpr ResourceTypeId GetId() {
-			static ResourceTypeId id = ++lastId;
-			return lastId;
+		static ResourceTypeId GetTypeId() {
+			static ResourceTypeId typeId = ++s_LastTypeId;
+			return typeId;
 		}
 	private:
-		static ResourceTypeId lastId;
+		static ResourceHandle s_LastHandle;
+		static ResourceTypeId s_LastTypeId;
 	};
 
-	ResourceTypeId ResourceTrait::lastId{ 0 };
+	ResourceHandle ResourceTrait::s_LastHandle{ 0 };
+	ResourceTypeId ResourceTrait::s_LastTypeId{ 0 };
 
 	class Resource {
 	public:
-		Resource() : m_RefCounter{ new RefCounter{} } {
-			m_RefCounter->Increment();
-		};
+		virtual ~Resource() {};
 
-		virtual ~Resource() {
-			m_RefCounter->Decrement();
-			if (m_RefCounter->Get() <= 0)
-				delete m_RefCounter;
-		}
-
-		virtual void Load() = 0;
+		virtual void Load(eastl::unique_ptr<GameFile> file) = 0;
 		virtual void Unload() = 0;
 
+		ResourceHandle GetHandle() {
+			return m_Handle;
+		}
 	private:
 		ResourceHandle m_Handle;
-		RefCounter* m_RefCounter;
+		ResourceTypeId m_TypeId;
+		const char* m_Path;
+
+		friend class Resources;
 	};
 }

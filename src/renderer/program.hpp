@@ -62,6 +62,6 @@ namespace Vin {
 		virtual void SetMat4(int location, float* values) = 0;
 		virtual void SetMat4(const char* name, float* values) { SetMat4(GetField(name), values); };
 
-		static std::shared_ptr<Program> Create();
+		static eastl::shared_ptr<Program> Create();
 	};
 }

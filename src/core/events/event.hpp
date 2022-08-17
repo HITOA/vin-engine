@@ -71,6 +71,6 @@ namespace Vin {
 	protected:
 		void Dispatch(const Event& e);
 	private:
-		std::vector<EventListener*> m_listeners{};
+		eastl::fixed_vector<EventListener*, 32, true> m_listeners{};
 	};
 }

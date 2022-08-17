@@ -43,13 +43,13 @@ void Vin::Renderer::Clear(float r, float g, float b, float a)
 	s_RenderingApi->Clear(r, g, b, a);
 }
 
-void Vin::Renderer::DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount)
+void Vin::Renderer::DrawArrays(const eastl::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount)
 {
 	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
 	s_RenderingApi->DrawArrays(vertexArray, verticiesCount);
 }
 
-void Vin::Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount)
+void Vin::Renderer::DrawIndexed(const eastl::shared_ptr<VertexArray>& vertexArray, size_t indexCount)
 {
 	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
 	indexCount = indexCount == 0 ? vertexArray->GetIndexBuffer()->GetCount() : indexCount;

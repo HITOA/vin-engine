@@ -18,6 +18,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
 
+add_subdirectory(${EXTERNAL_PATH}/EASTL)
 add_subdirectory(${EXTERNAL_PATH}/fmt)
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
@@ -39,8 +40,6 @@ add_library(vin_engine STATIC
 	src/core/task.hpp
 	src/core/timer.cpp
 	src/core/timer.hpp
-	src/core/vinptr.cpp
-	src/core/vinptr.hpp
 	src/core/window.hpp
 
 	src/core/events/applicationevent.hpp
@@ -77,8 +76,8 @@ add_library(vin_engine STATIC
 	src/core/math/vector3.hpp
 	src/core/math/vector4.hpp
 
+	src/core/resources/rawfile.hpp
 	src/core/resources/resource.hpp
-	src/core/resources/resourceloader.hpp
 	src/core/resources/resourcemanager.hpp
 	
 	src/platform/opengl/buffer_opengl.cpp
@@ -108,9 +107,10 @@ add_library(vin_engine STATIC
 	src/renderer/rendering.hpp
 	src/renderer/program.hpp
 	src/renderer/program.cpp
-	src/renderer/vertexarray.cpp	
-	src/renderer/vertexarray.hpp	
+	src/renderer/vertexarray.cpp
+	src/renderer/vertexarray.hpp
 	
+	src/fast_obj.h
 	src/vin.hpp
 	src/vinpch.hpp
 )
@@ -119,6 +119,7 @@ target_link_libraries(
 	vin_engine 
 	glad_library 
 	glfw 
+	EASTL
 	lua_static 
 	physfs-static 
 	GTest::gtest_main

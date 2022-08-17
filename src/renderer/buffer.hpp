@@ -66,15 +66,15 @@ namespace Vin {
 
 		size_t GetStride() const { return m_Stride; }
 
-		std::vector<BufferElement>::iterator begin() { return m_Layout.begin(); }
-		std::vector<BufferElement>::iterator end() { return m_Layout.end(); }
-		std::vector<BufferElement>::const_iterator begin() const { return m_Layout.begin(); }
-		std::vector<BufferElement>::const_iterator end() const { return m_Layout.end(); }
-		std::vector<BufferElement>::const_iterator cbegin() const { return m_Layout.cbegin(); }
-		std::vector<BufferElement>::const_iterator cend() const { return m_Layout.cend(); }
+		eastl::vector<BufferElement>::iterator begin() { return m_Layout.begin(); }
+		eastl::vector<BufferElement>::iterator end() { return m_Layout.end(); }
+		eastl::vector<BufferElement>::const_iterator begin() const { return m_Layout.begin(); }
+		eastl::vector<BufferElement>::const_iterator end() const { return m_Layout.end(); }
+		eastl::vector<BufferElement>::const_iterator cbegin() const { return m_Layout.cbegin(); }
+		eastl::vector<BufferElement>::const_iterator cend() const { return m_Layout.cend(); }
 
 	private:
-		std::vector<BufferElement> m_Layout;
+		eastl::vector<BufferElement> m_Layout;
 		size_t m_Stride = 0;
 	};
 	
@@ -95,7 +95,7 @@ namespace Vin {
 
 		virtual void SetData(void* data, size_t size, size_t offset) = 0;
 
-		static std::shared_ptr<VertexBuffer> Create(size_t size);
+		static eastl::shared_ptr<VertexBuffer> Create(size_t size);
 	};
 
 	class IndexBuffer : public Buffer{
@@ -107,6 +107,6 @@ namespace Vin {
 
 		virtual void SetData(void* data, size_t count) = 0;
 
-		static std::shared_ptr<IndexBuffer> Create(BufferIndexType type);
+		static eastl::shared_ptr<IndexBuffer> Create(BufferIndexType type);
 	};
 }

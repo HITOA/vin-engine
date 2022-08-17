@@ -77,9 +77,9 @@ void Vin::Application::SetUpdateRate(double rate)
 	m_UpdateRate = rate;
 }
 
-void Vin::Application::AddModule(Module* mod)
+void Vin::Application::AddModule(eastl::unique_ptr<Module> mod)
 {
-	m_ModuleList.AddModule(mod);
+	m_ModuleList.AddModule(eastl::move(mod));
 }
 
 double Vin::Application::GetMsPerProcess()
