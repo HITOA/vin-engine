@@ -5,12 +5,14 @@
 #include <core/filesystem/gamefilesystem.hpp>
 #include <core/resources/resourcemanager.hpp>
 #include <core/resources/rawfile.hpp>
+#include <core/resources/image.hpp>
 
 class TestModule : public Vin::Module {
 	eastl::shared_ptr<Vin::Program> program;
 	eastl::shared_ptr<Vin::VertexBuffer> vbo;
 	eastl::shared_ptr<Vin::IndexBuffer> ibo;
 	eastl::shared_ptr<Vin::VertexArray> vao;
+	eastl::shared_ptr<Vin::Texture> tex;
 
 	double t = 0;
 
@@ -58,22 +60,30 @@ class TestModule : public Vin::Module {
 		Vin::Resources::Unload(vsfile);
 		Vin::Resources::Unload(fsfile);
 
-		Vin::Vector3<float> vertices[] = {
+		/*Vin::Vector3<float> vertices[] = {
 			{1.0f,  1.0f, 0.0f},  // top right
 			{1.0f, -1.0f, 0.0f},  // bottom right
 			{-1.0f, -1.0f, 0.0f},  // bottom left
 			{-1.0f,  1.0f, 0.0f}   // top left 
+		};*/
+		float vertices[] = {
+			// positions          // colors           // texture coords
+			 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+			 1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+			-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+			-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 		};
+
 		unsigned short indices[] = {
 			0, 1, 3,
 			1, 2, 3 
 		};
 
-		vbo = Vin::VertexBuffer::Create(sizeof(float) * 12);
+		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
 
-		vbo->SetData(&vertices, sizeof(float) * 12, 0);
+		vbo->SetData(&vertices, sizeof(float) * 32, 0);
 
-		Vin::BufferLayout layout{ Vin::BufferElementType::Float3 };
+		Vin::BufferLayout layout{ Vin::BufferElementType::Float3, Vin::BufferElementType::Float3, Vin::BufferElementType::Float2 };
 
 		Vin::Logger::Log("Layout stride is : {}", layout.GetStride());
 
@@ -87,6 +97,15 @@ class TestModule : public Vin::Module {
 
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
+
+		eastl::shared_ptr<Vin::Image> img = Vin::Resources::Load<Vin::Image>("data/container.jpg");
+
+		tex = Vin::Texture::Create(img->GetWidth(), img->GetHeight(), Vin::TextureFormat::RGB24);
+		tex->SetData(img->GetData());
+
+		Vin::Resources::Unload(img);
+
+		tex->Bind(0);
 	}
 
 	void OnProcess(Vin::TimeStep ts) {
@@ -115,11 +134,10 @@ class TestModule : public Vin::Module {
 
 		Vin::Matrix4x4<float> mat4{ Vin::Matrix4x4<float>::identity };
 
-		Vin::Scale(mat4, Vin::Vector3<float>{1, 1, 1});
-		Vin::Rotate(mat4, Vin::Vector3<float>{0.662, 0.2, 0.722}, (float)t * 360.0f * (float)Vin::deg2rad);
-		Vin::Translate(mat4, Vin::Vector3<float>{0, 0, -3.0f});
+		Vin::Scale(mat4, Vin::Vector3<float>{1000, 1000, 1000});
+		Vin::Rotate(mat4, Vin::Vector3<float>{1.0f, 0, 0}, 90.0f * (float)Vin::deg2rad);
+		Vin::Translate(mat4, Vin::Vector3<float>{0, -6.0f, -6.0f});
 
-		//Vin::Matrix4x4<float> projection = Vin::Orthographic<float>(0, 600, 0, 400, 10, 10000);
 		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, 600.0f / 400.0f, 0.1, 1000);
 		mat4 = mat4 * projection;
 

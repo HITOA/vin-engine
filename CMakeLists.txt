@@ -28,6 +28,8 @@ add_subdirectory(${EXTERNAL_PATH}/physfs)
 
 glad_add_library(glad_library STATIC API gl:core=4.6)
 
+include_directories(${EXTERNAL_PATH}/stb)
+
 add_library(vin_engine STATIC 
 	src/core/allocator.hpp
 	src/core/application.cpp
@@ -76,6 +78,7 @@ add_library(vin_engine STATIC
 	src/core/math/vector3.hpp
 	src/core/math/vector4.hpp
 
+	src/core/resources/image.hpp
 	src/core/resources/rawfile.hpp
 	src/core/resources/resource.hpp
 	src/core/resources/resourcemanager.hpp
@@ -88,6 +91,8 @@ add_library(vin_engine STATIC
 	src/platform/opengl/program_opengl.hpp
 	src/platform/opengl/renderer_opengl.cpp
 	src/platform/opengl/renderer_opengl.hpp
+	src/platform/opengl/texture_opengl.cpp
+	src/platform/opengl/texture_opengl.hpp
 	src/platform/opengl/vertexarray_opengl.cpp
 	src/platform/opengl/vertexarray_opengl.hpp
 
@@ -107,10 +112,11 @@ add_library(vin_engine STATIC
 	src/renderer/rendering.hpp
 	src/renderer/program.hpp
 	src/renderer/program.cpp
+	src/renderer/texture.cpp
+	src/renderer/texture.hpp
 	src/renderer/vertexarray.cpp
 	src/renderer/vertexarray.hpp
 	
-	src/fast_obj.h
 	src/vin.hpp
 	src/vinpch.hpp
 )

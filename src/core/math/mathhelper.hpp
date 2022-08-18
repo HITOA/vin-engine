@@ -64,4 +64,9 @@ namespace Vin {
 	inline double Tan<double>(double v) { return tan(v); }
 	template<>
 	inline float Tan<float>(float v) { return tanf(v); }
+
+	template<typename T>
+	inline T Max(T v1, T v2) {
+		return v1 >= v2 ? v1 : v2;
+	}
 }

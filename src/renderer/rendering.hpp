@@ -4,3 +4,4 @@
 #include "renderer/program.hpp"
 #include "renderer/renderer.hpp"
 #include "renderer/vertexarray.hpp"
+#include "renderer/texture.hpp"
