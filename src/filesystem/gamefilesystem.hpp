@@ -2,13 +2,9 @@
 
 #include "vinpch.hpp"
 
+#include "filesystem.hpp"
+
 namespace Vin {
-	enum class FileMode {
-		None = 0,
-		Read,
-		Write,
-		WriteAppend
-	};
 
 	/**
 	 * GameFile class should manage Opening/Closing of file with RAII.

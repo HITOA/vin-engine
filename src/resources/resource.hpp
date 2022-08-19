@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vinpch.hpp"
-#include "core/filesystem/gamefilesystem.hpp"
+#include "filesystem/gamefilesystem.hpp"
 
 namespace Vin {
 	typedef unsigned int ResourceHandle;

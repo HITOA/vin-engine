@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/filesystem/gamefilesystem.hpp"
+#include "filesystem/gamefilesystem.hpp"
 
 #include <physfs.h>
 

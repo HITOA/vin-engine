@@ -20,8 +20,8 @@ namespace Vin {
 
 	public:
 		static void Init();
-		static void InitApi();
 		static void Terminate();
+		static void SetApi(Api api);
 		static Api GetApi();
 
 		static void SetViewport(int x, int y, int width, int height);

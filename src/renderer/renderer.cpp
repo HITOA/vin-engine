@@ -9,21 +9,25 @@ Vin::Renderer::RenderingApi* Vin::Renderer::s_RenderingApi = nullptr;
 
 void Vin::Renderer::Init()
 {
-	VIN_ASSERT(s_api == None, "Rendering api already initialized.");
+	VIN_ASSERT(s_api != None, "No rendering api set.");
 
-	s_api = Renderer::OpenGL;
-	s_RenderingApi = new OpenGLRenderingApi{};
-}
-
-void Vin::Renderer::InitApi()
-{
-	s_RenderingApi->Init();
+	switch (s_api) {
+	case Api::OpenGL:
+		s_RenderingApi = new OpenGLRenderingApi{};
+		s_RenderingApi->Init();
+	}
 }
 
 void Vin::Renderer::Terminate()
 {
 	delete s_RenderingApi;
 	s_api = Renderer::None;
+}
+
+void Vin::Renderer::SetApi(Api api)
+{
+	VIN_ASSERT(s_api == None, "Rendering api already initialized.");
+	s_api = api;
 }
 
 Vin::Renderer::Api Vin::Renderer::GetApi()

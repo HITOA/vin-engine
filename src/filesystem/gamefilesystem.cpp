@@ -2,7 +2,7 @@
 
 #include <assert.hpp>
 
-#include "platform/physfs/gamefilesystem_physfs.hpp"
+#include "physfs/gamefilesystem_physfs.hpp"
 
 Vin::GameFilesystem::GameFilesystemApi* Vin::GameFilesystem::s_GameFilesystemApi = nullptr;
 

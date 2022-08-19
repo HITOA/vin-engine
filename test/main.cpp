@@ -1,9 +1,5 @@
 #include <vin.hpp>
 
-#include <renderer/rendering.hpp>
-#include <math/math.hpp>
-#include <core/filesystem/gamefilesystem.hpp>
-#include <resources/resources.hpp>
 #include <resources/rawfile.hpp>
 #include <resources/image.hpp>
 
@@ -26,46 +22,24 @@ class TestModule : public Vin::Module {
 
 		Vin::GameFilesystem::Mount("./bin");
 
-		/*const char* vertexShaderSource = "#version 330 core\n"
-			"layout (location = 0) in vec3 aPos;\n"
-			"uniform mat4 randommat;\n"
-			"void main()\n"
-			"{\n"
-			"   gl_Position = (randommat * vec4(aPos.x, aPos.y, aPos.z, 1.0));\n"
-			"}\0";
+		{
+			eastl::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
+			eastl::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
 
-		const char* fragmentShaderSource = "#version 330 core\n"
-			"out vec4 FragColor;\n"
-			"uniform vec3 color;\n"
-			"void main()\n"
-			"{\n"
-			"	FragColor = vec4(color, 1.0f);\n"
-			"}\n";*/
+			if (vsfile && fsfile) {
+				program = Vin::Program::Create();
 
-		eastl::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
-		eastl::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
+				program->AddShader(Vin::ShaderType::VertexShader, vsfile->GetData());
+				program->AddShader(Vin::ShaderType::FragmentShader, fsfile->GetData());
 
-		if (vsfile && fsfile) {
-			program = Vin::Program::Create();
+				program->CompileProgram();
 
-			program->AddShader(Vin::ShaderType::VertexShader, vsfile->GetData());
-			program->AddShader(Vin::ShaderType::FragmentShader, fsfile->GetData());
-
-			program->CompileProgram();
-
-			if (!program->IsShaderComplete())
-				Vin::Logger::Log("Program could not compile?");
+				if (!program->IsShaderComplete())
+					Vin::Logger::Log("Program could not compile?");
+			}
 		}
 
-		Vin::Resources::Unload(vsfile);
-		Vin::Resources::Unload(fsfile);
 
-		/*Vin::Vector3<float> vertices[] = {
-			{1.0f,  1.0f, 0.0f},  // top right
-			{1.0f, -1.0f, 0.0f},  // bottom right
-			{-1.0f, -1.0f, 0.0f},  // bottom left
-			{-1.0f,  1.0f, 0.0f}   // top left 
-		};*/
 		float vertices[] = {
 			// positions          // colors           // texture coords
 			 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
@@ -98,14 +72,16 @@ class TestModule : public Vin::Module {
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
 
-		eastl::shared_ptr<Vin::Image> img = Vin::Resources::Load<Vin::Image>("data/container.jpg");
+		{
+			eastl::shared_ptr<Vin::Image> img = Vin::Resources::Load<Vin::Image>("data/container.jpg");
 
-		tex = Vin::Texture::Create(img->GetWidth(), img->GetHeight(), Vin::TextureFormat::RGB24);
-		tex->SetData(img->GetData());
+			tex = Vin::Texture::Create(img->GetWidth(), img->GetHeight(), Vin::TextureFormat::RGB24);
+			tex->SetData(img->GetData());
 
-		Vin::Resources::Unload(img);
+			tex->Bind(0);
+		}
 
-		tex->Bind(0);
+		Vin::Resources::UnloadUnused();
 	}
 
 	void OnProcess(Vin::TimeStep ts) {

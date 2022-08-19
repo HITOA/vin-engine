@@ -2,7 +2,7 @@
 
 #include "vinpch.hpp"
 #include "resource.hpp"
-#include "core/filesystem/gamefilesystem.hpp"
+#include "filesystem/gamefilesystem.hpp"
 #include "core/allocator.hpp"
 #include <assert.hpp>
 #include "logger/logger.hpp"
