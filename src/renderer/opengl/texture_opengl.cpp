@@ -1,7 +1,7 @@
 #include "texture_opengl.hpp"
 
 #include "glad/gl.h"
-#include "core/math/mathhelper.hpp"
+#include "math/math.hpp"
 
 Vin::OpenGLTexture::OpenGLTexture(size_t width, size_t height, TextureFormat format, bool mipmap) : 
 	m_Width{ width }, m_Height{ height }, m_Format{ format }, m_Mipmap{ mipmap },

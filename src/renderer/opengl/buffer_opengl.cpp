@@ -1,6 +1,6 @@
 #include "buffer_opengl.hpp"
 
-#include "core/logger/logger.hpp"
+#include "logger/logger.hpp"
 
 #include "glad/gl.h"
 

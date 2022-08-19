@@ -2,7 +2,7 @@
 
 #include <fmt/format.h>
 
-#include "core/math/matrix.hpp"
+#include "math/matrix.hpp"
 
 template<size_t M, size_t N>
 struct fmt::formatter<Vin::Matrix<float, M, N>> {

@@ -2,7 +2,7 @@
 
 #include <fmt/format.h>
 
-#include "core/math/vector.hpp"
+#include "math/vector.hpp"
 
 template<>
 struct fmt::formatter<Vin::Vector2<float>> {

@@ -1,8 +1,8 @@
 #include "renderer_opengl.hpp"
 
-#include "core/core.hpp"
-#include "core/assert.hpp"
-#include "core/logger/logger.hpp"
+#include <vinbase.hpp>
+#include <assert.hpp>
+#include "logger/logger.hpp"
 
 #include <glad/gl.h>
 

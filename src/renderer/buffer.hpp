@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vinpch.hpp"
-#include "core/assert.hpp"
+#include <assert.hpp>
 
 namespace Vin {
 

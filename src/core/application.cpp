@@ -1,7 +1,7 @@
 #include "application.hpp"
 
-#include "core/events/inputevent.hpp"
-#include "core/logger/logger.hpp"
+#include "events/inputevent.hpp"
+#include "logger/logger.hpp"
 #include "renderer/renderer.hpp"
 #include "core/filesystem/gamefilesystem.hpp"
 

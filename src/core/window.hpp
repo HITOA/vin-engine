@@ -2,7 +2,7 @@
 
 #include "vinpch.hpp"
 
-#include "core/events/event.hpp"
+#include "events/event.hpp"
 
 namespace Vin {
 	struct WindowInfo {

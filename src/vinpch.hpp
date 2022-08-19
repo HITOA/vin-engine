@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vinbase.hpp>
+
 #include <iostream>
 #include <ctime>
 

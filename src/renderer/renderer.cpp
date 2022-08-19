@@ -1,8 +1,8 @@
 #include "renderer.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 
-#include "platform/opengl/renderer_opengl.hpp"
+#include "opengl/renderer_opengl.hpp"
 
 Vin::Renderer::Api Vin::Renderer::s_api = Vin::Renderer::None;
 Vin::Renderer::RenderingApi* Vin::Renderer::s_RenderingApi = nullptr;

@@ -13,6 +13,12 @@ Clone the repository : ```git clone --recursive https://github.com/HITOA/vin-eng
 Install jinj2 package : ```pip install jinj2```   
 Generate with cmake : ```cmake -B"./build" .```   
 
+## TODO  
+-Custom Allocator  
+-Custom STL  
+-Refacto, some things are not modular enough (Most importante things is removing dependency between Rendering API and Windowing API)  
+    Ideally, things are separated into module. (Math module, Rendering module, Windowing module, etc..)
+
 ## Source
 A lot of useful source for developing a game engine :
 

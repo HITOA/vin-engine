@@ -1,5 +1,5 @@
 #include "vinpch.hpp"
-#include "core/core.hpp"
+#include <vinbase.hpp>
 
 #ifdef VIN_PLATFORM_WINDOWS
 

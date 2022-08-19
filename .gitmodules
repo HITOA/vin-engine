@@ -20,3 +20,6 @@
 [submodule "3rdparty/EASTL"]
 	path = 3rdparty/EASTL
 	url = https://github.com/electronicarts/EASTL.git
+[submodule "3rdparty/vin-base"]
+	path = 3rdparty/vin-base
+	url = https://github.com/HITOA/vin-base.git

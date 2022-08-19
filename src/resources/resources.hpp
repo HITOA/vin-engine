@@ -4,8 +4,8 @@
 #include "resource.hpp"
 #include "core/filesystem/gamefilesystem.hpp"
 #include "core/allocator.hpp"
-#include "core/assert.hpp"
-#include "core/logger/logger.hpp"
+#include <assert.hpp>
+#include "logger/logger.hpp"
 
 namespace Vin {
 	class Resources {

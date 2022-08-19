@@ -4,7 +4,7 @@
 
 #include "core/window.hpp"
 #include "core/timer.hpp"
-#include "core/events/event.hpp"
+#include "events/event.hpp"
 #include "core/module.hpp"
 
 int main(int argc, char* argv[]);

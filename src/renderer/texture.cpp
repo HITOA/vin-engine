@@ -1,8 +1,8 @@
 #include "texture.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 #include "renderer/renderer.hpp"
-#include "platform/opengl/texture_opengl.hpp"
+#include "opengl/texture_opengl.hpp"
 
 eastl::shared_ptr<Vin::Texture> Vin::Texture::Create(size_t width, size_t height, TextureFormat format, bool mipmap)
 {

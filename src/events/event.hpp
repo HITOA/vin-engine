@@ -2,9 +2,8 @@
 
 #include "vinpch.hpp"
 
-#include "core/core.hpp"
-
 #define EVENT(type, category) type, category, #type
+#define BIT(x) (1 << x)
 
 namespace Vin {
 

@@ -1,6 +1,6 @@
 #include "gamefilesystem.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 
 #include "platform/physfs/gamefilesystem_physfs.hpp"
 
@@ -28,7 +28,7 @@ void Vin::GameFilesystem::Mount(const char* path)
 bool Vin::GameFilesystem::Exists(const char* filepath)
 {
 	VIN_ASSERT(s_GameFilesystemApi != nullptr, "Game file system not initialized.");
-	s_GameFilesystemApi->Exists(filepath);
+	return s_GameFilesystemApi->Exists(filepath);
 }
 
 eastl::unique_ptr<Vin::GameFile> Vin::GameFilesystem::Open(const char* filepath, FileMode mod)

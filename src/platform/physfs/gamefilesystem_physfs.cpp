@@ -1,6 +1,6 @@
 #include "gamefilesystem_physfs.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 
 #include <physfs.h>
 

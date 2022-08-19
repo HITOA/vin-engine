@@ -1,11 +1,11 @@
 #include <vin.hpp>
 
 #include <renderer/rendering.hpp>
-#include <core/math/math.hpp>
+#include <math/math.hpp>
 #include <core/filesystem/gamefilesystem.hpp>
-#include <core/resources/resourcemanager.hpp>
-#include <core/resources/rawfile.hpp>
-#include <core/resources/image.hpp>
+#include <resources/resources.hpp>
+#include <resources/rawfile.hpp>
+#include <resources/image.hpp>
 
 class TestModule : public Vin::Module {
 	eastl::shared_ptr<Vin::Program> program;

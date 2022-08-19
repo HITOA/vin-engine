@@ -1,10 +1,10 @@
 #include "graphicscontext.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 
 #include "renderer/renderer.hpp"
 
-#include "platform/opengl/graphicscontext_opengl.hpp"
+#include "opengl/graphicscontext_opengl.hpp"
 
 std::unique_ptr<Vin::GraphicsContext> Vin::GraphicsContext::Create(void* window)
 {
