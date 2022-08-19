@@ -18,6 +18,8 @@ Generate with cmake : ```cmake -B"./build" .```
 -Custom STL  
 -Refacto, some things are not modular enough (Most importante things is removing dependency between Rendering API and Windowing API)  
     Ideally, things are separated into module. (Math module, Rendering module, Windowing module, etc..)
+-Render graph & Render queue obviously  
+-ECS  
 
 ## Source
 A lot of useful source for developing a game engine :
