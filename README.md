@@ -22,7 +22,7 @@ Generate with cmake : ```cmake -B"./build" .```
 -ECS (Based of bevy ecs system)
 
 ## Source
-A lot of useful source for developing a game engine :
+A lot of useful source for developing a game engine stuff :
 
 Game Programming Patterns (Robert Nystrom) : https://gameprogrammingpatterns.com/contents.html  
 Learn Vulkan : https://vulkan-tutorial.com/  
@@ -34,3 +34,6 @@ MonoGame Repos : https://github.com/MonoGame/MonoGame/tree/develop/MonoGame.Fram
 GLM Repos : https://github.com/g-truc/glm    
 Cell (JoeyDeVries) : https://github.com/JoeyDeVries/Cell  
 Bevy : https://github.com/bevyengine/bevy   
+An Entity component system with data locality : https://indiegamedev.net/2020/05/19/an-entity-component-system-with-data-locality-in-cpp/  
+Building an ECS : https://ajmmertens.medium.com/building-an-ecs-1-where-are-my-entities-and-components-63d07c7da742  
+ES wiki : http://entity-systems.wikidot.com/  
