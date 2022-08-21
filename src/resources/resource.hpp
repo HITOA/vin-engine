@@ -13,8 +13,8 @@ namespace Vin {
 			return ++s_LastHandle;
 		}
 		template<typename T>
-		static ResourceTypeId GetTypeId() {
-			static ResourceTypeId typeId = ++s_LastTypeId;
+		static const ResourceTypeId GetTypeId() {
+			static const ResourceTypeId typeId = ++s_LastTypeId;
 			return typeId;
 		}
 	private:

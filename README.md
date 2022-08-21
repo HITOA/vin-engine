@@ -19,7 +19,7 @@ Generate with cmake : ```cmake -B"./build" .```
 -Refacto, some things are not modular enough (Most importante things is removing dependency between Rendering API and Windowing API)  
     Ideally, things are separated into module. (Math module, Rendering module, Windowing module, etc..)
 -Render graph & Render queue obviously  
--ECS  
+-ECS (Based of bevy ecs system)
 
 ## Source
 A lot of useful source for developing a game engine :
@@ -33,3 +33,4 @@ Chili Tomato Noodle : https://www.youtube.com/c/ChiliTomatoNoodle
 MonoGame Repos : https://github.com/MonoGame/MonoGame/tree/develop/MonoGame.Framework    
 GLM Repos : https://github.com/g-truc/glm    
 Cell (JoeyDeVries) : https://github.com/JoeyDeVries/Cell  
+Bevy : https://github.com/bevyengine/bevy   
