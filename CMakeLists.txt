@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DVIN_DEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DVIN_DEBUG")
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
@@ -25,11 +25,11 @@ add_subdirectory(${EXTERNAL_PATH}/glfw)
 add_subdirectory(${EXTERNAL_PATH}/googletest)
 add_subdirectory(${EXTERNAL_PATH}/Lua)
 add_subdirectory(${EXTERNAL_PATH}/physfs)
+add_subdirectory(${EXTERNAL_PATH}/vin-base)
 
 glad_add_library(glad_library STATIC API gl:core=4.6)
 
 include_directories(${EXTERNAL_PATH}/stb)
-include_directories(${EXTERNAL_PATH}/vin-base/src)
 
 file(GLOB_RECURSE vin_engine_src "src/*.cpp" "src/*.hpp")
 
@@ -37,6 +37,7 @@ add_library(vin_engine STATIC ${vin_engine_src})
 
 target_link_libraries(
 	vin_engine 
+	vin_base
 	glad_library 
 	glfw 
 	EASTL

@@ -14,4 +14,6 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/hash_map.h>
 
+#include <EASTL/vector_set.h>
+
 #include <EASTL/string.h>

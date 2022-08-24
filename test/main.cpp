@@ -2,6 +2,19 @@
 
 #include <resources/rawfile.hpp>
 #include <resources/image.hpp>
+#include <ecs/archetype.hpp>
+
+struct Position {
+	float x;
+	float y;
+	float z;
+};
+
+struct Velocity {
+	float dx;
+	float dy;
+	float dz;
+};
 
 class TestModule : public Vin::Module {
 	eastl::shared_ptr<Vin::Program> program;
@@ -82,6 +95,47 @@ class TestModule : public Vin::Module {
 		}
 
 		Vin::Resources::UnloadUnused();
+
+		Vin::ArchetypeComponentLayout clayout{};
+
+		clayout.AddComponentTrait<Position>();
+		clayout.AddComponentTrait<Velocity>();
+
+		Vin::Logger::Log("Layout size : {}", clayout.GetSize());
+
+		Vin::ArchetypeComponentContainer<Vin::ArchetypeMemoryLayout::Contiguous> container{ clayout };
+
+		if (container.Begin<Position>(0) == container.End<Position>(0))
+			Vin::Logger::Log("End");
+
+		for (size_t i = 0; i < 18; i++) {
+			Position pos{};
+			pos.x = i;
+			pos.y = i * 3;
+			pos.z = i + 2;
+			Velocity vel{};
+			vel.dx = i * i;
+			vel.dy = i + i;
+			vel.dz = i / 2;
+			container.AddComponents(pos, vel);
+		}
+
+		container.DeleteComponents(0);
+		container.DeleteComponents(6);
+		container.DeleteComponents(3);
+		container.DeleteComponents(9);
+		container.DeleteComponents(5);
+
+		auto it1 = container.Begin<Position>(0);
+		auto it2 = container.Begin<Velocity>(1);
+		auto itend = container.End<Position>(0);
+
+		for (; it1 != itend; ++it1, ++it2) {
+			Vin::Logger::Log("Position : {}, {}, {}", it1->x, it1->y, it1->z);
+			Vin::Logger::Log("Velocity : {}, {}, {}", it2->dx, it2->dy, it2->dz);
+		}
+
+		Vin::Logger::Log("Container size : {}, capacity : {}", container.GetSize(), container.GetCapacity());
 	}
 
 	void OnProcess(Vin::TimeStep ts) {

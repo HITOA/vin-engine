@@ -15,7 +15,7 @@ namespace Vin {
 			T v1, T v2, T v3, T v4, 
 			T v5, T v6, T v7, T v8) :
 			Matrix{ v1, v2, v3, v4, v5, v6, v7, v8 } {}
-		Matrix2x4(const Matrix<T, rows, cols>& rhs) : Matrix{} {
+		Matrix2x4(const Matrix<T, 2, 4>& rhs) : Matrix{} {
 			memcpy(data, rhs.data, rows * cols * sizeof(T));
 		}
 
