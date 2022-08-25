@@ -31,7 +31,7 @@ namespace Vin {
 		static ComponentId lastId;
 	};
 
-	ComponentId ComponentTrait::lastId{ 1 };
+	ComponentId ComponentTrait::lastId{ 0 };
 
 	
 }

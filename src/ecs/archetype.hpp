@@ -15,6 +15,22 @@
 #endif
 
 namespace Vin {
+	typedef usize ArchetypeIdx;
+	typedef usize ArchetypeId;
+
+	struct ArchetypeTrait {
+	public:
+		template<typename... Args>
+		static const ArchetypeId GetId() {
+			static const ComponentId id = ++lastId;
+			return id;
+		}
+	private:
+		static ArchetypeId lastId;
+	};
+
+	ArchetypeId ArchetypeTrait::lastId{ 0 };
+
 	enum class ArchetypeMemoryLayout {
 		Contiguous,
 		Interleaved
@@ -99,6 +115,18 @@ namespace Vin {
 			for (usize i = 0; i < m_Layout.GetSize(); ++i)
 				Free<byte>(m_Data[i]);
 			Free<byte*>(m_Data);
+		}
+
+		template<typename... Args>
+		bool MatchLayout() {
+			if (sizeof...(Args) != m_Layout.GetSize())
+				return false;
+			const ComponentId ids[sizeof...(Args)]{ ComponentTrait::GetId<Args>()... };
+
+			for (usize i = 0; i < sizeof...(Args); ++i)
+				if (ids[i] != m_Layout.GetComponentTrait(i).id)
+					return false;
+			return true;
 		}
 
 		template<typename... Args>
