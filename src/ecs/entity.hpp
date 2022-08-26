@@ -8,11 +8,6 @@ namespace Vin {
 	
 	typedef usize EntityId;
 
-	struct Entity {
-		ArchetypeId id;
-		usize pos;
-	};
-
 	class EntityManager {
 	public:
 		inline EntityId GetNextId() {

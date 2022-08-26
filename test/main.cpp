@@ -16,6 +16,10 @@ struct Velocity {
 	float dz;
 };
 
+struct Acceleration {
+	double acc;
+};
+
 class TestModule : public Vin::Module {
 	eastl::shared_ptr<Vin::Program> program;
 	eastl::shared_ptr<Vin::VertexBuffer> vbo;
@@ -98,6 +102,7 @@ class TestModule : public Vin::Module {
 
 		Position pos{};
 		Velocity vel{};
+		Acceleration acc{};
 
 		pos.x = 1;
 		pos.y = 2;
@@ -105,12 +110,31 @@ class TestModule : public Vin::Module {
 		vel.dx = 4;
 		vel.dy = 5;
 		vel.dz = 6;
+		acc.acc = 7;
 
 		Vin::Registry<Vin::ArchetypeMemoryLayout::Contiguous> registry{};
 
-		Vin::Logger::Log("EntityId : {}", registry.CreateEntity(pos, vel));
-		Vin::Logger::Log("EntityId : {}", registry.CreateEntity(pos, vel));
-		Vin::Logger::Log("EntityId : {}", registry.CreateEntity(pos, vel));
+		Vin::EntityId entity1 = registry.CreateEntity(pos, vel);
+		Vin::EntityId entity2 = registry.CreateEntity(vel, acc);
+		acc.acc = 2;
+		Vin::EntityId entity3 = registry.CreateEntity(vel, acc);
+		acc.acc = 4;
+		Vin::EntityId entity4 = registry.CreateEntity(vel, acc);
+		Vin::EntityId entity5 = registry.CreateEntity(vel, acc, pos);
+
+		Position* pos1 = registry.GetComponent<Position>(entity1);
+		Acceleration* acc1 = registry.GetComponent<Acceleration>(entity3);
+
+		Vin::Logger::Log("{}, {}, {}", pos1->x, pos1->y, pos1->z);
+		Vin::Logger::Log("{}", acc1->acc);
+
+		registry.DeleteEntity(entity2);
+
+		Acceleration* acc2 = registry.GetComponent<Acceleration>(entity3);
+
+		Vin::Logger::Log("{}", acc2->acc);
+
+		//Vin::Logger::Log("EntityId : {}", registry.CreateEntity(vel, pos));
 		
 	}
 

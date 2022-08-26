@@ -2,6 +2,8 @@
 
 #include <vinbase.hpp>
 
+#define VINECS_MAX_COMPONENT_COUNT 512
+
 namespace Vin {
 	typedef usize ComponentId;
 

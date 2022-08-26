@@ -17,3 +17,5 @@
 #include <EASTL/vector_set.h>
 
 #include <EASTL/string.h>
+
+#include <EASTL/bitset.h>
