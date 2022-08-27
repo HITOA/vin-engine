@@ -20,26 +20,17 @@ struct Acceleration {
 	double acc;
 };
 
-template<Vin::ArchetypeMemoryLayout memlayout>
-void System(
-	Vin::usize count,
-	Vin::EntityIterator entities,
-	Vin::Iterator<Position, memlayout> pos,
-	Vin::Iterator<Velocity, memlayout> vel) {
-	
-	while (count-- != 0) {
+template<Vin::ArchetypeMemoryLayout layout>
+void System2(Vin::Query<layout, Position, Velocity> query) {
+	for (auto& [pos, vel] : query) {
 
-		Vin::Logger::Log("Entity : {}, is at position : {}, {}, {}", *entities.Get(), pos->x, pos->y, pos->z);
+		Vin::Logger::Log("position : {}, {}, {}", pos->x, pos->y, pos->z);
 
 		pos->x += vel->dx;
 		pos->y += vel->dy;
 		pos->z += vel->dz;
-
-		++entities;
-		++pos;
-		++vel;
 	}
-};
+}
 
 class TestModule : public Vin::Module {
 	eastl::shared_ptr<Vin::Program> program;
@@ -160,9 +151,9 @@ class TestModule : public Vin::Module {
 
 		Vin::Logger::Log("{}", acc2->acc);
 
-		registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
-		registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
-		registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
+		//registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
+		//registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
+		//registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
 
 		//Vin::Logger::Log("EntityId : {}", registry.CreateEntity(vel, pos));
 		
@@ -190,7 +181,7 @@ class TestModule : public Vin::Module {
 			updateC = 0;
 		}
 
-		registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
+		registry.Process(System2<Vin::ArchetypeMemoryLayout::Contiguous>);
 
 		Position pos{};
 		Velocity vel{};

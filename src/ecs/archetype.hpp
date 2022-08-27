@@ -89,29 +89,14 @@ namespace Vin {
 			inline T* Get() {
 				return ptr;
 			}
-
 			inline T* operator->() {
 				return ptr;
 			}
-
 			inline T* operator++() {
-				++ptr;
-				return ptr;
-			}
-			inline T* operator++(int) {
-				++ptr;
-				return ptr;
+				return ++ptr;
 			}
 			inline T* operator--() {
-				--ptr;
-				return ptr;
-			}
-			inline T* operator--(int) {
-				--ptr;
-				return ptr;
-			}
-			inline T* operator+(usize idx) {
-				return ptr + idx;
+				return --ptr;
 			}
 
 			inline friend bool operator==(const Iterator& it1, const Iterator& it2) {
@@ -219,14 +204,8 @@ namespace Vin {
 		}
 
 		template<typename T>
-		inline Iterator<T> Begin(usize componentIdx) {
-			if (ComponentTrait::GetId<T>() != m_Layout.GetComponentTrait(componentIdx).id)
-				return End<T>(componentIdx);
-			return Iterator<T>{ (T*)m_Data[componentIdx] };
-		}
-		template<typename T>
-		inline Iterator<T> End(usize componentIdx) {
-			return Iterator<T>{ (T*)(&m_Data[componentIdx][sizeof(T) * m_Count]) };
+		inline Iterator<T> GetComponentIterator(usize idx = 0) {
+			return Iterator<T>{ (T*)&m_Data[GetComponentIdx<T>()][idx] };
 		}
 	private:
 		void ExpandCapacity() {

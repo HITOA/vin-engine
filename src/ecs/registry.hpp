@@ -3,6 +3,7 @@
 #include <bitset.hpp>
 #include "vinpch.hpp"
 
+#include "query.hpp"
 #include "entity.hpp"
 #include "archetype.hpp"
 
@@ -48,7 +49,7 @@ namespace Vin {
 					--it.second;
 		}
 
-		template<typename RetType, typename... Args>
+		/*template<typename RetType, typename... Args>
 		void Process(RetType(system)(usize, ArchetypeComponentContainer<memlayout>::Iterator<Args>...)) {
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
@@ -66,6 +67,18 @@ namespace Vin {
 					system(it->archetype.GetSize(), EntityIterator{ (EntityId*)it->entityIds.data() }, it->archetype.Begin<Args>(it->archetype.GetComponentIdx<Args>())...);
 				}
 			}
+		}*/
+
+		template<typename RetType, typename... Args>
+		void Process(RetType(system)(Query<memlayout, Args...>)) {
+			auto itend = m_Archetypes.end();
+			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
+				if (it->archetype.MatchLayout<Args...>(true)) {
+					system(Query<memlayout, Args...>{ 
+						it->archetype.GetComponentIterator<Args>()..., 
+						it->archetype.GetSize() });
+				}
+			}
 		}
 
 		template<typename T>
@@ -76,8 +89,7 @@ namespace Vin {
 			usize componentIdx = m_Archetypes[archetypeIdx].archetype.GetComponentIdx<T>();
 			if (componentIdx == -1)
 				return nullptr;
-			auto it = m_Archetypes[archetypeIdx].archetype.Begin<T>(componentIdx);
-			return it + m_Archetypes[archetypeIdx].entityidx[entityId];
+			return m_Archetypes[archetypeIdx].archetype.GetComponentIterator<T>(m_Archetypes[archetypeIdx].entityidx[entityId]).Get();
 		}
 	private:
 		
