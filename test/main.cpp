@@ -20,12 +20,35 @@ struct Acceleration {
 	double acc;
 };
 
+template<Vin::ArchetypeMemoryLayout memlayout>
+void System(
+	Vin::usize count,
+	Vin::EntityIterator entities,
+	Vin::Iterator<Position, memlayout> pos,
+	Vin::Iterator<Velocity, memlayout> vel) {
+	
+	while (count-- != 0) {
+
+		Vin::Logger::Log("Entity : {}, is at position : {}, {}, {}", *entities.Get(), pos->x, pos->y, pos->z);
+
+		pos->x += vel->dx;
+		pos->y += vel->dy;
+		pos->z += vel->dz;
+
+		++entities;
+		++pos;
+		++vel;
+	}
+};
+
 class TestModule : public Vin::Module {
 	eastl::shared_ptr<Vin::Program> program;
 	eastl::shared_ptr<Vin::VertexBuffer> vbo;
 	eastl::shared_ptr<Vin::IndexBuffer> ibo;
 	eastl::shared_ptr<Vin::VertexArray> vao;
 	eastl::shared_ptr<Vin::Texture> tex;
+
+	Vin::Registry<Vin::ArchetypeMemoryLayout::Contiguous> registry{};
 
 	double t = 0;
 
@@ -112,9 +135,12 @@ class TestModule : public Vin::Module {
 		vel.dz = 6;
 		acc.acc = 7;
 
-		Vin::Registry<Vin::ArchetypeMemoryLayout::Contiguous> registry{};
-
 		Vin::EntityId entity1 = registry.CreateEntity(pos, vel);
+		registry.CreateEntity(pos, vel);
+		registry.CreateEntity(pos, vel);
+		registry.CreateEntity(pos, vel);
+		registry.CreateEntity(pos, vel);
+		registry.CreateEntity(pos, vel);
 		Vin::EntityId entity2 = registry.CreateEntity(vel, acc);
 		acc.acc = 2;
 		Vin::EntityId entity3 = registry.CreateEntity(vel, acc);
@@ -134,6 +160,10 @@ class TestModule : public Vin::Module {
 
 		Vin::Logger::Log("{}", acc2->acc);
 
+		registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
+		registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
+		registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
+
 		//Vin::Logger::Log("EntityId : {}", registry.CreateEntity(vel, pos));
 		
 	}
@@ -147,6 +177,7 @@ class TestModule : public Vin::Module {
 			processT = 0;
 			processC = 0;
 		}
+
 	}
 
 	void OnUpdate(Vin::TimeStep ts) {
@@ -158,6 +189,14 @@ class TestModule : public Vin::Module {
 			updateT = 0;
 			updateC = 0;
 		}
+
+		registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
+
+		Position pos{};
+		Velocity vel{};
+		pos.x = (float)ts.GetMillisecond();
+
+		Vin::EntityId id = registry.CreateEntity(pos, vel);
 
 		t += 0.1 * ts.GetSecond();
 		t = t > 1 ? 0 : t;

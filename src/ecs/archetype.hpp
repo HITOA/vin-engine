@@ -4,7 +4,10 @@
 #include <allocator.hpp>
 #include <cstring>
 
+#include "vinpch.hpp"
+
 #include "component.hpp"
+#include "entity.hpp"
 
 #ifndef VINECS_MAX_COMPONENT_BY_ENTITY
 #define VINECS_MAX_COMPONENT_BY_ENTITY 64
@@ -69,7 +72,11 @@ namespace Vin {
 	};
 
 	template<ArchetypeMemoryLayout memlayout>
-	class ArchetypeComponentContainer {};
+	class ArchetypeComponentContainer {
+	public:
+		template<typename T>
+		struct Iterator {};
+	};
 
 	template<>
 	class ArchetypeComponentContainer<ArchetypeMemoryLayout::Contiguous> {
@@ -79,6 +86,10 @@ namespace Vin {
 		public:
 			Iterator(T* ptr) : ptr{ ptr } {};
 		public:
+			inline T* Get() {
+				return ptr;
+			}
+
 			inline T* operator->() {
 				return ptr;
 			}
@@ -147,7 +158,7 @@ namespace Vin {
 				return false;
 			const ComponentId ids[sizeof...(Args)]{ ComponentTrait::GetId<Args>()... };
 
-			for (usize i = 0; i < sizeof...(args); ++i)
+			for (usize i = 0; i < sizeof...(Args); ++i)
 				if (m_Layout.GetComponentIdx(ids[i]) == -1)
 					return false;
 
@@ -219,12 +230,16 @@ namespace Vin {
 		}
 	private:
 		void ExpandCapacity() {
+			usize oldcapacity = m_Capacity;
 			m_Capacity *= 2;
 
 			m_Data[0] = Realloc<byte>(m_Data[0], m_Layout.GetStride() * m_Capacity);
 
 			usize currentStride{ 0 };
 			for (usize i = 0; i < m_Layout.GetSize(); ++i) {
+				memcpy(m_Data[0] + (currentStride * m_Capacity),
+					m_Data[0] + (currentStride * oldcapacity), m_Layout.GetComponentTrait(i).size * m_Count);
+
 				m_Data[i] = m_Data[0] + (currentStride * m_Capacity);
 				currentStride += m_Layout.GetComponentTrait(i).size;
 			}
@@ -250,6 +265,21 @@ namespace Vin {
 		usize stride;
 		byte* data;
 	};
+
+	template<ArchetypeMemoryLayout memlayout>
+	struct Archetype {
+		ArchetypeComponentContainer<memlayout> archetype{};
+		eastl::vector<EntityId> entityIds{};
+		eastl::hash_map<EntityId, usize> entityidx{};
+
+		Archetype(ArchetypeComponentLayout layout) : archetype{ layout } {};
+	};
+
+	template<Vin::ArchetypeMemoryLayout memlayout, typename T>
+	using _Iterator = typename Vin::ArchetypeComponentContainer<memlayout>::Iterator<T>;
+
+	template<typename T, Vin::ArchetypeMemoryLayout memlayout>
+	using Iterator = _Iterator<memlayout, T>;
 
 	/*template<ArchetypeMemoryLayout memlayout>
 	struct Archetype {

@@ -16,14 +16,6 @@ struct eastl::hash<eastl::bitset<N, WordType>> {
 namespace Vin {
 
 	template<ArchetypeMemoryLayout memlayout>
-	struct ArchetypeEntities {
-		ArchetypeComponentContainer<memlayout> archetype{};
-		eastl::hash_map<EntityId, usize> entityidx{};
-
-		ArchetypeEntities(ArchetypeComponentLayout layout) : archetype{ layout } {};
-	};
-
-	template<ArchetypeMemoryLayout memlayout>
 	class Registry {
 	public:
 		
@@ -34,6 +26,7 @@ namespace Vin {
 
 			m_EntityArchetypeMap[entityId] = archetypeIdx;
 			m_Archetypes[archetypeIdx].entityidx[entityId] = m_Archetypes[archetypeIdx].archetype.GetSize() - 1;
+			m_Archetypes[archetypeIdx].entityIds.push_back(entityId);
 
 			return entityId;
 		}
@@ -48,10 +41,31 @@ namespace Vin {
 			usize entityIdx = m_Archetypes[archetypeIdx].entityidx[entityId];
 			m_Archetypes[archetypeIdx].entityidx.erase(entityId);
 			m_Archetypes[archetypeIdx].archetype.DeleteComponents(entityIdx);
+			m_Archetypes[archetypeIdx].entityIds.erase(m_Archetypes[archetypeIdx].entityIds.begin() + entityIdx);
 
 			for (auto& it : m_Archetypes[archetypeIdx].entityidx)
 				if (it.second > entityIdx)
 					--it.second;
+		}
+
+		template<typename RetType, typename... Args>
+		void Process(RetType(system)(usize, ArchetypeComponentContainer<memlayout>::Iterator<Args>...)) {
+			auto itend = m_Archetypes.end();
+			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
+				if (it->archetype.MatchLayout<Args...>(true)) {
+					system(it->archetype.GetSize(), it->archetype.Begin<Args>(it->archetype.GetComponentIdx<Args>())...);
+				}
+			}
+		}
+
+		template<typename RetType, typename... Args>
+		void Process(RetType(system)(usize, EntityIterator, ArchetypeComponentContainer<memlayout>::Iterator<Args>...)) {
+			auto itend = m_Archetypes.end();
+			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
+				if (it->archetype.MatchLayout<Args...>(true)) {
+					system(it->archetype.GetSize(), EntityIterator{ (EntityId*)it->entityIds.data() }, it->archetype.Begin<Args>(it->archetype.GetComponentIdx<Args>())...);
+				}
+			}
 		}
 
 		template<typename T>
@@ -98,7 +112,7 @@ namespace Vin {
 	private:
 		EntityManager m_EntityManager{};
 
-		eastl::vector<ArchetypeEntities<memlayout>> m_Archetypes{};
+		eastl::vector<Archetype<memlayout>> m_Archetypes{};
 		eastl::hash_map<eastl::bitset<VINECS_MAX_COMPONENT_COUNT>, ArchetypeIdx> m_ArchetypeMap{};
 		eastl::hash_map<EntityId, ArchetypeIdx> m_EntityArchetypeMap{};
 	};
