@@ -308,6 +308,10 @@ namespace Vin {
 		Query(ArchetypeComponentContainer<memlayout>::Iterator<Args>... args, usize count) : grp{ args... }, count{ count } {};
 		Query(QueryGroup::IteratorGroup<memlayout, Args...> grp, usize count) : grp{ grp }, count{ count } {};
 
+		inline usize Count() {
+			return count;
+		}
+
 		Iterator begin() {
 			return Iterator{ grp, count };
 		}
@@ -317,6 +321,52 @@ namespace Vin {
 		}
 	private:
 		QueryGroup::IteratorGroup<memlayout, Args...> grp;
+		usize count;
+	};
+
+	template<ArchetypeMemoryLayout memlayout, typename... Args>
+	class Query<memlayout, EntityId, Args...> {
+	public:
+		struct Iterator {
+		public:
+			Iterator(QueryGroup::IteratorGroup<memlayout, EntityId, Args...> grp, usize count) : grp{ grp }, count{ count } {};
+		public:
+			inline QueryGroup::Group<EntityId, Args...> operator*() {
+				return *grp;
+			}
+
+			inline QueryGroup::IteratorGroup<memlayout, EntityId, Args...> operator++() {
+				--count;
+				return ++grp;
+			}
+
+			inline friend bool operator==(const Iterator& it1, const Iterator& it2) {
+				return it1.count == it2.count;
+			}
+			inline friend bool operator!=(const Iterator& it1, const Iterator& it2) {
+				return it1.count != it2.count;
+			}
+		private:
+			QueryGroup::IteratorGroup<memlayout, EntityId, Args...> grp;
+			usize count;
+		};
+	public:
+		Query(EntityId* id, ArchetypeComponentContainer<memlayout>::Iterator<Args>... args, usize count) : grp{ id, args... }, count{ count } {};
+		Query(QueryGroup::IteratorGroup<memlayout, EntityId, Args...> grp, usize count) : grp{ grp }, count{ count } {};
+
+		inline usize Count() {
+			return count;
+		}
+
+		Iterator begin() {
+			return Iterator{ grp, count };
+		}
+
+		Iterator end() {
+			return Iterator{ grp, 0 };
+		}
+	private:
+		QueryGroup::IteratorGroup<memlayout, EntityId, Args...> grp;
 		usize count;
 	};
 

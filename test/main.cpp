@@ -21,10 +21,9 @@ struct Acceleration {
 };
 
 template<Vin::ArchetypeMemoryLayout layout>
-void System2(Vin::Query<layout, Position, Velocity> query) {
-	for (auto& [pos, vel] : query) {
-
-		Vin::Logger::Log("position : {}, {}, {}", pos->x, pos->y, pos->z);
+void System(Vin::Query<layout, Vin::EntityId, Position, Velocity> query) {
+	for (auto& [entity, pos, vel] : query) {
+		Vin::Logger::Log("Entity : {}, is at position : {}, {}, {}", entity, pos->x, pos->y, pos->z);
 
 		pos->x += vel->dx;
 		pos->y += vel->dy;
@@ -147,10 +146,15 @@ class TestModule : public Vin::Module {
 
 		registry.DeleteEntity(entity2);
 
-		Acceleration* acc2 = registry.GetComponent<Acceleration>(entity3);
+		registry.DeleteComponent<Velocity>(entity1);
+		registry.DeleteComponent<Acceleration>(entity5);
+		Acceleration* acc2 = registry.AddComponent(entity1, acc);
 
 		Vin::Logger::Log("{}", acc2->acc);
 
+
+
+		registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
 		//registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
 		//registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
 		//registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
@@ -181,13 +185,13 @@ class TestModule : public Vin::Module {
 			updateC = 0;
 		}
 
-		registry.Process(System2<Vin::ArchetypeMemoryLayout::Contiguous>);
+		//registry.Process(System<Vin::ArchetypeMemoryLayout::Contiguous>);
 
-		Position pos{};
-		Velocity vel{};
-		pos.x = (float)ts.GetMillisecond();
+		//Position pos{};
+		//Velocity vel{};
+		//pos.x = (float)ts.GetMillisecond();
 
-		Vin::EntityId id = registry.CreateEntity(pos, vel);
+		//Vin::EntityId id = registry.CreateEntity(pos, vel);
 
 		t += 0.1 * ts.GetSecond();
 		t = t > 1 ? 0 : t;

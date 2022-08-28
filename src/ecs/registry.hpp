@@ -49,26 +49,6 @@ namespace Vin {
 					--it.second;
 		}
 
-		/*template<typename RetType, typename... Args>
-		void Process(RetType(system)(usize, ArchetypeComponentContainer<memlayout>::Iterator<Args>...)) {
-			auto itend = m_Archetypes.end();
-			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Args...>(true)) {
-					system(it->archetype.GetSize(), it->archetype.Begin<Args>(it->archetype.GetComponentIdx<Args>())...);
-				}
-			}
-		}
-
-		template<typename RetType, typename... Args>
-		void Process(RetType(system)(usize, EntityIterator, ArchetypeComponentContainer<memlayout>::Iterator<Args>...)) {
-			auto itend = m_Archetypes.end();
-			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Args...>(true)) {
-					system(it->archetype.GetSize(), EntityIterator{ (EntityId*)it->entityIds.data() }, it->archetype.Begin<Args>(it->archetype.GetComponentIdx<Args>())...);
-				}
-			}
-		}*/
-
 		template<typename RetType, typename... Args>
 		void Process(RetType(system)(Query<memlayout, Args...>)) {
 			auto itend = m_Archetypes.end();
@@ -76,6 +56,19 @@ namespace Vin {
 				if (it->archetype.MatchLayout<Args...>(true)) {
 					system(Query<memlayout, Args...>{ 
 						it->archetype.GetComponentIterator<Args>()..., 
+						it->archetype.GetSize() });
+				}
+			}
+		}
+
+		template<typename RetType, typename... Args>
+		void Process(RetType(system)(Query<memlayout, EntityId, Args...>)) {
+			auto itend = m_Archetypes.end();
+			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
+				if (it->archetype.MatchLayout<Args...>(true)) {
+					system(Query<memlayout, EntityId, Args...>{
+						(EntityId*)it->entityIds.data(),
+						it->archetype.GetComponentIterator<Args>()...,
 						it->archetype.GetSize() });
 				}
 			}
@@ -89,7 +82,89 @@ namespace Vin {
 			usize componentIdx = m_Archetypes[archetypeIdx].archetype.GetComponentIdx<T>();
 			if (componentIdx == -1)
 				return nullptr;
-			return m_Archetypes[archetypeIdx].archetype.GetComponentIterator<T>(m_Archetypes[archetypeIdx].entityidx[entityId]).Get();
+			return m_Archetypes[archetypeIdx].archetype.GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
+		}
+
+		template<typename T>
+		T* AddComponent(EntityId entityId, T component) {
+			if (m_EntityArchetypeMap.count(entityId) == 0)
+				return nullptr;
+			ArchetypeIdx archetypeIdx = m_EntityArchetypeMap[entityId];
+			usize componentIdx = m_Archetypes[archetypeIdx].archetype.GetComponentIdx<T>();
+			if (componentIdx != -1) {
+				T* ptr = m_Archetypes[archetypeIdx].archetype.GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
+				memcpy(ptr, &component, sizeof(T));
+				return ptr;
+			}
+
+			ArchetypeComponentLayout layout = m_Archetypes[archetypeIdx].archetype.GetLayout();
+			
+			usize entityIdx = m_Archetypes[archetypeIdx].entityidx[entityId];
+			usize count = layout.GetSize() + 1;
+			ComponentTrait* traits = Alloc<ComponentTrait>(count);
+			byte* datas = Alloc<byte>(layout.GetStride() + sizeof(T));
+
+			usize stride{ 0 };
+			for (usize i = 0; i < count - 1; ++i) {
+				traits[i] = layout.GetComponentTrait(i);
+				memcpy(datas + stride, m_Archetypes[archetypeIdx].archetype.GetComponentRawPtr(i, entityIdx), traits[i].size);
+				stride += traits[i].size;
+			}
+			traits[count - 1] = ComponentTrait::GetTrait<T>();
+			memcpy(datas + stride, &component, sizeof(T));
+
+			DeleteEntity(entityId);
+			archetypeIdx = AddEntityComponents(traits, datas, count);
+
+			m_EntityArchetypeMap[entityId] = archetypeIdx;
+			m_Archetypes[archetypeIdx].entityidx[entityId] = m_Archetypes[archetypeIdx].archetype.GetSize() - 1;
+			m_Archetypes[archetypeIdx].entityIds.push_back(entityId);
+
+			Free<ComponentTrait>(traits);
+			Free<byte>(datas);
+
+			return m_Archetypes[archetypeIdx].archetype.GetComponentByIdx<T>(m_Archetypes[archetypeIdx].archetype.GetSize() - 1);
+		}
+
+		template<typename T>
+		void DeleteComponent(EntityId entityId) {
+			if (m_EntityArchetypeMap.count(entityId) == 0)
+				return;
+			ArchetypeIdx archetypeIdx = m_EntityArchetypeMap[entityId];
+
+			ArchetypeComponentLayout layout = m_Archetypes[archetypeIdx].archetype.GetLayout();
+
+			usize entityIdx = m_Archetypes[archetypeIdx].entityidx[entityId];
+			usize count = layout.GetSize() - 1;
+			ComponentTrait* traits = Alloc<ComponentTrait>(count);
+
+			usize stride{ 0 };
+			for (usize i = 0, j = 0; i < layout.GetSize(); ++i) {
+				if (layout.GetComponentTrait(i).id == ComponentTrait::GetId<T>())
+					continue;
+
+				traits[j] = layout.GetComponentTrait(i);	
+				stride += traits[j].size;
+				++j;
+			}
+
+			byte* datas = Alloc<byte>(stride);
+			stride = 0;
+			for (usize i = 0; i < count; ++i) {
+				memcpy(datas + stride, m_Archetypes[archetypeIdx].archetype.GetComponentRawPtr(
+					layout.GetComponentIdx(traits[i].id), entityIdx), traits[i].size);
+				stride += traits[i].size;
+			}
+
+			DeleteEntity(entityId);
+			archetypeIdx = AddEntityComponents(traits, datas, count);
+
+			m_EntityArchetypeMap[entityId] = archetypeIdx;
+			m_Archetypes[archetypeIdx].entityidx[entityId] = m_Archetypes[archetypeIdx].archetype.GetSize() - 1;
+			m_Archetypes[archetypeIdx].entityIds.push_back(entityId);
+
+			Free<ComponentTrait>(traits);
+			Free<byte>(datas);
 		}
 	private:
 		
@@ -116,6 +191,30 @@ namespace Vin {
 
 			m_Archetypes.emplace_back(layout);
 			m_Archetypes[m_Archetypes.size() - 1].archetype.AddComponents(args...);
+
+			m_ArchetypeMap[archetypeId] = m_Archetypes.size() - 1;
+
+			return m_Archetypes.size() - 1;
+		}
+
+		inline ArchetypeIdx AddEntityComponents(ComponentTrait* traits, byte* datas, usize count) {
+			eastl::bitset<VINECS_MAX_COMPONENT_COUNT> archetypeId{};
+
+			for (usize i = 0; i < count; i++)
+				archetypeId[traits[i].id] = true;
+
+			if (m_ArchetypeMap.count(archetypeId) > 0) {
+				ArchetypeIdx idx = m_ArchetypeMap[archetypeId];
+				m_Archetypes[idx].archetype.AddComponents(traits, datas, count);
+				return idx;
+			}
+
+			ArchetypeComponentLayout layout{};
+			for (usize i = 0; i < count; ++i)
+				layout.AddComponentTrait(traits[i]);
+
+			m_Archetypes.emplace_back(layout);
+			m_Archetypes[m_Archetypes.size() - 1].archetype.AddComponents(traits, datas, count);
 
 			m_ArchetypeMap[archetypeId] = m_Archetypes.size() - 1;
 

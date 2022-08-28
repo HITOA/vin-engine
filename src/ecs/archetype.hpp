@@ -165,8 +165,6 @@ namespace Vin {
 			for (usize i = 0; i < sizeof...(args); ++i)
 				if (m_Layout.GetComponentIdx(traits[i].id) == -1)
 					return m_Count;
-				//if (traits[i].id != m_Layout.GetComponentTrait(i).id)
-					//return m_Count;
 
 			if (m_Count == m_Capacity)
 				ExpandCapacity();
@@ -175,6 +173,26 @@ namespace Vin {
 
 			for (usize i = 0; i < sizeof...(args); ++i)
 				memcpy(m_Data[m_Layout.GetComponentIdx(traits[i].id)] + (traits[i].size * m_Count), datas[i], traits[i].size);
+
+			return m_Count++;
+		}
+
+		usize AddComponents(ComponentTrait* traits, byte* datas, usize count) {
+			if (count != m_Layout.GetSize())
+				return m_Count;
+
+			for (usize i = 0; i < count; ++i)
+				if (m_Layout.GetComponentIdx(traits[i].id) == -1)
+					return m_Count;
+
+			if (m_Count == m_Capacity)
+				ExpandCapacity();
+
+			usize stride{ 0 };
+			for (usize i = 0; i < count; ++i) {
+				memcpy(m_Data[m_Layout.GetComponentIdx(traits[i].id)] + (traits[i].size * m_Count), datas + stride, traits[i].size);
+				stride += traits[i].size;
+			}
 
 			return m_Count++;
 		}
@@ -195,6 +213,10 @@ namespace Vin {
 			--m_Count;
 		}
 
+		inline ArchetypeComponentLayout GetLayout() {
+			return m_Layout;
+		}
+
 		inline usize GetSize() {
 			return m_Count;
 		}
@@ -205,7 +227,16 @@ namespace Vin {
 
 		template<typename T>
 		inline Iterator<T> GetComponentIterator(usize idx = 0) {
-			return Iterator<T>{ (T*)&m_Data[GetComponentIdx<T>()][idx] };
+			return Iterator<T>{ (T*)&m_Data[GetComponentIdx<T>()][sizeof(T) * idx] };
+		}
+
+		template<typename T>
+		inline T* GetComponentByIdx(usize idx) {
+			return (T*)&m_Data[GetComponentIdx<T>()][sizeof(T) * idx];
+		}
+
+		inline void* GetComponentRawPtr(usize componentIdx, usize pos) {
+			return &m_Data[componentIdx][m_Layout.GetComponentTrait(componentIdx).size * pos];
 		}
 	private:
 		void ExpandCapacity() {
