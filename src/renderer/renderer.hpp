@@ -15,13 +15,14 @@ namespace Vin {
 	public:
 		enum Api {
 			None = 0,
-			OpenGL
+			OpenGL,
+			Count
 		};
 
 	public:
 		static void Init();
-		static void InitApi();
 		static void Terminate();
+		static void SetApi(Api api);
 		static Api GetApi();
 
 		static void SetViewport(int x, int y, int width, int height);
@@ -31,6 +32,7 @@ namespace Vin {
 	private:
 		static Api s_api;
 	protected:
+		friend class NoneRenderingApi;
 		friend class OpenGLRenderingApi;
 
 		static class RenderingApi {
@@ -41,5 +43,13 @@ namespace Vin {
 			virtual void DrawArrays(const eastl::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount) = 0;
 			virtual void DrawIndexed(const eastl::shared_ptr<VertexArray>& vertexArray, size_t indexCount) = 0;
 		} *s_RenderingApi;
+	};
+
+	class NoneRenderingApi : public Renderer::RenderingApi {
+		virtual void Init() {};
+		virtual void SetViewport(int x, int y, int width, int height) {};
+		virtual void Clear(float r, float g, float b, float a) {};
+		virtual void DrawArrays(const eastl::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount) {};
+		virtual void DrawIndexed(const eastl::shared_ptr<VertexArray>& vertexArray, size_t indexCount) {};
 	};
 }

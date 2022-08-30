@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vinbase.hpp>
+
 #include <iostream>
 #include <ctime>
 
@@ -12,4 +14,8 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/hash_map.h>
 
+#include <EASTL/vector_set.h>
+
 #include <EASTL/string.h>
+
+#include <EASTL/bitset.h>

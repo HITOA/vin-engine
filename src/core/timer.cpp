@@ -4,13 +4,14 @@
 
 Vin::VinTimer::VinTimer()
 {
-	VIN_ASSERT(timespec_get(&m_StartTime, TIME_UTC) == TIME_UTC, "timespec_get failed.")
+	int s = timespec_get(&m_StartTime, TIME_UTC);
+	VIN_ASSERT(s == TIME_UTC, "timespec_get failed.")
 }
 
 inline timespec GetTimeSpec() {
 	timespec spec{};
-
-	VIN_ASSERT(timespec_get(&spec, TIME_UTC) == TIME_UTC, "timespec_get failed.")
+	int s = timespec_get(&spec, TIME_UTC);
+	VIN_ASSERT(s == TIME_UTC, "timespec_get failed.")
 
 	return spec;
 }

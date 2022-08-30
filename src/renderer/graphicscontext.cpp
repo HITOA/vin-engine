@@ -1,16 +1,16 @@
 #include "graphicscontext.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 
 #include "renderer/renderer.hpp"
 
-#include "platform/opengl/graphicscontext_opengl.hpp"
+#include "opengl/graphicscontext_opengl.hpp"
 
-std::unique_ptr<Vin::GraphicsContext> Vin::GraphicsContext::Create(void* window)
+eastl::unique_ptr<Vin::GraphicsContext> Vin::GraphicsContext::Create(void* window)
 {
     VIN_ASSERT(Renderer::GetApi() != Renderer::None, "Rendering api not initialized.");
 
     switch (Renderer::GetApi()) {
-    case Renderer::OpenGL: return std::make_unique<Vin::OpenGLContext>((GLFWwindow*)window);
+    case Renderer::OpenGL: return eastl::make_unique<Vin::OpenGLContext>((GLFWwindow*)window);
     }
 }

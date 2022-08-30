@@ -1,12 +1,20 @@
 #include "application.hpp"
-#include "core/logger/logger.hpp"
+#include "logger/logger.hpp"
+#include "filesystem/filesystem.hpp"
+#include "filesystem/gamefilesystem.hpp"
+#include "renderer/renderer.hpp"
 
-extern Vin::Application* Vin::CreateApp();
-extern void Vin::DestroyApp(Vin::Application* app);
+extern Vin::App* Vin::CreateApp();
+extern void Vin::DestroyApp(Vin::App* app);
 
 int main(int argc, char* argv[]) {
-	Vin::Application* app = Vin::CreateApp();
 
+	Vin::GameFilesystem::Init();
+	Vin::Renderer::SetApi(Vin::Renderer::Count);
+
+	Vin::App* app = Vin::CreateApp();
+
+	app->Build();
 	app->Run();
 
 	Vin::DestroyApp(app);

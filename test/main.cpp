@@ -1,13 +1,24 @@
 #include <vin.hpp>
 
-#include <renderer/rendering.hpp>
-#include <core/math/math.hpp>
-#include <core/filesystem/gamefilesystem.hpp>
-#include <core/resources/resourcemanager.hpp>
-#include <core/resources/rawfile.hpp>
-#include <core/resources/image.hpp>
+#include <filesystem/gamefilesystem.hpp>
 
-class TestModule : public Vin::Module {
+#include <module/windowing/windowmodule.hpp>
+#include <module/rendering/renderingmodule.hpp>
+
+float vertices[] = {
+	// positions          // colors           // texture coords
+	 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+	 1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+	-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+	-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+};
+
+unsigned short indices[] = {
+	0, 1, 3,
+	1, 2, 3
+};
+
+class MyModule : public Vin::Module {
 	eastl::shared_ptr<Vin::Program> program;
 	eastl::shared_ptr<Vin::VertexBuffer> vbo;
 	eastl::shared_ptr<Vin::IndexBuffer> ibo;
@@ -21,26 +32,10 @@ class TestModule : public Vin::Module {
 	int updateC = 0;
 	int processC = 0;
 
-	void OnStart() {
+	void Start() {
 		Vin::Logger::Log("Module is working.");
 
 		Vin::GameFilesystem::Mount("./bin");
-
-		/*const char* vertexShaderSource = "#version 330 core\n"
-			"layout (location = 0) in vec3 aPos;\n"
-			"uniform mat4 randommat;\n"
-			"void main()\n"
-			"{\n"
-			"   gl_Position = (randommat * vec4(aPos.x, aPos.y, aPos.z, 1.0));\n"
-			"}\0";
-
-		const char* fragmentShaderSource = "#version 330 core\n"
-			"out vec4 FragColor;\n"
-			"uniform vec3 color;\n"
-			"void main()\n"
-			"{\n"
-			"	FragColor = vec4(color, 1.0f);\n"
-			"}\n";*/
 
 		eastl::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
 		eastl::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
@@ -59,25 +54,6 @@ class TestModule : public Vin::Module {
 
 		Vin::Resources::Unload(vsfile);
 		Vin::Resources::Unload(fsfile);
-
-		/*Vin::Vector3<float> vertices[] = {
-			{1.0f,  1.0f, 0.0f},  // top right
-			{1.0f, -1.0f, 0.0f},  // bottom right
-			{-1.0f, -1.0f, 0.0f},  // bottom left
-			{-1.0f,  1.0f, 0.0f}   // top left 
-		};*/
-		float vertices[] = {
-			// positions          // colors           // texture coords
-			 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-			 1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-			-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-			-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-		};
-
-		unsigned short indices[] = {
-			0, 1, 3,
-			1, 2, 3 
-		};
 
 		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
 
@@ -103,13 +79,13 @@ class TestModule : public Vin::Module {
 		tex = Vin::Texture::Create(img->GetWidth(), img->GetHeight(), Vin::TextureFormat::RGB24);
 		tex->SetData(img->GetData());
 
-		Vin::Resources::Unload(img);
-
 		tex->Bind(0);
+
+		Vin::Resources::Unload(img);
 	}
 
-	void OnProcess(Vin::TimeStep ts) {
-		processT += ts.GetMillisecond();
+	void Process() {
+		processT += GetApp()->GetDeltaTime().GetMillisecond();
 		processC += 1;
 
 		if (processT > 1000) {
@@ -119,8 +95,8 @@ class TestModule : public Vin::Module {
 		}
 	}
 
-	void OnUpdate(Vin::TimeStep ts) {
-		updateT += ts.GetMillisecond();
+	void Update() {
+		updateT += GetApp()->GetDeltaTime().GetMillisecond();
 		updateC += 1;
 
 		if (updateT > 1000) {
@@ -128,9 +104,10 @@ class TestModule : public Vin::Module {
 			updateT = 0;
 			updateC = 0;
 		}
+	}
 
-		t += 0.1 * ts.GetSecond();
-		t = t > 1 ? 0 : t;
+	void Render() {
+		Vin::Asset<Vin::WindowInfo> windowInfo = GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETNAME);
 
 		Vin::Matrix4x4<float> mat4{ Vin::Matrix4x4<float>::identity };
 
@@ -138,42 +115,41 @@ class TestModule : public Vin::Module {
 		Vin::Rotate(mat4, Vin::Vector3<float>{1.0f, 0, 0}, 90.0f * (float)Vin::deg2rad);
 		Vin::Translate(mat4, Vin::Vector3<float>{0, -6.0f, -6.0f});
 
-		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, 600.0f / 400.0f, 0.1, 1000);
+		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
 		mat4 = mat4 * projection;
 
 		program->SetMat4("randommat", mat4.data);
 
 		program->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
 
-		Vin::Renderer::Clear(0.05, 0.025, 0, 0.1f);
+		Vin::Renderer::Clear(0.3, 0.025, 0.06, 0.1f);
 		program->Bind();
 		Vin::Renderer::DrawIndexed(vao);
+	}
 
+	void OnEvent(Vin::EventHandler handler) {
+		if (Vin::WindowCloseEvent* event = handler.GetEvent<Vin::WindowCloseEvent>())
+			GetApp()->Stop();
 	}
 };
 
-class TestApp : public Vin::Application {
+class TestApp : public Vin::App {
 public:
-	TestApp(const Vin::ApplicationInfo& info) : Application{ info } {
-		AddModule(eastl::make_unique<TestModule>());
+	void Build() {
+		Vin::Logger::Log("Application starting.");
 
-		Vin::Renderer::SetViewport(0, 0, 600, 400);
-
-		SetProcessRate(120);
-		SetUpdateRate(60);
+		AddModule<Vin::WindowModule>();
+		AddModule<Vin::RenderingModule>();
+		AddModule<MyModule>();
 	}
 };
 
-Vin::Application* Vin::CreateApp() {
+Vin::App* Vin::CreateApp() {
 	Vin::Logger::AddDefaultLogOutputStream();
 
-	Vin::ApplicationInfo info{};
-
-	info.name = "Application test";
-
-	return new TestApp{ info };
+	return new TestApp{};
 }
 
-void Vin::DestroyApp(Vin::Application* app) {
+void Vin::DestroyApp(Vin::App* app) {
 	delete app;
 }

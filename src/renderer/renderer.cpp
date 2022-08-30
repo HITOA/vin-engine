@@ -1,22 +1,20 @@
 #include "renderer.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 
-#include "platform/opengl/renderer_opengl.hpp"
+#include "opengl/renderer_opengl.hpp"
 
 Vin::Renderer::Api Vin::Renderer::s_api = Vin::Renderer::None;
-Vin::Renderer::RenderingApi* Vin::Renderer::s_RenderingApi = nullptr;
+Vin::Renderer::RenderingApi* Vin::Renderer::s_RenderingApi = new NoneRenderingApi{};
 
 void Vin::Renderer::Init()
 {
-	VIN_ASSERT(s_api == None, "Rendering api already initialized.");
+	switch (s_api) {
+	case Api::OpenGL:
+		s_RenderingApi = new OpenGLRenderingApi{};
+		break;
+	}
 
-	s_api = Renderer::OpenGL;
-	s_RenderingApi = new OpenGLRenderingApi{};
-}
-
-void Vin::Renderer::InitApi()
-{
 	s_RenderingApi->Init();
 }
 
@@ -24,6 +22,14 @@ void Vin::Renderer::Terminate()
 {
 	delete s_RenderingApi;
 	s_api = Renderer::None;
+}
+
+void Vin::Renderer::SetApi(Api api)
+{
+	if (api == Count)
+		s_api = OpenGL;
+	else
+		s_api = api;
 }
 
 Vin::Renderer::Api Vin::Renderer::GetApi()

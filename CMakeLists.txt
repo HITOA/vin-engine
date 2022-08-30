@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DVIN_DEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DVIN_DEBUG")
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
@@ -25,104 +25,19 @@ add_subdirectory(${EXTERNAL_PATH}/glfw)
 add_subdirectory(${EXTERNAL_PATH}/googletest)
 add_subdirectory(${EXTERNAL_PATH}/Lua)
 add_subdirectory(${EXTERNAL_PATH}/physfs)
+add_subdirectory(${EXTERNAL_PATH}/vin-base)
 
 glad_add_library(glad_library STATIC API gl:core=4.6)
 
 include_directories(${EXTERNAL_PATH}/stb)
 
-add_library(vin_engine STATIC 
-	src/core/allocator.hpp
-	src/core/application.cpp
-	src/core/application.hpp
-	src/core/assert.hpp
-	src/core/container.hpp
-	src/core/entrypoint.cpp
-	src/core/module.cpp
-	src/core/module.hpp
-	src/core/task.hpp
-	src/core/timer.cpp
-	src/core/timer.hpp
-	src/core/window.hpp
+file(GLOB_RECURSE vin_engine_src "src/*.cpp" "src/*.hpp")
 
-	src/core/events/applicationevent.hpp
-	src/core/events/event.cpp
-	src/core/events/event.hpp
-	src/core/events/inputevent.hpp
-
-	src/core/filesystem/filesystem.hpp
-	src/core/filesystem/gamefilesystem.cpp
-	src/core/filesystem/gamefilesystem.hpp
-
-	src/core/logger/logger.cpp
-	src/core/logger/logger.hpp
-	src/core/logger/matrixfmt.hpp
-	src/core/logger/vectorfmt.hpp
-
-	src/core/math/math.hpp
-	src/core/math/mathhelper.hpp
-	src/core/math/matrix.hpp
-	src/core/math/matrix_base.hpp
-	src/core/math/matrix2x2.hpp
-	src/core/math/matrix2x3.hpp
-	src/core/math/matrix2x4.hpp
-	src/core/math/matrix3x2.hpp
-	src/core/math/matrix3x3.hpp
-	src/core/math/matrix3x4.hpp
-	src/core/math/matrix4x2.hpp
-	src/core/math/matrix4x3.hpp
-	src/core/math/matrix4x4.hpp
-	src/core/math/transform.hpp
-	src/core/math/vector.hpp
-	src/core/math/vector_base.hpp
-	src/core/math/vector2.hpp
-	src/core/math/vector3.hpp
-	src/core/math/vector4.hpp
-
-	src/core/resources/image.hpp
-	src/core/resources/rawfile.hpp
-	src/core/resources/resource.hpp
-	src/core/resources/resourcemanager.hpp
-	
-	src/platform/opengl/buffer_opengl.cpp
-	src/platform/opengl/buffer_opengl.hpp
-	src/platform/opengl/graphicscontext_opengl.cpp
-	src/platform/opengl/graphicscontext_opengl.hpp
-	src/platform/opengl/program_opengl.cpp
-	src/platform/opengl/program_opengl.hpp
-	src/platform/opengl/renderer_opengl.cpp
-	src/platform/opengl/renderer_opengl.hpp
-	src/platform/opengl/texture_opengl.cpp
-	src/platform/opengl/texture_opengl.hpp
-	src/platform/opengl/vertexarray_opengl.cpp
-	src/platform/opengl/vertexarray_opengl.hpp
-
-	src/platform/physfs/gamefilesystem_physfs.cpp
-	src/platform/physfs/gamefilesystem_physfs.hpp
-
-	src/platform/windows/window_windows.cpp
-	src/platform/windows/window_windows.hpp
-
-	src/renderer/buffer.cpp
-	src/renderer/buffer.hpp
-	src/renderer/framebuffer.hpp
-	src/renderer/graphicscontext.cpp
-	src/renderer/graphicscontext.hpp
-	src/renderer/renderer.cpp
-	src/renderer/renderer.hpp
-	src/renderer/rendering.hpp
-	src/renderer/program.hpp
-	src/renderer/program.cpp
-	src/renderer/texture.cpp
-	src/renderer/texture.hpp
-	src/renderer/vertexarray.cpp
-	src/renderer/vertexarray.hpp
-	
-	src/vin.hpp
-	src/vinpch.hpp
-)
+add_library(vin_engine STATIC ${vin_engine_src})
 
 target_link_libraries(
 	vin_engine 
+	vin_base
 	glad_library 
 	glfw 
 	EASTL

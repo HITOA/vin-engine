@@ -1,10 +1,10 @@
 #include "vertexarray.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 
 #include "renderer/renderer.hpp"
 
-#include "platform/opengl/vertexarray_opengl.hpp"
+#include "opengl/vertexarray_opengl.hpp"
 
 eastl::shared_ptr<Vin::VertexArray> Vin::VertexArray::Create()
 {

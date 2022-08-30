@@ -1,10 +1,10 @@
 #include "program.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 
 #include "renderer/renderer.hpp"
 
-#include "platform/opengl/program_opengl.hpp"
+#include "opengl/program_opengl.hpp"
 
 eastl::shared_ptr<Vin::Program> Vin::Program::Create()
 {

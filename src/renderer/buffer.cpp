@@ -1,10 +1,10 @@
 #include "buffer.hpp"
 
-#include "core/assert.hpp"
+#include <assert.hpp>
 
 #include "renderer/renderer.hpp"
 
-#include "platform/opengl/buffer_opengl.hpp"
+#include "opengl/buffer_opengl.hpp"
 
 eastl::shared_ptr<Vin::VertexBuffer> Vin::VertexBuffer::Create(size_t size)
 {
