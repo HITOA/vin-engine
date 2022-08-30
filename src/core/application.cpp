@@ -1,90 +1,108 @@
 #include "application.hpp"
 
-#include "events/inputevent.hpp"
-#include "logger/logger.hpp"
-#include "renderer/renderer.hpp"
-#include "filesystem/gamefilesystem.hpp"
-
-Vin::Application::Application(const ApplicationInfo& info) : m_ApplicationInfo{ info }, m_Running{ false }, m_Timer{}
+void Vin::App::ClearModule()
 {
-	Renderer::SetApi(Renderer::Api::OpenGL);
-
-	m_Window = CreateWindow(WindowInfo{ info.name });
-	m_Window->RegisterListener(this);
-
-	Renderer::Init();
+	for (auto mod : m_Modules)
+		delete mod;
+	m_Modules.clear();
 }
 
-Vin::Application::~Application()
+void Vin::App::DispatchEvent(EventHandler handler)
 {
-	Renderer::Terminate();
-	GameFilesystem::Terminate();
+	for (auto mod : m_Modules)
+		mod->OnEvent(handler);
+	handler.Unbind();
 }
 
-void Vin::Application::OnEvent(const Event& e)
-{
-	Dispatch(e);
-
-	if (e.type == EventType::WindowClose)
-		Stop();
-}
-
-void Vin::Application::Run()
+void Vin::App::Run()
 {
 	m_Running = true;
 
 	TimeStep last = m_Timer.GetTimeStep();
 	TimeStep ulast = m_Timer.GetTimeStep();
 
-	m_ModuleList.OnStart();
+	for (auto mod : m_Modules)
+		mod->Start();
 
 	while (m_Running) {
 		TimeStep current = m_Timer.GetTimeStep();
 		TimeStep elapsed = current - last;
 		last = current;
 
-		m_ModuleList.OnProcess(elapsed);
+		m_CurrentDeltaTime = elapsed;
+		for (auto mod : m_Modules)
+			mod->Process();
 
 		if (((current - ulast).GetMillisecond() + elapsed.GetMillisecond()) > GetMsPerUpdate() * 1.05) {
 			TimeStep uelapsed = current - ulast;
 			ulast = current;
-			m_ModuleList.OnUpdate(uelapsed);
-			m_ModuleList.OnRender(uelapsed);
-			m_Window->OnUpdate();
+			m_CurrentDeltaTime = uelapsed;
+			for (auto mod : m_Modules)
+				mod->EarlyUpdate();
+			for (auto mod : m_Modules)
+				mod->Update();
+			for (auto mod : m_Modules)
+				mod->LateUpdate();
+			for (auto mod : m_Modules)
+				mod->Render();
 		}
 
 		m_Timer.Wait(current.GetMillisecond() + GetMsPerProcess() - m_Timer.GetElapsedMillisecond());
 	}
 
-	m_ModuleList.OnStop();
+	for (auto mod : m_Modules)
+		mod->Stop();
 }
 
-void Vin::Application::Stop()
+void Vin::App::Stop()
 {
 	m_Running = false;
 }
 
-void Vin::Application::SetProcessRate(double rate)
+Vin::AssetDatabase* Vin::App::GetAssetDatabase() {
+	return &m_AssetDatabase;
+}
+
+void Vin::App::SetAppInfo(AppInfo appInfo)
+{
+	m_AppInfo = appInfo;
+}
+
+Vin::AppInfo Vin::App::GetAppInfo()
+{
+	return m_AppInfo;
+}
+
+void Vin::App::SetProcessRate(double rate)
 {
 	m_ProcessRate = rate;
 }
 
-void Vin::Application::SetUpdateRate(double rate)
+void Vin::App::SetUpdateRate(double rate)
 {
 	m_UpdateRate = rate;
 }
 
-void Vin::Application::AddModule(eastl::unique_ptr<Module> mod)
+double Vin::App::GetProcessRate()
 {
-	m_ModuleList.AddModule(eastl::move(mod));
+	return m_ProcessRate;
 }
 
-double Vin::Application::GetMsPerProcess()
+double Vin::App::GetUpdateRate()
+{
+	return m_UpdateRate;
+}
+
+Vin::TimeStep Vin::App::GetDeltaTime() {
+	return m_CurrentDeltaTime;
+}
+
+double Vin::App::GetMsPerProcess()
 {
 	return (1000 / m_ProcessRate);
 }
 
-double Vin::Application::GetMsPerUpdate()
+double Vin::App::GetMsPerUpdate()
 {
 	return (1000 / m_UpdateRate);
 }

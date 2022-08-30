@@ -35,6 +35,10 @@ namespace Vin {
 		ResourceHandle GetHandle() {
 			return m_Handle;
 		}
+
+		const char* GetPath() {
+			return m_Path;
+		}
 	private:
 		ResourceHandle m_Handle;
 		ResourceTypeId m_TypeId;

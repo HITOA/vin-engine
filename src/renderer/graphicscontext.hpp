@@ -1,5 +1,7 @@
 #pragma once
 
+#include "vinpch.hpp"
+
 namespace Vin {
 
 	class GraphicsContext {
@@ -7,7 +9,7 @@ namespace Vin {
 		virtual void Init() = 0;
 		virtual void SwapBuffer() = 0;
 
-		static std::unique_ptr<GraphicsContext> Create(void* window);
+		static eastl::unique_ptr<GraphicsContext> Create(void* window);
 	};
 
 }

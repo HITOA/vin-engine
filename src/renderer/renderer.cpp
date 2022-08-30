@@ -5,17 +5,17 @@
 #include "opengl/renderer_opengl.hpp"
 
 Vin::Renderer::Api Vin::Renderer::s_api = Vin::Renderer::None;
-Vin::Renderer::RenderingApi* Vin::Renderer::s_RenderingApi = nullptr;
+Vin::Renderer::RenderingApi* Vin::Renderer::s_RenderingApi = new NoneRenderingApi{};
 
 void Vin::Renderer::Init()
 {
-	VIN_ASSERT(s_api != None, "No rendering api set.");
-
 	switch (s_api) {
 	case Api::OpenGL:
 		s_RenderingApi = new OpenGLRenderingApi{};
-		s_RenderingApi->Init();
+		break;
 	}
+
+	s_RenderingApi->Init();
 }
 
 void Vin::Renderer::Terminate()
@@ -26,8 +26,10 @@ void Vin::Renderer::Terminate()
 
 void Vin::Renderer::SetApi(Api api)
 {
-	VIN_ASSERT(s_api == None, "Rendering api already initialized.");
-	s_api = api;
+	if (api == Count)
+		s_api = OpenGL;
+	else
+		s_api = api;
 }
 
 Vin::Renderer::Api Vin::Renderer::GetApi()

@@ -105,9 +105,9 @@ namespace Vin {
 		}
 	private:
 		static eastl::hash_map<ResourceHandle, eastl::shared_ptr<Resource>> s_Resources;
-		static eastl::hash_map<const char*, ResourceHandle> s_ResourcesPathe;
+		static eastl::hash_map<eastl::string, ResourceHandle> s_ResourcesPathe;
 	};
 
 	eastl::hash_map<ResourceHandle, eastl::shared_ptr<Resource>> Resources::s_Resources{};
-	eastl::hash_map<const char*, ResourceHandle> Resources::s_ResourcesPathe{};
+	eastl::hash_map<eastl::string, ResourceHandle> Resources::s_ResourcesPathe{};
 }
