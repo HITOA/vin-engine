@@ -11,14 +11,14 @@ namespace Vin {
 		void Bind() const;
 		void Unbind() const;
 
-		void SetBufferLayout(const BufferLayout& layout);
-		const BufferLayout& GetBufferLayout() const;
+		void SetBufferLayout(const VertexBufferLayout& layout);
+		const VertexBufferLayout& GetBufferLayout() const;
 
-		void SetData(void* data, size_t size, size_t offset);
+		void SetData(void* data, size_t size, size_t offset, bool resize = false);
 
 	private:
 		unsigned int m_BufferId;
-		BufferLayout m_Layout;
+		VertexBufferLayout m_Layout;
 	};
 
 	class OpenGLIndexBuffer : public IndexBuffer {

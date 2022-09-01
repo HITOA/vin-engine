@@ -7,8 +7,7 @@
 Vin::OpenGLVertexBuffer::OpenGLVertexBuffer(size_t size)
 {
 	glCreateBuffers(1, &m_BufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, m_BufferId);
-	glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STATIC_DRAW);
+	glNamedBufferData(m_BufferId, size, nullptr, GL_STATIC_DRAW);
 }
 
 Vin::OpenGLVertexBuffer::~OpenGLVertexBuffer()
@@ -26,20 +25,22 @@ void Vin::OpenGLVertexBuffer::Unbind() const
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Vin::OpenGLVertexBuffer::SetBufferLayout(const BufferLayout& layout)
+void Vin::OpenGLVertexBuffer::SetBufferLayout(const VertexBufferLayout& layout)
 {
 	m_Layout = layout;
 }
 
-const Vin::BufferLayout& Vin::OpenGLVertexBuffer::GetBufferLayout() const
+const Vin::VertexBufferLayout& Vin::OpenGLVertexBuffer::GetBufferLayout() const
 {
 	return m_Layout;
 }
 
-void Vin::OpenGLVertexBuffer::SetData(void* data, size_t size, size_t offset)
+void Vin::OpenGLVertexBuffer::SetData(void* data, size_t size, size_t offset, bool resize)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, m_BufferId);
-	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+	if (resize)
+		glNamedBufferData(m_BufferId, size, data, GL_STATIC_DRAW);
+	else
+		glNamedBufferSubData(m_BufferId, offset, size, data);
 }
 
 Vin::OpenGLIndexBuffer::OpenGLIndexBuffer(BufferIndexType type) : m_Type{ type }
@@ -74,7 +75,6 @@ Vin::BufferIndexType Vin::OpenGLIndexBuffer::GetIndexType() const
 
 void Vin::OpenGLIndexBuffer::SetData(void* data, size_t count)
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * GetBufferIndexTypeSize(m_Type), data, GL_STATIC_DRAW);
+	glNamedBufferData(m_BufferId, count * GetBufferIndexTypeSize(m_Type), data, GL_STATIC_DRAW);
 	m_Count = count;
 }

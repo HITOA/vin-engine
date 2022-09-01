@@ -5,6 +5,8 @@
 #include <module/windowing/windowmodule.hpp>
 #include <module/rendering/renderingmodule.hpp>
 
+#include <utils/textureutils.hpp>
+
 float vertices[] = {
 	// positions          // colors           // texture coords
 	 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
@@ -59,7 +61,11 @@ class MyModule : public Vin::Module {
 
 		vbo->SetData(&vertices, sizeof(float) * 32, 0);
 
-		Vin::BufferLayout layout{ Vin::BufferElementType::Float3, Vin::BufferElementType::Float3, Vin::BufferElementType::Float2 };
+		Vin::VertexBufferLayout layout{ 
+			{ Vin::VertexAttribute::Position, Vin::VertexAttributeType::Float3 },
+			{ Vin::VertexAttribute::Color, Vin::VertexAttributeType::Float3 },
+			{ Vin::VertexAttribute::TextureCoord0, Vin::VertexAttributeType::Float2 }
+		};
 
 		Vin::Logger::Log("Layout stride is : {}", layout.GetStride());
 
@@ -74,14 +80,7 @@ class MyModule : public Vin::Module {
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
 
-		eastl::shared_ptr<Vin::Image> img = Vin::Resources::Load<Vin::Image>("data/container.jpg");
-
-		tex = Vin::Texture::Create(img->GetWidth(), img->GetHeight(), Vin::TextureFormat::RGB24);
-		tex->SetData(img->GetData());
-
-		tex->Bind(0);
-
-		Vin::Resources::Unload(img);
+		tex = Vin::LoadTexture("data/container.jpg");
 	}
 
 	void Process() {

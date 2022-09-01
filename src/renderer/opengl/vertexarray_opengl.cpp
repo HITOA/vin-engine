@@ -27,57 +27,49 @@ void Vin::OpenGLVertexArray::AddVertexBuffer(const eastl::shared_ptr<VertexBuffe
 	glBindVertexArray(m_VertexArrayId);
 	vertexBuffer->Bind();
 
-	const BufferLayout& layout = vertexBuffer->GetBufferLayout();
+	const VertexBufferLayout& layout = vertexBuffer->GetBufferLayout();
 
 	for (const auto& element : layout) {
 		switch (element.type) {
-		case BufferElementType::Float: {
-			glVertexAttribPointer(m_AttribIndex, 1, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (void*)element.offset);
-			glEnableVertexAttribArray(m_AttribIndex);
-			m_AttribIndex++;
+		case VertexAttributeType::Float: {
+			glVertexAttribPointer((GLuint)element.attribute, 1, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (void*)element.offset);
+			glEnableVertexAttribArray((GLuint)element.attribute);
 			break;
 		}
-		case BufferElementType::Float2: {
-			glVertexAttribPointer(m_AttribIndex, 2, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (void*)element.offset);
-			glEnableVertexAttribArray(m_AttribIndex);
-			m_AttribIndex++;
+		case VertexAttributeType::Float2: {
+			glVertexAttribPointer((GLuint)element.attribute, 2, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (void*)element.offset);
+			glEnableVertexAttribArray((GLuint)element.attribute);
 			break;
 		}
-		case BufferElementType::Float3: {
-			glVertexAttribPointer(m_AttribIndex, 3, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (void*)element.offset);
-			glEnableVertexAttribArray(m_AttribIndex);
-			m_AttribIndex++;
+		case VertexAttributeType::Float3: {
+			glVertexAttribPointer((GLuint)element.attribute, 3, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (void*)element.offset);
+			glEnableVertexAttribArray((GLuint)element.attribute);
 			break;
 		}
-		case BufferElementType::Float4: {
-			glVertexAttribPointer(m_AttribIndex, 4, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (void*)element.offset);
-			glEnableVertexAttribArray(m_AttribIndex);
-			m_AttribIndex++;
+		case VertexAttributeType::Float4: {
+			glVertexAttribPointer((GLuint)element.attribute, 4, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (void*)element.offset);
+			glEnableVertexAttribArray((GLuint)element.attribute);
 			break;
 		}
 
-		case BufferElementType::Int: {
-			glVertexAttribIPointer(m_AttribIndex, 1, GL_INT, layout.GetStride(), (void*)element.offset);
-			glEnableVertexAttribArray(m_AttribIndex);
-			m_AttribIndex++;
+		case VertexAttributeType::Int: {
+			glVertexAttribIPointer((GLuint)element.attribute, 1, GL_INT, layout.GetStride(), (void*)element.offset);
+			glEnableVertexAttribArray((GLuint)element.attribute);
 			break;
 		}
-		case BufferElementType::Int2: {
-			glVertexAttribIPointer(m_AttribIndex, 2, GL_INT, layout.GetStride(), (void*)element.offset);
-			glEnableVertexAttribArray(m_AttribIndex);
-			m_AttribIndex++;
+		case VertexAttributeType::Int2: {
+			glVertexAttribIPointer((GLuint)element.attribute, 2, GL_INT, layout.GetStride(), (void*)element.offset);
+			glEnableVertexAttribArray((GLuint)element.attribute);
 			break;
 		}
-		case BufferElementType::Int3: {
-			glVertexAttribIPointer(m_AttribIndex, 3, GL_INT, layout.GetStride(), (void*)element.offset);
-			glEnableVertexAttribArray(m_AttribIndex);
-			m_AttribIndex++;
+		case VertexAttributeType::Int3: {
+			glVertexAttribIPointer((GLuint)element.attribute, 3, GL_INT, layout.GetStride(), (void*)element.offset);
+			glEnableVertexAttribArray((GLuint)element.attribute);
 			break;
 		}
-		case BufferElementType::Int4: {
-			glVertexAttribIPointer(m_AttribIndex, 4, GL_INT, layout.GetStride(), (void*)element.offset);
-			glEnableVertexAttribArray(m_AttribIndex);
-			m_AttribIndex++;
+		case VertexAttributeType::Int4: {
+			glVertexAttribIPointer((GLuint)element.attribute, 4, GL_INT, layout.GetStride(), (void*)element.offset);
+			glEnableVertexAttribArray((GLuint)element.attribute);
 			break;
 		}
 		}
@@ -89,6 +81,11 @@ void Vin::OpenGLVertexArray::SetIndexBuffer(const eastl::shared_ptr<IndexBuffer>
 	glBindVertexArray(m_VertexArrayId);
 	indexBuffer->Bind();
 	m_IndexBuffer = indexBuffer;
+}
+
+void Vin::OpenGLVertexArray::IgnoreAttribute(usize n)
+{
+	m_AttribIndex += n;
 }
 
 const eastl::shared_ptr<Vin::IndexBuffer>& Vin::OpenGLVertexArray::GetIndexBuffer() const

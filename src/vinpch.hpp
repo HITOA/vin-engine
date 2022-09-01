@@ -19,3 +19,4 @@
 #include <EASTL/string.h>
 
 #include <EASTL/bitset.h>
+#include <EASTL/array.h>

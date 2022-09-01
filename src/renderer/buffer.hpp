@@ -4,29 +4,46 @@
 #include <assert.hpp>
 
 namespace Vin {
-
-	enum class BufferElementType {
-		Float, Float2, Float3, Float4,
-		Int, Int2, Int3, Int4
-	};
-
 	enum class BufferIndexType {
 		None = 0,
 		UnsignedInt16,
 		UnsignedInt32
 	};
 
-	static size_t GetBufferElementTypeSize(BufferElementType type) {
-		switch (type) {
-		case BufferElementType::Float: return sizeof(float);
-		case BufferElementType::Float2: return sizeof(float) * 2;
-		case BufferElementType::Float3: return sizeof(float) * 3;
-		case BufferElementType::Float4: return sizeof(float) * 4;
+	enum class VertexAttributeType {
+		None,
+		Float, Float2, Float3, Float4,
+		Int, Int2, Int3, Int4
+	};
 
-		case BufferElementType::Int: return sizeof(int);
-		case BufferElementType::Int2: return sizeof(int) * 2;
-		case BufferElementType::Int3: return sizeof(int) * 3;
-		case BufferElementType::Int4: return sizeof(int) * 4;
+	enum class VertexAttribute {
+		Position = 0,
+		Normal,
+		Tangent,
+		Color,
+		TextureCoord0,
+		TextureCoord1,
+		TextureCoord2,
+		TextureCoord3,
+		TextureCoord4,
+		TextureCoord5,
+		TextureCoord6,
+		TextureCoord7,
+		BlendWeight,
+		BlendIndices
+	};
+
+	static size_t GetVertexAttributeTypeSize(VertexAttributeType type) {
+		switch (type) {
+		case VertexAttributeType::Float: return sizeof(float);
+		case VertexAttributeType::Float2: return sizeof(float) * 2;
+		case VertexAttributeType::Float3: return sizeof(float) * 3;
+		case VertexAttributeType::Float4: return sizeof(float) * 4;
+
+		case VertexAttributeType::Int: return sizeof(int);
+		case VertexAttributeType::Int2: return sizeof(int) * 2;
+		case VertexAttributeType::Int3: return sizeof(int) * 3;
+		case VertexAttributeType::Int4: return sizeof(int) * 4;
 		}
 
 		return 0;
@@ -41,40 +58,41 @@ namespace Vin {
 		return 0;
 	}
 
-	struct BufferElement {
-		BufferElementType type;
+	struct VertexBufferElement {
+		VertexAttribute attribute;
+		VertexAttributeType type;
 		size_t offset;
 		bool normalized;
 
-		BufferElement() = default;
-		BufferElement(BufferElementType type, bool normalized = false) : 
-			type{ type }, offset{ 0 }, normalized{ normalized } {};
+		VertexBufferElement() = default;
+		VertexBufferElement(VertexAttribute attribute, VertexAttributeType type, bool normalized = false) : 
+			attribute{ attribute }, type { type }, offset{ 0 }, normalized{ normalized } {};
 	};
 
-	class BufferLayout {
+	class VertexBufferLayout {
 	public:
-		BufferLayout() = default;
+		VertexBufferLayout() = default;
 
-		BufferLayout(std::initializer_list<BufferElement> elements) : m_Layout{ elements } {
+		VertexBufferLayout(std::initializer_list<VertexBufferElement> elements) : m_Layout{ elements } {
 			m_Stride = 0;
 
 			for (auto& element : m_Layout) {
 				element.offset = m_Stride;
-				m_Stride += GetBufferElementTypeSize(element.type);
+				m_Stride += GetVertexAttributeTypeSize(element.type);
 			}
 		}
 
 		size_t GetStride() const { return m_Stride; }
 
-		eastl::vector<BufferElement>::iterator begin() { return m_Layout.begin(); }
-		eastl::vector<BufferElement>::iterator end() { return m_Layout.end(); }
-		eastl::vector<BufferElement>::const_iterator begin() const { return m_Layout.begin(); }
-		eastl::vector<BufferElement>::const_iterator end() const { return m_Layout.end(); }
-		eastl::vector<BufferElement>::const_iterator cbegin() const { return m_Layout.cbegin(); }
-		eastl::vector<BufferElement>::const_iterator cend() const { return m_Layout.cend(); }
+		eastl::vector<VertexBufferElement>::iterator begin() { return m_Layout.begin(); }
+		eastl::vector<VertexBufferElement>::iterator end() { return m_Layout.end(); }
+		eastl::vector<VertexBufferElement>::const_iterator begin() const { return m_Layout.begin(); }
+		eastl::vector<VertexBufferElement>::const_iterator end() const { return m_Layout.end(); }
+		eastl::vector<VertexBufferElement>::const_iterator cbegin() const { return m_Layout.cbegin(); }
+		eastl::vector<VertexBufferElement>::const_iterator cend() const { return m_Layout.cend(); }
 
 	private:
-		eastl::vector<BufferElement> m_Layout;
+		eastl::vector<VertexBufferElement> m_Layout;
 		size_t m_Stride = 0;
 	};
 	
@@ -90,10 +108,10 @@ namespace Vin {
 	public:
 		virtual ~VertexBuffer() {};
 
-		virtual void SetBufferLayout(const BufferLayout& layout) = 0;
-		virtual const BufferLayout& GetBufferLayout() const = 0;
+		virtual void SetBufferLayout(const VertexBufferLayout& layout) = 0;
+		virtual const VertexBufferLayout& GetBufferLayout() const = 0;
 
-		virtual void SetData(void* data, size_t size, size_t offset) = 0;
+		virtual void SetData(void* data, size_t size, size_t offset, bool resize = false) = 0;
 
 		static eastl::shared_ptr<VertexBuffer> Create(size_t size);
 	};
