@@ -13,8 +13,8 @@ static void GlfwErrorCallback(int err, const char* desc)
 void Vin::WindowResizeCallback(GLFWwindow* window, int width, int height)
 {
 	WindowModule* winmod = (WindowModule*)glfwGetWindowUserPointer(window);
-	winmod->m_Info->width = width;
-	winmod->m_Info->height = height;
+	//winmod->m_Info->width = width;
+	//winmod->m_Info->height = height;
 	EventHandler handler{};
 	handler.Bind(WindowResizeEvent{ width, height });
 	winmod->DispatchEvent(handler);
@@ -30,7 +30,7 @@ void Vin::WindowCloseCallback(GLFWwindow* window)
 
 void Vin::WindowModule::Init()
 {
-	m_Info = CreateAsset<WindowInfo>(VIN_WINDOWINFO_ASSETNAME, WindowInfo{});
+	//m_Info = CreateAsset<WindowInfo>(VIN_WINDOWINFO_ASSETNAME, WindowInfo{});
 
 	if (!_isGlfwInit) {
 		int status = glfwInit();
@@ -39,7 +39,7 @@ void Vin::WindowModule::Init()
 		glfwSetErrorCallback(GlfwErrorCallback);
 	}
 
-	m_Window = glfwCreateWindow(m_Info->width, m_Info->height, m_Info->title, nullptr, nullptr);
+	//m_Window = glfwCreateWindow(m_Info->width, m_Info->height, m_Info->title, nullptr, nullptr);
 	glfwSetWindowUserPointer(m_Window, this);
 
 	m_Context = GraphicsContext::Create(m_Window);

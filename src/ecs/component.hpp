@@ -34,6 +34,4 @@ namespace Vin {
 	};
 
 	ComponentId ComponentTrait::lastId{ 0 };
-
-	
 }

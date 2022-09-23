@@ -22,9 +22,6 @@ namespace Vin {
 		static ResourceTypeId s_LastTypeId;
 	};
 
-	ResourceHandle ResourceTrait::s_LastHandle{ 0 };
-	ResourceTypeId ResourceTrait::s_LastTypeId{ 0 };
-
 	class Resource {
 	public:
 		virtual ~Resource() {};

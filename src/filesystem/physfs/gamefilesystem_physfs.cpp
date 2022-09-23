@@ -16,6 +16,7 @@ Vin::PhysfsGameFilesystemApi::~PhysfsGameFilesystemApi()
 void Vin::PhysfsGameFilesystemApi::Mount(const char* path)
 {
 	PHYSFS_mount(path, nullptr, 0);
+	PHYSFS_setWriteDir(path);
 }
 
 bool Vin::PhysfsGameFilesystemApi::Exists(const char* filepath)
@@ -28,6 +29,11 @@ eastl::unique_ptr<Vin::GameFile> Vin::PhysfsGameFilesystemApi::Open(const char* 
 	if (!Exists(filepath))
 		return nullptr;
 	return eastl::make_unique<PhysfsGameFile>(filepath, mod);
+}
+
+eastl::unique_ptr<Vin::GameFile> Vin::PhysfsGameFilesystemApi::Create(const char* filepath)
+{
+	return eastl::make_unique<PhysfsGameFile>(filepath, FileMode::Write);
 }
 
 void Vin::PhysfsGameFilesystemApi::Delete(const char* filepath)
@@ -63,6 +69,11 @@ Vin::PhysfsGameFile::~PhysfsGameFile()
 void Vin::PhysfsGameFile::Close()
 {
 	PHYSFS_close(m_Handle);
+}
+
+bool Vin::PhysfsGameFile::IsValid()
+{
+	return m_Handle != nullptr;
 }
 
 char Vin::PhysfsGameFile::ReadByte()

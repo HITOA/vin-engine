@@ -1,5 +1,12 @@
 #include "material.hpp"
 
+Vin::Material::Material(eastl::shared_ptr<Program> program) : 
+    m_Program{ program }, m_Textures{}
+{
+    for (usize i = 0; i < 16; i++)
+        m_Textures[i].used = false;
+}
+
 void Vin::Material::Bind()
 {
     m_Program->Bind();
@@ -77,9 +84,4 @@ void Vin::Material::SetTexture(int location, eastl::shared_ptr<Texture> texture)
 {
     m_Textures[location].texture = texture;
     m_Textures[location].used = true;
-}
-
-eastl::shared_ptr<Vin::Material> Vin::Material::Create(eastl::shared_ptr<Program> program)
-{
-    return eastl::make_shared<Material>(program);
 }

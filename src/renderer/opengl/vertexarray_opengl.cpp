@@ -83,11 +83,6 @@ void Vin::OpenGLVertexArray::SetIndexBuffer(const eastl::shared_ptr<IndexBuffer>
 	m_IndexBuffer = indexBuffer;
 }
 
-void Vin::OpenGLVertexArray::IgnoreAttribute(usize n)
-{
-	m_AttribIndex += n;
-}
-
 const eastl::shared_ptr<Vin::IndexBuffer>& Vin::OpenGLVertexArray::GetIndexBuffer() const
 {
 	return m_IndexBuffer;

@@ -15,6 +15,7 @@ namespace Vin {
 		virtual ~GameFile() {};
 
 		virtual void Close() = 0;
+		virtual bool IsValid() = 0;
 
 		virtual char ReadByte() = 0;
 		virtual size_t ReadBytes(char* buff, size_t count) = 0;
@@ -52,6 +53,7 @@ namespace Vin {
 		 * \return Return a valid file handle if success, -1 on failure.
 		 */
 		static eastl::unique_ptr<GameFile> Open(const char* filepath, FileMode mod);
+		static eastl::unique_ptr<GameFile> Create(const char* filepath);
 		static void Delete(const char* filepath);
 
 	protected:
@@ -64,6 +66,7 @@ namespace Vin {
 			virtual void Mount(const char* path) = 0;
 			virtual bool Exists(const char* filepath) = 0;
 			virtual eastl::unique_ptr<GameFile> Open(const char* filepath, FileMode mod) = 0;
+			virtual eastl::unique_ptr<GameFile> Create(const char* filepath) = 0;
 			virtual void Delete(const char* filepath) = 0;
 		} *s_GameFilesystemApi;
 	};

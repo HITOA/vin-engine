@@ -35,7 +35,7 @@ namespace Vin {
 		void EarlyUpdate() final;
 		void Render() final;
 	private:
-		Asset<WindowInfo> m_Info;
+		//Asset<WindowInfo> m_Info;
 		GLFWwindow* m_Window;
 		eastl::unique_ptr<GraphicsContext> m_Context;
 

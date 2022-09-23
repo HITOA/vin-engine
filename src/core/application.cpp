@@ -58,11 +58,6 @@ void Vin::App::Stop()
 {
 	m_Running = false;
 }
-
-Vin::AssetDatabase* Vin::App::GetAssetDatabase() {
-	return &m_AssetDatabase;
-}
-
 void Vin::App::SetAppInfo(AppInfo appInfo)
 {
 	m_AppInfo = appInfo;

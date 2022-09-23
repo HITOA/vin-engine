@@ -7,7 +7,6 @@
 
 #include "core/event.hpp"
 #include "core/timer.hpp"
-#include "core/asset.hpp"
 
 #ifndef VINAPP_MAX_MODULE_COUNT
 #define VINAPP_MAX_MODULE_COUNT 128
@@ -53,8 +52,6 @@ namespace Vin {
 		void Run();
 		void Stop();
 
-		AssetDatabase* GetAssetDatabase();
-
 		void SetAppInfo(AppInfo appInfo);
 		AppInfo GetAppInfo();
 
@@ -70,7 +67,6 @@ namespace Vin {
 		double GetMsPerUpdate();
 
 	private:
-		AssetDatabase m_AssetDatabase{};
 		AppInfo m_AppInfo{};
 		eastl::fixed_vector<Module*, VINAPP_MAX_MODULE_COUNT, false> m_Modules{};
 
@@ -106,14 +102,6 @@ namespace Vin {
 		void DispatchEvent(EventHandler handler);
 		inline App* GetApp() {
 			return m_App;
-		}
-		template<typename T>
-		inline Asset<T> GetAsset(const char* path) {
-			return m_App->GetAssetDatabase()->GetAsset<T>(path);
-		}
-		template<typename T>
-		inline Asset<T> CreateAsset(const char* path, T asset) {
-			return m_App->GetAssetDatabase()->CreateAsset<T>(path, asset);
 		}
 	private:
 		App* m_App;

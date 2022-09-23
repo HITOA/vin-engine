@@ -14,7 +14,6 @@ namespace Vin {
 
 		virtual void AddVertexBuffer(const eastl::shared_ptr<VertexBuffer>& vertexBuffer) = 0;
 		virtual void SetIndexBuffer(const eastl::shared_ptr<IndexBuffer>& indexBuffer) = 0;
-		virtual void IgnoreAttribute(usize n) = 0;
 
 		virtual const eastl::shared_ptr<IndexBuffer>& GetIndexBuffer() const = 0;
 

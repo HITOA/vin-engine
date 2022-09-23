@@ -12,6 +12,7 @@ namespace Vin {
 		~PhysfsGameFile();
 
 		void Close();
+		bool IsValid();
 
 		char ReadByte();
 		size_t ReadBytes(char* buff, size_t count);
@@ -34,6 +35,7 @@ namespace Vin {
 		void Mount(const char* path) final;
 		bool Exists(const char* filepath) final;
 		eastl::unique_ptr<GameFile> Open(const char* filepath, FileMode mod) final;
+		eastl::unique_ptr<GameFile> Create(const char* filepath) final;
 		void Delete(const char* filepath) final;
 	};
 

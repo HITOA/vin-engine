@@ -37,6 +37,12 @@ eastl::unique_ptr<Vin::GameFile> Vin::GameFilesystem::Open(const char* filepath,
 	return s_GameFilesystemApi->Open(filepath, mod);
 }
 
+eastl::unique_ptr<Vin::GameFile> Vin::GameFilesystem::Create(const char* filepath)
+{
+	VIN_ASSERT(s_GameFilesystemApi != nullptr, "Game file system not initialized.");
+	return s_GameFilesystemApi->Create(filepath);
+}
+
 void Vin::GameFilesystem::Delete(const char* filepath)
 {
 	VIN_ASSERT(s_GameFilesystemApi != nullptr, "Game file system not initialized.");

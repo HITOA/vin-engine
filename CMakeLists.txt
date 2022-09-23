@@ -25,6 +25,7 @@ add_subdirectory(${EXTERNAL_PATH}/glfw)
 add_subdirectory(${EXTERNAL_PATH}/googletest)
 add_subdirectory(${EXTERNAL_PATH}/Lua)
 add_subdirectory(${EXTERNAL_PATH}/physfs)
+add_subdirectory(${EXTERNAL_PATH}/tinygltf)
 add_subdirectory(${EXTERNAL_PATH}/vin-base)
 
 glad_add_library(glad_library STATIC API gl:core=4.6)
@@ -45,6 +46,7 @@ target_link_libraries(
 	physfs-static 
 	GTest::gtest_main
 	fmt
+	tinygltf
 )
 
 target_precompile_headers(vin_engine PUBLIC src/vinpch.hpp)
