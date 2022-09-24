@@ -52,7 +52,7 @@ namespace Vin {
 			return layout[idx];
 		}
 
-		inline ComponentIdx GetComponentIdx(ComponentId id) {
+		inline ComponentIdx GetComponentIdx(AssetTypeId id) {
 			return indices[id];
 		}
 
@@ -141,7 +141,7 @@ namespace Vin {
 		bool MatchLayout(bool permissive = false) {
 			if (sizeof...(Args) != m_Layout.GetSize() && !permissive)
 				return false;
-			const ComponentId ids[sizeof...(Args)]{ ComponentTrait::GetId<Args>()... };
+			const AssetTypeId ids[sizeof...(Args)]{ ComponentTrait::GetId<Args>()... };
 
 			for (usize i = 0; i < sizeof...(Args); ++i)
 				if (m_Layout.GetComponentIdx(ids[i]) == -1)

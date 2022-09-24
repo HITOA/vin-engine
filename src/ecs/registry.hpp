@@ -171,10 +171,10 @@ namespace Vin {
 		/* Add components to the corresponding Archetype, Create the archetype if it doesn't exists. */
 		template<typename... Args>
 		inline ArchetypeIdx AddEntityComponents(Args... args) {
-			const ComponentId ids[sizeof...(Args)]{ ComponentTrait::GetId<Args>()... };
+			const AssetTypeId ids[sizeof...(Args)]{ ComponentTrait::GetId<Args>()... };
 			eastl::bitset<VINECS_MAX_COMPONENT_COUNT> archetypeId{};
 
-			for (ComponentId id : ids)
+			for (AssetTypeId id : ids)
 				archetypeId[id] = true;
 
 			if (m_ArchetypeMap.count(archetypeId) > 0) {
