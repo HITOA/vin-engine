@@ -5,10 +5,14 @@
 
 #define BIT(x) 1 << x
 #define ASSET_MAGIC "\xE9\x23\xE6\x0E"
+#define MAX_ASSET_ID_VALUE 4294967295
+#define ASSET_ID_CORE_COUNT 256
 
 namespace Vin {
 	typedef ui32 AssetId;
 	typedef usize AssetTypeId;
+
+	//static AssetId GenerateAssetId();
 
 	struct AssetTypeTrait {
 	public:
@@ -50,7 +54,7 @@ namespace Vin {
 	template<typename T>
 	class Asset {
 	public:
-		Asset() = delete;
+		Asset() = default;
 		Asset(eastl::shared_ptr<T> ptr, AssetId assetId) : m_Ptr{ ptr }, m_AssetId{ assetId } {};
 
 	public:
@@ -65,6 +69,11 @@ namespace Vin {
 
 	class AssetHolder {
 	public:
+		AssetHolder() : m_Ptr{ nullptr }, m_TypeId{ 0 } {};
+		AssetHolder(eastl::shared_ptr<void> ptr, AssetTypeId typeId) : m_Ptr{ ptr }, m_TypeId{ typeId } {};
+		AssetHolder(AssetHolder& holder) : m_Ptr{ holder.m_Ptr }, m_TypeId{ holder.m_TypeId } {};
+
+	public:
 		template<typename T>
 		Asset<T> GetAsset(AssetId assetId) {
 			if (AssetTypeTrait::GetId<T>() != m_TypeId)
@@ -75,5 +84,10 @@ namespace Vin {
 	private:
 		eastl::shared_ptr<void> m_Ptr{ nullptr };
 		AssetTypeId m_TypeId{ 0 };
+	};
+
+	class AssetFileSerDes {
+	public:
+		static bool GetHeader(AssetHeader& header, const char* path);
 	};
 }

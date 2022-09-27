@@ -3,6 +3,8 @@
 #include <assert.hpp>
 #include <GLFW/glfw3.h>
 
+#include "assets/assetdatabase.hpp"
+
 static bool _isGlfwInit = false;
 
 static void GlfwErrorCallback(int err, const char* desc)
@@ -13,8 +15,8 @@ static void GlfwErrorCallback(int err, const char* desc)
 void Vin::WindowResizeCallback(GLFWwindow* window, int width, int height)
 {
 	WindowModule* winmod = (WindowModule*)glfwGetWindowUserPointer(window);
-	//winmod->m_Info->width = width;
-	//winmod->m_Info->height = height;
+	winmod->m_Info->width = width;
+	winmod->m_Info->height = height;
 	EventHandler handler{};
 	handler.Bind(WindowResizeEvent{ width, height });
 	winmod->DispatchEvent(handler);
@@ -30,7 +32,7 @@ void Vin::WindowCloseCallback(GLFWwindow* window)
 
 void Vin::WindowModule::Init()
 {
-	//m_Info = CreateAsset<WindowInfo>(VIN_WINDOWINFO_ASSETNAME, WindowInfo{});
+	m_Info = AssetDatabase::AddAsset<WindowInfo>(WindowInfo{}, VIN_WINDOWINFO_ASSETID);
 
 	if (!_isGlfwInit) {
 		int status = glfwInit();
@@ -39,7 +41,10 @@ void Vin::WindowModule::Init()
 		glfwSetErrorCallback(GlfwErrorCallback);
 	}
 
-	//m_Window = glfwCreateWindow(m_Info->width, m_Info->height, m_Info->title, nullptr, nullptr);
+	m_Window = glfwCreateWindow(m_Info->width, m_Info->height, m_Info->title, nullptr, nullptr);
+
+	AssetDatabase::AddAsset<GlfwWindowHolder>(GlfwWindowHolder{ m_Window }, VIN_GLFWWINDOW_ASSETID);
+
 	glfwSetWindowUserPointer(m_Window, this);
 
 	m_Context = GraphicsContext::Create(m_Window);

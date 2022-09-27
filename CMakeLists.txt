@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
+cmake_policy(SET CMP0079 NEW)
 project(vin)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -23,6 +24,7 @@ add_subdirectory(${EXTERNAL_PATH}/fmt)
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
 add_subdirectory(${EXTERNAL_PATH}/googletest)
+add_subdirectory(${EXTERNAL_PATH}/imgui)
 add_subdirectory(${EXTERNAL_PATH}/Lua)
 add_subdirectory(${EXTERNAL_PATH}/physfs)
 add_subdirectory(${EXTERNAL_PATH}/tinygltf)
@@ -32,7 +34,7 @@ glad_add_library(glad_library STATIC API gl:core=4.6)
 
 include_directories(${EXTERNAL_PATH}/stb)
 
-file(GLOB_RECURSE vin_engine_src "src/*.cpp" "src/*.hpp")
+file(GLOB_RECURSE vin_engine_src "src/*.cpp" "src/*.hpp" "src/*.h")
 
 add_library(vin_engine STATIC ${vin_engine_src})
 
@@ -45,6 +47,7 @@ target_link_libraries(
 	lua_static 
 	physfs-static 
 	GTest::gtest_main
+	imgui
 	fmt
 	tinygltf
 )

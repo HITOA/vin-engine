@@ -3,8 +3,10 @@
 #include "vinpch.hpp"
 #include "core/application.hpp"
 #include "renderer/graphicscontext.hpp"
+#include "assets/asset.hpp"
 
-#define VIN_WINDOWINFO_ASSETNAME "//WindowInfo"
+#define VIN_GLFWWINDOW_ASSETID MAX_ASSET_ID_VALUE - 0
+#define VIN_WINDOWINFO_ASSETID MAX_ASSET_ID_VALUE - 1
 
 struct GLFWwindow;
 
@@ -29,13 +31,17 @@ namespace Vin {
 		int height{ 400 };
 	};
 
+	struct GlfwWindowHolder {
+		GLFWwindow* window;
+	};
+
 	class WindowModule : public Module {
 	public:
 		void Init() final;
 		void EarlyUpdate() final;
 		void Render() final;
 	private:
-		//Asset<WindowInfo> m_Info;
+		Asset<WindowInfo> m_Info;
 		GLFWwindow* m_Window;
 		eastl::unique_ptr<GraphicsContext> m_Context;
 

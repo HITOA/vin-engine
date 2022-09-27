@@ -4,7 +4,7 @@
 #include <physfs.h>
 #include "logger/logger.hpp"
 
-bool Vin::AssetRegistrySerializer::Load(AssetRegistry& registry, const char* path)
+bool Vin::AssetRegistrySerDes::Load(AssetRegistry& registry, const char* path)
 {
     if (!GameFilesystem::Exists(path))
         return false;
@@ -23,7 +23,7 @@ bool Vin::AssetRegistrySerializer::Load(AssetRegistry& registry, const char* pat
     return true;
 }
 
-bool Vin::AssetRegistrySerializer::Save(AssetRegistry& registry, const char* path)
+bool Vin::AssetRegistrySerDes::Save(AssetRegistry& registry, const char* path)
 {
     static const char magic[4] = { ASSET_REGISTRY_MAGIC[0], ASSET_REGISTRY_MAGIC[1], ASSET_REGISTRY_MAGIC[2], ASSET_REGISTRY_MAGIC[3] };
     
@@ -63,6 +63,11 @@ Vin::AssetId Vin::AssetRegistry::AddPath(const char* path, size_t size)
     memcpy(m_Pathes[pos].path, path, size);
 
     return pos + m_Offset;
+}
+
+Vin::AssetId Vin::AssetRegistry::GetOffset() const
+{
+    return m_Offset;
 }
 
 

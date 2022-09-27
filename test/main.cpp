@@ -4,36 +4,34 @@
 
 #include <module/windowing/windowmodule.hpp>
 #include <module/rendering/renderingmodule.hpp>
+#include <module/editor/editormodule.hpp>
 
 #include <utils/textureutils.hpp>
 #include <utils/gltfutils.hpp>
 
 #include "scene/mesh.hpp"
 
-#include "assets/assetregistry.hpp"
+#include "assets/assetdatabase.hpp"
 
 float vertices[] = {
-	// positions          // colors         
-	 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,  // top right
-	 1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,  // bottom right
-	-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,  // bottom left
-	-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,  // top left 
-};
-
-float uv[] = {
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f
+	// positions          // colors           // texture coords
+	 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+	 1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+	-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+	-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 };
 
 unsigned short indices[] = {
 	0, 1, 3,
 	1, 2, 3
 };
-/*
+
 class MyModule : public Vin::Module {
-	Vin::Material mat{ nullptr };
+	eastl::shared_ptr<Vin::Program> program;
+	eastl::shared_ptr<Vin::VertexBuffer> vbo;
+	eastl::shared_ptr<Vin::IndexBuffer> ibo;
+	eastl::shared_ptr<Vin::VertexArray> vao;
+	eastl::shared_ptr<Vin::Texture> tex;
 
 	double t = 0;
 
@@ -47,13 +45,12 @@ class MyModule : public Vin::Module {
 
 		Vin::GameFilesystem::Mount("./bin");
 
-		eastl::shared_ptr<Vin::Program> program = Vin::Program::Create();
-		eastl::shared_ptr<Vin::Texture> tex = Vin::LoadTexture("data/container.jpg");
-
 		eastl::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
 		eastl::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
 
 		if (vsfile && fsfile) {
+			program = Vin::Program::Create();
+
 			program->AddShader(Vin::ShaderType::VertexShader, vsfile->GetData());
 			program->AddShader(Vin::ShaderType::FragmentShader, fsfile->GetData());
 
@@ -66,11 +63,30 @@ class MyModule : public Vin::Module {
 		Vin::Resources::Unload(vsfile);
 		Vin::Resources::Unload(fsfile);
 
-		mat = Vin::Material{ program };
-		mat.SetTexture("ourTexture", tex);
-		mat.SetTexture("ourTexture2", tex);
+		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
 
-		Vin::Logger::Log("{}", sizeof(Vin::Primitive));
+		vbo->SetData(&vertices, sizeof(float) * 32, 0);
+
+		Vin::VertexBufferLayout layout{
+			{ Vin::VertexAttribute::Position, Vin::VertexAttributeType::Float3 },
+			{ Vin::VertexAttribute::Color, Vin::VertexAttributeType::Float3 },
+			{ Vin::VertexAttribute::TextureCoord0, Vin::VertexAttributeType::Float2 }
+		};
+
+		Vin::Logger::Log("Layout stride is : {}", layout.GetStride());
+
+		vbo->SetBufferLayout(layout);
+
+		ibo = Vin::IndexBuffer::Create(Vin::BufferIndexType::UnsignedInt16);
+
+		ibo->SetData(&indices, 6);
+
+		vao = Vin::VertexArray::Create();
+
+		vao->AddVertexBuffer(vbo);
+		vao->SetIndexBuffer(ibo);
+
+		tex = Vin::LoadTexture("data/container.jpg");
 	}
 
 	void Process() {
@@ -96,9 +112,7 @@ class MyModule : public Vin::Module {
 	}
 
 	void Render() {
-		Vin::Asset<Vin::WindowInfo> windowInfo = GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETNAME);
-
-		CreateAsset<int>("Tam?relapute", 12);
+		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETID);
 
 		Vin::Matrix4x4<float> mat4{ Vin::Matrix4x4<float>::identity };
 
@@ -109,39 +123,38 @@ class MyModule : public Vin::Module {
 		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
 		mat4 = mat4 * projection;
 
-		mat.SetMat4("randommat", mat4.data);
-		mat.SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
+		program->SetMat4("randommat", mat4.data);
 
-		Vin::Renderer::Clear(0.3, 0.025, 0.06, 1.0f);
-		mat.Bind();
+		program->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
+
+		Vin::Renderer::Clear(0.3, 0.025, 0.06, 0.1f);
+		program->Bind();
+		Vin::Renderer::DrawIndexed(vao);
 	}
 
 	void OnEvent(Vin::EventHandler handler) {
 		if (Vin::WindowCloseEvent* event = handler.GetEvent<Vin::WindowCloseEvent>())
 			GetApp()->Stop();
 	}
-};*/
+};
+
+struct TestAsset {
+	int v = 12;
+};
 
 class AssetTestModule : public Vin::Module {
 	void Start() {
 		Vin::GameFilesystem::Mount("./bin");
 
-		Vin::Logger::Log("{}", sizeof(Vin::AssetRegistryHeader));
+		TestAsset testAsset{};
 
-		Vin::AssetRegistry registry{};
+		Vin::Asset<TestAsset> asset1 = Vin::AssetDatabase::AddAsset(eastl::move(testAsset), 12);
+		Vin::Asset<TestAsset> asset2 = Vin::AssetDatabase::GetAsset<TestAsset>(12);
 
-		registry.AddPath("TestPuteSalope", 14);
-		registry.AddPath("Il etait une fois la vie", 24);
-		registry.AddPath("J'aime la viande", 16);
-		Vin::AssetId id = registry.AddPath("Les chaussure", 13);
-		registry.AddPath("OWOONO", 6);
-
-		Vin::AssetRegistrySerializer::Save(registry, "registry.assetregistry");
-
-		Vin::AssetRegistry newregistry{};
-
-		Vin::AssetRegistrySerializer::Load(newregistry, "registry.assetregistry");
-		Vin::Logger::Log("Path of AssetId {} : {}", id, newregistry.GetPath(id).path);
+		asset2->v = 14;
+		
+		Vin::Logger::Log("{}", asset1->v);
+		Vin::Logger::Log("{}", asset2->v);
 	}
 };
 
@@ -150,10 +163,11 @@ public:
 	void Build() {
 		Vin::Logger::Log("Application starting.");
 
-		//AddModule<Vin::WindowModule>();
-		//AddModule<Vin::RenderingModule>();
-		//AddModule<MyModule>();
-		AddModule<AssetTestModule>();
+		AddModule<Vin::WindowModule>();
+		AddModule<Vin::RenderingModule>();
+		AddModule<Vin::EditorModule>();
+		AddModule<MyModule>();
+		//AddModule<AssetTestModule>();
 	}
 };
 

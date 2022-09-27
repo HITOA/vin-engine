@@ -24,15 +24,16 @@ namespace Vin {
 	public:
 		AssetRegistryPath GetPath(AssetId id);
 		AssetId AddPath(const char* path, size_t size);
+		AssetId GetOffset() const;
 
 	private:
 		AssetId m_Offset{};
 		eastl::vector<AssetRegistryPath> m_Pathes{};
 
-		friend class AssetRegistrySerializer;
+		friend class AssetRegistrySerDes;
 	};
 
-	class AssetRegistrySerializer {
+	class AssetRegistrySerDes {
 	public:
 		static bool Load(AssetRegistry& registry, const char* path);
 		static bool Save(AssetRegistry& registry, const char* path);
