@@ -14,6 +14,11 @@ namespace Vin {
 		static void AddRegistry(AssetRegistry&& registry); //Add registry from memory
 		static void AddRegistry(const char* path); //Add Registry from file
 
+		static eastl::fixed_vector<AssetRegistry, 8>::iterator RegistryBegin() { return s_Registries.begin(); };
+		static eastl::fixed_vector<AssetRegistry, 8>::iterator RegistryEnd() { return s_Registries.end(); };
+		static int GetRegistryCount() { return s_Registries.size(); };
+		static AssetRegistry& GetRegistryByIdx(int idx) { return s_Registries[idx]; };
+
 		template<typename T>
 		static Asset<T> GetAsset(AssetId id) {
 			if (s_Database.count(id) <= 0) {
@@ -36,7 +41,7 @@ namespace Vin {
 		static bool LoadAsset(AssetId id) {
 			for (AssetRegistry& registry : m_Registries) {
 				if (registry.GetOffset() <= id) {
-					AssetRegistryPath path = registry.GetPath(id);
+					AssetRegistryPath path = registry.GetAssetPath(id);
 					if (LoadAsset(path.path))
 						return true;
 				}

@@ -28,6 +28,8 @@ namespace Vin {
 		void DrawPreferencesWindow(bool* drawWindow);
 		void DrawDebugConsoleWindow(bool* drawWindow);
 		void DrawAssetExplorerWindow(bool* drawWindow);
+
+		void DrawCreateRegistryPopup();
 	private:
 		ImGuiContext* m_Ctx{ nullptr };
 

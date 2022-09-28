@@ -45,6 +45,7 @@ class MyModule : public Vin::Module {
 		Vin::Logger::Log("Module is working.");
 
 		Vin::GameFilesystem::Mount("./bin");
+		Vin::AssetDatabase::AddRegistry("mainregistry.registry");
 
 		eastl::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
 		eastl::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
@@ -89,7 +90,7 @@ class MyModule : public Vin::Module {
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
 
-		tex = Vin::LoadTexture("data/container.jpg");
+		tex = Vin::LoadTexture("data/aerial_grass_rock_diff_1k.jpg");
 		mat->SetTexture("ourTexture", tex);
 	}
 
@@ -98,7 +99,7 @@ class MyModule : public Vin::Module {
 		processC += 1;
 
 		if (processT > 1000) {
-			Vin::Logger::Log("Average process rate : {} ps ({} ms)", round(1000 / (processT / processC)), (processT / processC));
+			//Vin::Logger::Log("Average process rate : {} ps ({} ms)", round(1000 / (processT / processC)), (processT / processC));
 			processT = 0;
 			processC = 0;
 		}
@@ -109,7 +110,7 @@ class MyModule : public Vin::Module {
 		updateC += 1;
 
 		if (updateT > 1000) {
-			Vin::Logger::Log("Average update rate : {} ps ({} ms)", round(1000 / (updateT / updateC)), (updateT / updateC));
+			//Vin::Logger::Log("Average update rate : {} ps ({} ms)", round(1000 / (updateT / updateC)), (updateT / updateC));
 			updateT = 0;
 			updateC = 0;
 		}

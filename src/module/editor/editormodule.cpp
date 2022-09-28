@@ -109,7 +109,7 @@ void Vin::EditorModule::SetImGuiStyle()
 	colors[ImGuiCol_NavHighlight] = ImVec4(0.50f, 0.50f, 1.00f, 1.00f);
 	colors[ImGuiCol_NavWindowingHighlight] = ImVec4(0.50f, 0.50f, 1.00f, 1.00f);
 	colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.50f, 0.50f, 1.00f, 1.00f);
-	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.50f, 0.50f, 1.00f, 1.00f);
+	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.60f, 0.60f, 0.60f, 0.80f);
 
 	ImGuiStyle& style = ImGui::GetStyle();
 	style.Alpha = 0.75f;
@@ -229,7 +229,7 @@ void Vin::EditorModule::DrawMainMenuBarMenuFile()
 
 void Vin::EditorModule::DrawMainMenuBarMenuEdit()
 {
-	if (ImGui::MenuItem(drawEditor ? "Hide Editor" : "Show Editor", "Ctrl+H")) {
+	if (ImGui::MenuItem(drawEditor ? "Hide Editor" : "Show Editor", "Ctrl+H (Disable)")) {
 		drawEditor = !drawEditor;
 	}
 	ImGui::Separator();
@@ -280,7 +280,78 @@ void Vin::EditorModule::DrawDebugConsoleWindow(bool* drawWindow)
 void Vin::EditorModule::DrawAssetExplorerWindow(bool* drawWindow)
 {
 	if (ImGui::Begin("Asset Explorer", drawWindow)) {
-		ImGui::Text("Asset Explorer Test");
+
+		if (ImGui::Button("Create Registry")) {
+			ImGui::OpenPopup("CreateRegistryPopup");
+		}
+
+		DrawCreateRegistryPopup();
+
+		ImGui::SameLine();
+
+		static int  currentIdx = 0;
+		static char namebuff[128];
+		memset(namebuff, 0, sizeof(namebuff));
+
+		if (currentIdx < AssetDatabase::GetRegistryCount())
+			sprintf(namebuff, "#%i %s", currentIdx, AssetDatabase::GetRegistryByIdx(currentIdx).GetRegistryName());
+
+		if (ImGui::BeginCombo("Registry", namebuff)) {
+			int i = 0;
+			auto itend = AssetDatabase::RegistryEnd();
+			for (auto it = AssetDatabase::RegistryBegin(); it != itend; ++it, ++i) {
+				const bool isSelected = (i == currentIdx);
+
+				sprintf(namebuff, "#%i %s", i, it->GetRegistryName());
+				if (ImGui::Selectable(namebuff, &isSelected))
+					currentIdx = i;
+				if (currentIdx)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+		//if (ImGui::Button("Save") && currentIdx < AssetDatabase::GetRegistryCount()) {
+		//	AssetRegistrySerDes::Save(AssetDatabase::GetRegistryByIdx(currentIdx));
+		//}
+		if (currentIdx < AssetDatabase::GetRegistryCount()) {
+			AssetRegistry& registry = AssetDatabase::GetRegistryByIdx(currentIdx);
+
+			ImGui::Separator();
+
+			if (ImGui::BeginTable("Assets", 3)) { //AssetId, Path, Size
+
+				ImGui::EndTable();
+			}
+
+			ImGui::Separator();
+		}
+		//Add/Remove entry
 	}
 	ImGui::End();
+}
+
+void Vin::EditorModule::DrawCreateRegistryPopup()
+{
+	static char namebuf[64];
+	static char pathbuf[64];
+
+	if (ImGui::BeginPopupModal("CreateRegistryPopup", (bool*)0, ImGuiWindowFlags_NoResize)) {
+		ImGui::InputText("Registry name", namebuf, sizeof(namebuf));
+		ImGui::InputText("Registry path", pathbuf, sizeof(pathbuf));
+		if (ImGui::Button("Create")) {
+			AssetRegistry registry{};
+
+			registry.SetRegistryName(namebuf);
+			registry.SetRegistryPath(pathbuf);
+
+			AssetDatabase::AddRegistry(std::move(registry));
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::End();
+	}
 }
