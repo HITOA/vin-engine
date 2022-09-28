@@ -32,6 +32,7 @@ class MyModule : public Vin::Module {
 	eastl::shared_ptr<Vin::IndexBuffer> ibo;
 	eastl::shared_ptr<Vin::VertexArray> vao;
 	eastl::shared_ptr<Vin::Texture> tex;
+	eastl::shared_ptr<Vin::Material> mat;
 
 	double t = 0;
 
@@ -63,6 +64,8 @@ class MyModule : public Vin::Module {
 		Vin::Resources::Unload(vsfile);
 		Vin::Resources::Unload(fsfile);
 
+		mat = eastl::make_shared<Vin::Material>(program);
+
 		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
 
 		vbo->SetData(&vertices, sizeof(float) * 32, 0);
@@ -87,6 +90,7 @@ class MyModule : public Vin::Module {
 		vao->SetIndexBuffer(ibo);
 
 		tex = Vin::LoadTexture("data/container.jpg");
+		mat->SetTexture("ourTexture", tex);
 	}
 
 	void Process() {
@@ -123,12 +127,12 @@ class MyModule : public Vin::Module {
 		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
 		mat4 = mat4 * projection;
 
-		program->SetMat4("randommat", mat4.data);
+		mat->SetMat4("randommat", mat4.data);
+		mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
 
-		program->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
+		Vin::Renderer::Clear(0.85, 0.85, 1.0, 1.0f);
 
-		Vin::Renderer::Clear(0.3, 0.025, 0.06, 0.1f);
-		program->Bind();
+		mat->Bind();
 		Vin::Renderer::DrawIndexed(vao);
 	}
 
@@ -172,7 +176,7 @@ public:
 };
 
 Vin::App* Vin::CreateApp() {
-	Vin::Logger::AddDefaultLogOutputStream();
+	//Logger::AddDefaultLogOutputStream();
 
 	return new TestApp{};
 }

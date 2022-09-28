@@ -20,10 +20,8 @@ void OpenGLMessageCallback(
 	case GL_DEBUG_SEVERITY_HIGH:         Vin::Logger::Err(message); return;
 	case GL_DEBUG_SEVERITY_MEDIUM:       Vin::Logger::Warn(message); return;
 	case GL_DEBUG_SEVERITY_LOW:          Vin::Logger::Log(message); return;
-	case GL_DEBUG_SEVERITY_NOTIFICATION: Vin::Logger::Log(message); return;
+	//case GL_DEBUG_SEVERITY_NOTIFICATION: Vin::Logger::Log(message); return;
 	}
-
-	VIN_ASSERT(false, "Unknown severity level!");
 }
 
 void Vin::OpenGLRenderingApi::Init()

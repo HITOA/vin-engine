@@ -43,8 +43,6 @@ void Vin::WindowModule::Init()
 
 	m_Window = glfwCreateWindow(m_Info->width, m_Info->height, m_Info->title, nullptr, nullptr);
 
-	AssetDatabase::AddAsset<GlfwWindowHolder>(GlfwWindowHolder{ m_Window }, VIN_GLFWWINDOW_ASSETID);
-
 	glfwSetWindowUserPointer(m_Window, this);
 
 	m_Context = GraphicsContext::Create(m_Window);
