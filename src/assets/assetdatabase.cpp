@@ -3,22 +3,19 @@
 
 eastl::hash_map<Vin::AssetId, Vin::AssetHolder> Vin::AssetDatabase::s_Database{};
 eastl::hash_map<eastl::string, Vin::AssetId> Vin::AssetDatabase::s_Pathes{};
-eastl::fixed_vector<Vin::AssetRegistry, 8> Vin::AssetDatabase::s_Registries{};
+Vin::AssetRegistry Vin::AssetDatabase::s_Registry{};
 
-void Vin::AssetDatabase::AddRegistry(AssetRegistry&& registry)
+bool Vin::AssetDatabase::LoadRegistry(const char* path)
 {
-	s_Registries.push_back(registry);
-	eastl::quick_sort(s_Registries.begin(), s_Registries.end(), [](const AssetRegistry& a, const AssetRegistry& b) {
-		return a.GetOffset() > b.GetOffset();
-		});
+	return AssetRegistrySerializer::Load(s_Registry, path);
 }
 
-void Vin::AssetDatabase::AddRegistry(const char* path)
+bool Vin::AssetDatabase::SaveRegistry()
 {
-	AssetRegistry registry{};
-	if (AssetRegistrySerDes::Load(registry, path))
-		s_Registries.push_back(registry);
-	eastl::quick_sort(s_Registries.begin(), s_Registries.end(), [](const AssetRegistry& a, const AssetRegistry& b) {
-		return a.GetOffset() > b.GetOffset();
-		});
+	return AssetRegistrySerializer::Save(s_Registry);
+}
+
+Vin::AssetRegistry& Vin::AssetDatabase::GetRegistry()
+{
+	return s_Registry;
 }

@@ -7,8 +7,10 @@
 #include "module/windowing/windowmodule.hpp"
 #include "assets/assetdatabase.hpp"
 #include "editordebugconsole.hpp"
+#include "filesystem/gamefilesystem.hpp"
 
 #include <GLFW/glfw3.h>
+#include <cwalk.h>
 
 void Vin::EditorModule::Init()
 {
@@ -50,6 +52,30 @@ void Vin::EditorModule::Render()
 	}
 
 	End();
+}
+
+void Vin::EditorModule::OnEvent(EventHandler handler)
+{
+	static char buff[256];
+
+	if (WindowDropEvent* event = handler.GetEvent<WindowDropEvent>()) {
+		for (int i = 0; i < event->count; ++i) {
+			//ImportAsset
+			cwk_path_normalize(event->paths[i], buff, sizeof(buff));
+
+			{
+				eastl::string_view str{ buff };
+				eastl::replace(buff, (char*)str.end(), '\\', '/');
+			}
+
+			const char* relativepath;
+			cwk_path_get_basename(buff, &relativepath, nullptr);
+			while (relativepath != buff && !GameFilesystem::Exists(relativepath))
+				--relativepath;
+
+			Logger::Log(relativepath);
+		}
+	}
 }
 
 void Vin::EditorModule::SetImGuiStyle()
@@ -99,11 +125,11 @@ void Vin::EditorModule::SetImGuiStyle()
 	colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 1.00f, 0.00f, 1.00f);
 	colors[ImGuiCol_PlotHistogram] = ImVec4(1.00f, 1.00f, 0.00f, 1.00f);
 	colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 1.00f, 0.00f, 1.00f);
-	colors[ImGuiCol_TableHeaderBg] = ImVec4(1.00f, 1.00f, 0.00f, 1.00f);
-	colors[ImGuiCol_TableBorderStrong] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
-	colors[ImGuiCol_TableBorderLight] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
-	colors[ImGuiCol_TableRowBg] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
-	colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
+	colors[ImGuiCol_TableHeaderBg] = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
+	colors[ImGuiCol_TableBorderStrong] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+	colors[ImGuiCol_TableBorderLight] = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
+	colors[ImGuiCol_TableRowBg] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+	colors[ImGuiCol_TableRowBgAlt] = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
 	colors[ImGuiCol_TextSelectedBg] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
 	colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 1.00f);
 	colors[ImGuiCol_NavHighlight] = ImVec4(0.50f, 0.50f, 1.00f, 1.00f);
@@ -114,7 +140,7 @@ void Vin::EditorModule::SetImGuiStyle()
 	ImGuiStyle& style = ImGui::GetStyle();
 	style.Alpha = 0.75f;
 	style.WindowPadding = ImVec2(8.00f, 8.00f);
-	style.FramePadding = ImVec2(5.00f, 2.00f);
+	style.FramePadding = ImVec2(8.00f, 4.00f);
 	style.CellPadding = ImVec2(6.00f, 6.00f);
 	style.ItemSpacing = ImVec2(6.00f, 6.00f);
 	style.ItemInnerSpacing = ImVec2(6.00f, 6.00f);
@@ -128,8 +154,8 @@ void Vin::EditorModule::SetImGuiStyle()
 	style.FrameBorderSize = 1;
 	style.TabBorderSize = 1;
 	style.WindowRounding = 7;
-	style.ChildRounding = 4;
-	style.FrameRounding = 3;
+	style.ChildRounding = 6;
+	style.FrameRounding = 8;
 	style.PopupRounding = 4;
 	style.ScrollbarRounding = 9;
 	style.GrabRounding = 3;
@@ -274,84 +300,10 @@ void Vin::EditorModule::DrawPreferencesWindow(bool* drawWindow)
 
 void Vin::EditorModule::DrawDebugConsoleWindow(bool* drawWindow)
 {
-	s_DebugConsole.Draw(drawWindow);
+	m_DebugConsole.Draw(drawWindow);
 }
 
 void Vin::EditorModule::DrawAssetExplorerWindow(bool* drawWindow)
 {
-	if (ImGui::Begin("Asset Explorer", drawWindow)) {
-
-		if (ImGui::Button("Create Registry")) {
-			ImGui::OpenPopup("CreateRegistryPopup");
-		}
-
-		DrawCreateRegistryPopup();
-
-		ImGui::SameLine();
-
-		static int  currentIdx = 0;
-		static char namebuff[128];
-		memset(namebuff, 0, sizeof(namebuff));
-
-		if (currentIdx < AssetDatabase::GetRegistryCount())
-			sprintf(namebuff, "#%i %s", currentIdx, AssetDatabase::GetRegistryByIdx(currentIdx).GetRegistryName());
-
-		if (ImGui::BeginCombo("Registry", namebuff)) {
-			int i = 0;
-			auto itend = AssetDatabase::RegistryEnd();
-			for (auto it = AssetDatabase::RegistryBegin(); it != itend; ++it, ++i) {
-				const bool isSelected = (i == currentIdx);
-
-				sprintf(namebuff, "#%i %s", i, it->GetRegistryName());
-				if (ImGui::Selectable(namebuff, &isSelected))
-					currentIdx = i;
-				if (currentIdx)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-		//if (ImGui::Button("Save") && currentIdx < AssetDatabase::GetRegistryCount()) {
-		//	AssetRegistrySerDes::Save(AssetDatabase::GetRegistryByIdx(currentIdx));
-		//}
-		if (currentIdx < AssetDatabase::GetRegistryCount()) {
-			AssetRegistry& registry = AssetDatabase::GetRegistryByIdx(currentIdx);
-
-			ImGui::Separator();
-
-			if (ImGui::BeginTable("Assets", 3)) { //AssetId, Path, Size
-
-				ImGui::EndTable();
-			}
-
-			ImGui::Separator();
-		}
-		//Add/Remove entry
-	}
-	ImGui::End();
-}
-
-void Vin::EditorModule::DrawCreateRegistryPopup()
-{
-	static char namebuf[64];
-	static char pathbuf[64];
-
-	if (ImGui::BeginPopupModal("CreateRegistryPopup", (bool*)0, ImGuiWindowFlags_NoResize)) {
-		ImGui::InputText("Registry name", namebuf, sizeof(namebuf));
-		ImGui::InputText("Registry path", pathbuf, sizeof(pathbuf));
-		if (ImGui::Button("Create")) {
-			AssetRegistry registry{};
-
-			registry.SetRegistryName(namebuf);
-			registry.SetRegistryPath(pathbuf);
-
-			AssetDatabase::AddRegistry(std::move(registry));
-
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel")) {
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::End();
-	}
+	m_AssetExplorer.Draw(drawWindow);
 }

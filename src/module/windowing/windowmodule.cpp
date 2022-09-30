@@ -30,6 +30,14 @@ void Vin::WindowCloseCallback(GLFWwindow* window)
 	winmod->DispatchEvent(handler);
 }
 
+void Vin::WindowDropCallback(GLFWwindow* window, int count, const char** paths)
+{
+	WindowModule* winmod = (WindowModule*)glfwGetWindowUserPointer(window);
+	EventHandler handler{};
+	handler.Bind(WindowDropEvent{ count, paths });
+	winmod->DispatchEvent(handler);
+}
+
 void Vin::WindowModule::Init()
 {
 	m_Info = AssetDatabase::AddAsset<WindowInfo>(WindowInfo{}, VIN_WINDOWINFO_ASSETID);
@@ -50,6 +58,7 @@ void Vin::WindowModule::Init()
 
 	glfwSetWindowSizeCallback(m_Window, WindowResizeCallback);
 	glfwSetWindowCloseCallback(m_Window, WindowCloseCallback);
+	glfwSetDropCallback(m_Window, WindowDropCallback);
 }
 
 void Vin::WindowModule::EarlyUpdate()

@@ -62,7 +62,7 @@ void Vin::EditorDebugConsole::Draw(bool* drawWindow)
 				break;
 			}
 			case EntryData::Warning: {
-				ImGui::TextColored(ImVec4(0.00f, 1.00f, 0.00f, 1.00f), m_Items[currentIndex].str.c_str());
+				ImGui::TextColored(ImVec4(1.00f, 1.00f, 0.00f, 1.00f), m_Items[currentIndex].str.c_str());
 				break;
 			}
 			case EntryData::Info: {

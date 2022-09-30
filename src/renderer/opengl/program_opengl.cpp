@@ -34,8 +34,10 @@ bool Vin::OpenGLProgram::AddShader(ShaderType type, const char* src)
 	shaderId = glCreateShader(ParseShaderType(type));
 	glShaderSource(shaderId, 1, &src, NULL);
 	glCompileShader(shaderId);
-	if (!CheckForShaderCompilationErr(shaderId))
+	if (!CheckForShaderCompilationErr(shaderId)) {
+		m_IsShaderComplete = false;
 		return false;
+	}
 	m_Shaders.push_back(shaderId);
 	return true;
 }
@@ -52,14 +54,14 @@ bool Vin::OpenGLProgram::CompileProgram()
 	for (auto shaderId : m_Shaders)
 		glDeleteShader(shaderId);
 
-	m_IsComplete = true;
+	m_IsProgramComplete = true;
 	m_Shaders.clear();
 	return true;
 }
 
-bool Vin::OpenGLProgram::IsShaderComplete()
+bool Vin::OpenGLProgram::IsProgramComplete()
 {
-	return m_IsComplete;
+	return m_IsProgramComplete && m_IsShaderComplete;
 }
 
 int Vin::OpenGLProgram::GetField(const char* name)

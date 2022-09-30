@@ -7,47 +7,36 @@
 #include "assetregistry.hpp"
 #include "assert.hpp"
 
+#include "logger/logger.hpp"
+
 namespace Vin {
 
 	class AssetDatabase {
 	public:
-		static void AddRegistry(AssetRegistry&& registry); //Add registry from memory
-		static void AddRegistry(const char* path); //Add Registry from file
-
-		static eastl::fixed_vector<AssetRegistry, 8>::iterator RegistryBegin() { return s_Registries.begin(); };
-		static eastl::fixed_vector<AssetRegistry, 8>::iterator RegistryEnd() { return s_Registries.end(); };
-		static int GetRegistryCount() { return s_Registries.size(); };
-		static AssetRegistry& GetRegistryByIdx(int idx) { return s_Registries[idx]; };
+		static bool LoadRegistry(const char* path);
+		static bool SaveRegistry();
+		static AssetRegistry& GetRegistry();
 
 		template<typename T>
 		static Asset<T> GetAsset(AssetId id) {
 			if (s_Database.count(id) <= 0) {
-				VIN_SOFT_ASSERT(false, "No asset with provided id is loaded.");
-				return Asset<T>{ nullptr, 0 };
+				Logger::Log("Asset {} is not loaded.", id);
+				return Asset<T>{};
 			}
 			return s_Database[id].GetAsset<T>(id);
 		}
 		template<typename T>
 		static Asset<T> GetAsset(const char* path) {
-			AssetHeader header{};
-			if (!AssetFileSerDes::GetHeader(header, path)) {
-				VIN_SOFT_ASSERT(false, "Not able to read asset header.");
-				return Asset<T>{ nullptr, 0 };
+			if (s_Pathes.count(path) <= 0) {
+				Logger::Log("Asset {} is not loaded.", path);
+				return Asset<T>{};
 			}
-			return GetAsset<T>(header.id);
+			return GetAsset<T>(s_Pathes[id]);
 		}
 
 		template<typename T>
 		static bool LoadAsset(AssetId id) {
-			for (AssetRegistry& registry : m_Registries) {
-				if (registry.GetOffset() <= id) {
-					AssetRegistryPath path = registry.GetAssetPath(id);
-					if (LoadAsset(path.path))
-						return true;
-				}
-			}
-			VIN_SOFT_ASSERT(false, "No asset on disk with provided id.");
-			return false;
+			
 		}
 		template<typename T>
 		static bool LoadAsset(const char* path) {
@@ -56,12 +45,16 @@ namespace Vin {
 
 		template<typename T>
 		static Asset<T> AddAsset(T&& asset, AssetId id) {
+			if (s_Database.count(id) > 0)
+				return GetAsset<T>(id);
 			AssetHolder holder{ eastl::make_shared<T>(asset), AssetTypeTrait::GetId<T>() };
 			s_Database[id] = holder;
 			return holder.GetAsset<T>(id);
 		}
 		template<typename T>
 		static Asset<T> AddAsset(eastl::shared_ptr<T> asset, AssetId id) {
+			if (s_Database.count(id) > 0)
+				return GetAsset<T>(id);
 			AssetHolder holder{ eastl::static_shared_pointer_cast<void>(asset), AssetTypeTrait::GetId<T>() };
 			s_Database[id] = holder;
 			return holder.GetAsset<T>(id);
@@ -70,6 +63,6 @@ namespace Vin {
 	private:
 		static eastl::hash_map<AssetId, AssetHolder> s_Database;
 		static eastl::hash_map<eastl::string, AssetId> s_Pathes;
-		static eastl::fixed_vector<AssetRegistry, 8> s_Registries;
+		static AssetRegistry s_Registry;
 	};
 }

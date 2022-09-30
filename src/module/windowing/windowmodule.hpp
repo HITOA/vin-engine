@@ -10,12 +10,6 @@
 struct GLFWwindow;
 
 namespace Vin {
-
-	enum class WindowEvent {
-		Close,
-		Resize
-	};
-
 	struct WindowResizeEvent {
 		int width, height;
 	};
@@ -24,10 +18,15 @@ namespace Vin {
 		bool closed;
 	};
 
+	struct WindowDropEvent {
+		int count;
+		const char** paths;
+	};
+
 	struct WindowInfo {
 		const char* title{ "Application" };
-		int width{ 600 };
-		int height{ 400 };
+		int width{ 1600 };
+		int height{ 900 };
 	};
 
 	struct GlfwWindowHolder {
@@ -46,6 +45,7 @@ namespace Vin {
 
 		friend void WindowResizeCallback(GLFWwindow* window, int width, int height);
 		friend void WindowCloseCallback(GLFWwindow* window);
+		friend void WindowDropCallback(GLFWwindow* window, int count, const char** paths);
 	};
 
 }

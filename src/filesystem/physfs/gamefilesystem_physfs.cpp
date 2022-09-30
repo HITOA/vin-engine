@@ -3,6 +3,7 @@
 #include <assert.hpp>
 
 #include <physfs.h>
+#include "logger/logger.hpp"
 
 Vin::PhysfsGameFilesystemApi::PhysfsGameFilesystemApi() {
 	PHYSFS_init(NULL);
@@ -17,6 +18,29 @@ void Vin::PhysfsGameFilesystemApi::Mount(const char* path)
 {
 	PHYSFS_mount(path, nullptr, 0);
 	PHYSFS_setWriteDir(path);
+}
+
+eastl::vector<eastl::string> Vin::PhysfsGameFilesystemApi::GetSeatchPath()
+{
+	eastl::vector<eastl::string> r{};
+
+	char** pathes = PHYSFS_getSearchPath();
+	for (char** i = pathes; *i != NULL; ++i) {
+		r.push_back(*i);
+	}
+	PHYSFS_freeList(pathes); //Why does it crash?
+
+	return r;
+}
+
+eastl::string Vin::PhysfsGameFilesystemApi::GetAppRoot()
+{
+	return PHYSFS_getBaseDir();
+}
+
+const char* Vin::PhysfsGameFilesystemApi::GetRealDir(const char* filename)
+{
+	return PHYSFS_getRealDir(filename);
 }
 
 bool Vin::PhysfsGameFilesystemApi::Exists(const char* filepath)

@@ -22,7 +22,7 @@ namespace Vin {
 
 		virtual bool AddShader(ShaderType type, const char* src) = 0;
 		virtual bool CompileProgram() = 0;
-		virtual bool IsShaderComplete() = 0;
+		virtual bool IsProgramComplete() = 0;
 
 		virtual int GetField(const char* name) = 0;
 

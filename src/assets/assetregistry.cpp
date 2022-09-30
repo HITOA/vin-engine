@@ -4,7 +4,7 @@
 #include <physfs.h>
 #include "logger/logger.hpp"
 
-bool Vin::AssetRegistrySerDes::Load(AssetRegistry& registry, const char* path)
+bool Vin::AssetRegistrySerializer::Load(AssetRegistry& registry, const char* path)
 {
     if (!GameFilesystem::Exists(path))
         return false;
@@ -17,7 +17,6 @@ bool Vin::AssetRegistrySerDes::Load(AssetRegistry& registry, const char* path)
 
     memcpy(registry.m_Name, header.name, sizeof(registry.m_Name));
     memcpy(registry.m_Path, header.path, sizeof(registry.m_Name));
-    registry.m_Offset = header.offset;
     registry.m_Pathes.resize(header.count);
     for (AssetRegistryPath& registrypath : registry.m_Pathes)
         file->ReadBytes(registrypath.path, ASSET_REGISTRY_PATH_LENGTH);
@@ -25,7 +24,7 @@ bool Vin::AssetRegistrySerDes::Load(AssetRegistry& registry, const char* path)
     return true;
 }
 
-bool Vin::AssetRegistrySerDes::Save(AssetRegistry& registry)
+bool Vin::AssetRegistrySerializer::Save(AssetRegistry& registry)
 {
     static const char magic[4] = { ASSET_REGISTRY_MAGIC[0], ASSET_REGISTRY_MAGIC[1], ASSET_REGISTRY_MAGIC[2], ASSET_REGISTRY_MAGIC[3] };
     
@@ -41,7 +40,6 @@ bool Vin::AssetRegistrySerDes::Save(AssetRegistry& registry)
     memcpy(header.name, registry.m_Name, sizeof(header.name));
     memcpy(header.path, registry.m_Path, sizeof(header.path));
     header.count = registry.m_Pathes.size();
-    header.offset = registry.m_Offset;
 
     file->WriteType(header);
 
@@ -53,10 +51,10 @@ bool Vin::AssetRegistrySerDes::Save(AssetRegistry& registry)
 
 Vin::AssetRegistryPath Vin::AssetRegistry::GetAssetPath(AssetId id)
 {
-    if (id - m_Offset < 0 || id - m_Offset > m_Pathes.size())
+    if (id  > m_Pathes.size())
         return AssetRegistryPath{};
 
-    return m_Pathes[id - m_Offset];
+    return m_Pathes[id];
 }
 
 Vin::AssetId Vin::AssetRegistry::AddAssetPath(const char* path, size_t size)
@@ -64,17 +62,12 @@ Vin::AssetId Vin::AssetRegistry::AddAssetPath(const char* path, size_t size)
     if (size > 256)
         return -1;
 
-    uint32_t pos = m_Pathes.size();
+    AssetId assetId = m_Pathes.size();
     m_Pathes.push_back(AssetRegistryPath{});
-    memset(m_Pathes[pos].path, 0, ASSET_REGISTRY_PATH_LENGTH);
-    memcpy(m_Pathes[pos].path, path, size);
+    memset(m_Pathes[assetId].path, 0, ASSET_REGISTRY_PATH_LENGTH);
+    memcpy(m_Pathes[assetId].path, path, size);
 
-    return pos + m_Offset;
-}
-
-Vin::AssetId Vin::AssetRegistry::GetOffset() const
-{
-    return m_Offset;
+    return assetId;
 }
 
 int Vin::AssetRegistry::GetAssetCount() const

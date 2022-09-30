@@ -46,6 +46,7 @@
 uniform mat4 vin_matrix_model;
 uniform mat4 vin_matrix_view;
 uniform mat4 vin_matrix_projection;
+uniform mat4 vin_matrix_mvp;
 
 /*layout(binding = 0) uniform Transform {
     mat4 model;

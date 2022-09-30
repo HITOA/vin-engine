@@ -14,8 +14,13 @@ Install jinja2 package : ```pip install jinja2```
 Generate with cmake : ```cmake -B"./build" .```   
 
 ## TODO  
--Redo the use of eastl, go to std instead?
--Loading GLTF/GLB (2.0) model.
+- Reduce number of dependency:
+    - Remplace eastl by custom stl
+    - Remplace Physfs&cwalk by custom file system
+
+- Replace const char* by Vin::StringView from vin_base
+
+- Loading GLTF/GLB (2.0) model.
 
 ## Source
 A lot of useful source for developing a game engine stuff :

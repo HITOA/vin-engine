@@ -25,6 +25,22 @@ void Vin::GameFilesystem::Mount(const char* path)
 	s_GameFilesystemApi->Mount(path);
 }
 
+eastl::vector<eastl::string> Vin::GameFilesystem::GetSeatchPath()
+{
+	VIN_ASSERT(s_GameFilesystemApi != nullptr, "Game file system not initialized.");
+	return s_GameFilesystemApi->GetSeatchPath();
+}
+
+eastl::string Vin::GameFilesystem::GetAppRoot()
+{
+	return s_GameFilesystemApi->GetAppRoot();
+}
+
+const char* Vin::GameFilesystem::GetRealDir(const char* filename)
+{
+	return s_GameFilesystemApi->GetRealDir(filename);
+}
+
 bool Vin::GameFilesystem::Exists(const char* filepath)
 {
 	VIN_ASSERT(s_GameFilesystemApi != nullptr, "Game file system not initialized.");

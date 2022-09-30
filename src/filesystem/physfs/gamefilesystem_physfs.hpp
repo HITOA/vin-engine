@@ -33,6 +33,9 @@ namespace Vin {
 		~PhysfsGameFilesystemApi();
 
 		void Mount(const char* path) final;
+		eastl::vector<eastl::string> GetSeatchPath() final;
+		eastl::string GetAppRoot() final;
+		const char* GetRealDir(const char* filename) final;
 		bool Exists(const char* filepath) final;
 		eastl::unique_ptr<GameFile> Open(const char* filepath, FileMode mod) final;
 		eastl::unique_ptr<GameFile> Create(const char* filepath) final;

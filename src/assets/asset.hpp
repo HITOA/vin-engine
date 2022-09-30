@@ -4,7 +4,6 @@
 #include <vinbase.hpp>
 
 #define BIT(x) 1 << x
-#define ASSET_MAGIC "\xE9\x23\xE6\x0E"
 #define MAX_ASSET_ID_VALUE 4294967295
 #define ASSET_ID_CORE_COUNT 256
 
@@ -45,12 +44,6 @@ namespace Vin {
 		Persistent = BIT(0)
 	};
 
-	struct AssetHeader {
-		char magic[4];
-		AssetId id;
-		uint32_t depCount;
-	};
-
 	template<typename T>
 	class Asset {
 	public:
@@ -84,10 +77,5 @@ namespace Vin {
 	private:
 		eastl::shared_ptr<void> m_Ptr{ nullptr };
 		AssetTypeId m_TypeId{ 0 };
-	};
-
-	class AssetFileSerDes {
-	public:
-		static bool GetHeader(AssetHeader& header, const char* path);
 	};
 }

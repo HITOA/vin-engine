@@ -13,6 +13,8 @@
 
 #include "assets/assetdatabase.hpp"
 
+#include "ecs/registry.hpp"
+
 float vertices[] = {
 	// positions          // colors           // texture coords
 	 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
@@ -25,6 +27,8 @@ unsigned short indices[] = {
 	0, 1, 3,
 	1, 2, 3
 };
+
+char fallbacktexture[4]{ 255, 0, 255, 0 };
 
 class MyModule : public Vin::Module {
 	eastl::shared_ptr<Vin::Program> program;
@@ -45,7 +49,7 @@ class MyModule : public Vin::Module {
 		Vin::Logger::Log("Module is working.");
 
 		Vin::GameFilesystem::Mount("./bin");
-		Vin::AssetDatabase::AddRegistry("mainregistry.registry");
+		//Vin::AssetDatabase::AddRegistry("mainregistry.registry");
 
 		eastl::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
 		eastl::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
@@ -57,9 +61,6 @@ class MyModule : public Vin::Module {
 			program->AddShader(Vin::ShaderType::FragmentShader, fsfile->GetData());
 
 			program->CompileProgram();
-
-			if (!program->IsShaderComplete())
-				Vin::Logger::Log("Program could not compile?");
 		}
 
 		Vin::Resources::Unload(vsfile);
@@ -128,8 +129,8 @@ class MyModule : public Vin::Module {
 		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
 		mat4 = mat4 * projection;
 
-		mat->SetMat4("randommat", mat4.data);
-		mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
+		mat->SetMat4("vin_matrix_mvp", mat4.data);
+		//mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
 
 		Vin::Renderer::Clear(0.85, 0.85, 1.0, 1.0f);
 
@@ -166,7 +167,10 @@ class AssetTestModule : public Vin::Module {
 class TestApp : public Vin::App {
 public:
 	void Build() {
-		Vin::Logger::Log("Application starting.");
+		Vin::WindowInfo winfo{};
+		winfo.title = "Test Application";
+
+		Vin::AssetDatabase::AddAsset<Vin::WindowInfo>(eastl::move(winfo), VIN_WINDOWINFO_ASSETID);
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();
@@ -177,7 +181,7 @@ public:
 };
 
 Vin::App* Vin::CreateApp() {
-	//Logger::AddDefaultLogOutputStream();
+	Logger::AddDefaultLogOutputStream();
 
 	return new TestApp{};
 }

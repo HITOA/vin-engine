@@ -12,7 +12,6 @@ namespace Vin {
 		char name[64];
 		char path[256];
 		uint32_t count;
-		AssetId offset;
 	};
 
 	struct AssetRegistryPath {
@@ -26,7 +25,6 @@ namespace Vin {
 	public:
 		AssetRegistryPath GetAssetPath(AssetId id);
 		AssetId AddAssetPath(const char* path, size_t size);
-		AssetId GetOffset() const;
 		int GetAssetCount() const;
 
 		void SetRegistryName(char name[64]);
@@ -38,13 +36,12 @@ namespace Vin {
 	private:
 		char m_Name[64];
 		char m_Path[256];
-		AssetId m_Offset{};
 		eastl::vector<AssetRegistryPath> m_Pathes{};
 
-		friend class AssetRegistrySerDes;
+		friend class AssetRegistrySerializer;
 	};
 
-	class AssetRegistrySerDes {
+	class AssetRegistrySerializer {
 	public:
 		static bool Load(AssetRegistry& registry, const char* path);
 		static bool Save(AssetRegistry& registry);

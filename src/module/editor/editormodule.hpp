@@ -3,6 +3,7 @@
 #include "core/application.hpp"
 #include <imgui.h>
 #include "editordebugconsole.hpp"
+#include "editorassetexplorer.hpp"
 
 namespace Vin {
 	class EditorModule : public Module {
@@ -10,6 +11,8 @@ namespace Vin {
 		void Init();
 		void Stop();
 		void Render();
+
+		void OnEvent(EventHandler handler);
 	private:
 		void SetImGuiStyle();
 
@@ -28,8 +31,6 @@ namespace Vin {
 		void DrawPreferencesWindow(bool* drawWindow);
 		void DrawDebugConsoleWindow(bool* drawWindow);
 		void DrawAssetExplorerWindow(bool* drawWindow);
-
-		void DrawCreateRegistryPopup();
 	private:
 		ImGuiContext* m_Ctx{ nullptr };
 
@@ -39,6 +40,7 @@ namespace Vin {
 		bool drawDebugConsoleWindow{ true };
 		bool drawAssetExplorerWindow{ true };
 
-		EditorDebugConsole s_DebugConsole{};
+		EditorDebugConsole m_DebugConsole{};
+		EditorAssetExplorer m_AssetExplorer{};
 	};
 }

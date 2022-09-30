@@ -20,6 +20,7 @@ set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
 
 add_subdirectory(${EXTERNAL_PATH}/EASTL)
+add_subdirectory(${EXTERNAL_PATH}/cwalk)
 add_subdirectory(${EXTERNAL_PATH}/fmt)
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
@@ -41,6 +42,7 @@ add_library(vin_engine STATIC ${vin_engine_src})
 target_link_libraries(
 	vin_engine 
 	vin_base
+	cwalk
 	glad_library 
 	glfw 
 	EASTL
