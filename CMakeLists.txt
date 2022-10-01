@@ -19,16 +19,11 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
 
-add_subdirectory(${EXTERNAL_PATH}/cwalk)
 add_subdirectory(${EXTERNAL_PATH}/fmt)
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
-add_subdirectory(${EXTERNAL_PATH}/googletest)
 add_subdirectory(${EXTERNAL_PATH}/imgui)
-add_subdirectory(${EXTERNAL_PATH}/Lua)
-add_subdirectory(${EXTERNAL_PATH}/physfs)
 add_subdirectory(${EXTERNAL_PATH}/tinygltf)
-add_subdirectory(${EXTERNAL_PATH}/vin-base)
 
 glad_add_library(glad_library STATIC API gl:core=4.6)
 
@@ -40,13 +35,8 @@ add_library(vin_engine STATIC ${vin_engine_src})
 
 target_link_libraries(
 	vin_engine 
-	vin_base
-	cwalk
 	glad_library 
 	glfw 
-	lua_static 
-	physfs-static 
-	GTest::gtest_main
 	imgui
 	fmt
 	tinygltf
@@ -62,5 +52,4 @@ add_executable(vin_test
 target_link_libraries(
   vin_test
   vin_engine
-  GTest::gtest_main
 )
