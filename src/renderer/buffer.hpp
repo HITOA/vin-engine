@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vinpch.hpp"
-#include <assert.hpp>
+#include "core/assert.hpp"
 
 namespace Vin {
 	enum class BufferIndexType {

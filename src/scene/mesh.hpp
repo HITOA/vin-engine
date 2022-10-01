@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vinbase.hpp>
+#include "core/base.hpp">
 #include "vinpch.hpp"
 #include "renderer/buffer.hpp"
 #include "renderer/vertexarray.hpp"

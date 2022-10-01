@@ -1,6 +1,6 @@
 #include "timer.hpp"
 
-#include "assert.hpp"
+#include "core/assert.hpp"
 
 Vin::VinTimer::VinTimer()
 {

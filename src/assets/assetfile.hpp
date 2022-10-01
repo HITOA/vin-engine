@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vinbase.hpp>
+#include "core/base.hpp">
 #include "asset.hpp"
 
 #define ASSET_MAGIC "\xE9\x23\xE6\x0E"

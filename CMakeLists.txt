@@ -23,6 +23,7 @@ add_subdirectory(${EXTERNAL_PATH}/fmt)
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
 add_subdirectory(${EXTERNAL_PATH}/imgui)
+add_subdirectory(${EXTERNAL_PATH}/mimalloc)
 add_subdirectory(${EXTERNAL_PATH}/tinygltf)
 
 glad_add_library(glad_library STATIC API gl:core=4.6)
@@ -38,6 +39,7 @@ target_link_libraries(
 	glad_library 
 	glfw 
 	imgui
+	mimalloc-static
 	fmt
 	tinygltf
 )

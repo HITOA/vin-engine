@@ -1,11 +1,11 @@
 #pragma once
 
 #include "vinpch.hpp"
-#include <vinbase.hpp>
+#include "core/base.hpp">
 
 #include "asset.hpp"
 #include "assetregistry.hpp"
-#include "assert.hpp"
+#include "core/assert.hpp"
 
 #include "logger/logger.hpp"
 

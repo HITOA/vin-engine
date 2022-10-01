@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vinpch.hpp"
-#include <vinbase.hpp>
+#include "core/base.hpp"
 
 #define BIT(x) 1 << x
 #define MAX_ASSET_ID_VALUE 4294967295

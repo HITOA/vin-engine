@@ -1,6 +1,6 @@
 #include "assetregistry.hpp"
 #include "filesystem/gamefilesystem.hpp"
-#include "assert.hpp"
+#include "core/assert.hpp"
 #include <physfs.h>
 #include "logger/logger.hpp"
 

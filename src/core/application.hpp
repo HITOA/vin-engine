@@ -2,8 +2,8 @@
 
 #include "vinpch.hpp"
 
-#include <vinbase.hpp>
-#include <allocator.hpp>
+#include "core/base.hpp">
+#include "core/allocator.hpp"
 
 #include "core/event.hpp"
 #include "core/timer.hpp"

@@ -61,7 +61,7 @@ void Vin::EditorModule::OnEvent(EventHandler handler)
 	if (WindowDropEvent* event = handler.GetEvent<WindowDropEvent>()) {
 		for (int i = 0; i < event->count; ++i) {
 			//ImportAsset
-			cwk_path_normalize(event->paths[i], buff, sizeof(buff));
+			/*cwk_path_normalize(event->paths[i], buff, sizeof(buff));
 
 			{
 				//std::string_view str{ buff };
@@ -73,7 +73,7 @@ void Vin::EditorModule::OnEvent(EventHandler handler)
 			while (relativepath != buff && !GameFilesystem::Exists(relativepath))
 				--relativepath;
 
-			Logger::Log(relativepath);
+			Logger::Log(relativepath);*/
 		}
 	}
 }

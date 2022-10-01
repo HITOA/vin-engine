@@ -1,6 +1,6 @@
 #include "renderer_opengl.hpp"
 
-#include <vinbase.hpp>
+#include "core/base.hpp">
 #include <assert.hpp>
 #include "logger/logger.hpp"
 
