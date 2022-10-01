@@ -9,7 +9,7 @@ bool Vin::AssetRegistrySerializer::Load(AssetRegistry& registry, const char* pat
     if (!GameFilesystem::Exists(path))
         return false;
 
-    eastl::unique_ptr<GameFile> file = GameFilesystem::Open(path, FileMode::Read);
+    std::unique_ptr<GameFile> file = GameFilesystem::Open(path, FileMode::Read);
     
     AssetRegistryHeader header = file->ReadType<AssetRegistryHeader>();
     if (strncmp(header.magic, ASSET_REGISTRY_MAGIC, 4) != 0)
@@ -28,7 +28,7 @@ bool Vin::AssetRegistrySerializer::Save(AssetRegistry& registry)
 {
     static const char magic[4] = { ASSET_REGISTRY_MAGIC[0], ASSET_REGISTRY_MAGIC[1], ASSET_REGISTRY_MAGIC[2], ASSET_REGISTRY_MAGIC[3] };
     
-    eastl::unique_ptr<GameFile> file = GameFilesystem::Create(registry.GetRegistryPath());
+    std::unique_ptr<GameFile> file = GameFilesystem::Create(registry.GetRegistryPath());
 
     if (!file->IsValid()) {
         Logger::Err("Couldn't save registry to : {}", registry.GetRegistryPath());

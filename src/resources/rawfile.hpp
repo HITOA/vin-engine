@@ -6,7 +6,7 @@ namespace Vin {
 
 	class RawFile : public Resource {
 	public:
-		virtual void Load(eastl::unique_ptr<GameFile> file) {
+		virtual void Load(std::unique_ptr<GameFile> file) {
 			size = file->GetSize() + 1;
 			data = new char[size];
 

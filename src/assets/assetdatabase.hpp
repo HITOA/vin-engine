@@ -47,22 +47,22 @@ namespace Vin {
 		static Asset<T> AddAsset(T&& asset, AssetId id) {
 			if (s_Database.count(id) > 0)
 				return GetAsset<T>(id);
-			AssetHolder holder{ eastl::make_shared<T>(asset), AssetTypeTrait::GetId<T>() };
+			AssetHolder holder{ std::make_shared<T>(asset), AssetTypeTrait::GetId<T>() };
 			s_Database[id] = holder;
 			return holder.GetAsset<T>(id);
 		}
 		template<typename T>
-		static Asset<T> AddAsset(eastl::shared_ptr<T> asset, AssetId id) {
+		static Asset<T> AddAsset(std::shared_ptr<T> asset, AssetId id) {
 			if (s_Database.count(id) > 0)
 				return GetAsset<T>(id);
-			AssetHolder holder{ eastl::static_shared_pointer_cast<void>(asset), AssetTypeTrait::GetId<T>() };
+			AssetHolder holder{ std::static_pointer_cast<void>(asset), AssetTypeTrait::GetId<T>() };
 			s_Database[id] = holder;
 			return holder.GetAsset<T>(id);
 		}
 
 	private:
-		static eastl::hash_map<AssetId, AssetHolder> s_Database;
-		static eastl::hash_map<eastl::string, AssetId> s_Pathes;
+		static std::unordered_map<AssetId, AssetHolder> s_Database;
+		static std::unordered_map<std::string, AssetId> s_Pathes;
 		static AssetRegistry s_Registry;
 	};
 }

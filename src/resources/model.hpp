@@ -6,7 +6,7 @@ namespace Vin {
 
 	class Model : public Resource {
 	public:
-		void Load(eastl::unique_ptr<GameFile> file);
+		void Load(std::unique_ptr<GameFile> file);
 		void Unload();
 	};
 

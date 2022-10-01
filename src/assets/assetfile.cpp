@@ -6,7 +6,7 @@ bool Vin::AssetFileSerializer::Load(const char* path, AssetHeader& header, void*
     if (!GameFilesystem::Exists(path))
         return false;
 
-    eastl::unique_ptr<GameFile> file = GameFilesystem::Open(path, FileMode::Read);
+    std::unique_ptr<GameFile> file = GameFilesystem::Open(path, FileMode::Read);
 
     if (!file->IsValid())
         return false;
@@ -26,7 +26,7 @@ bool Vin::AssetFileSerializer::Save(const char* path, AssetHeader& header, void*
 {
     static const char magic[4] = { ASSET_MAGIC[0], ASSET_MAGIC[1], ASSET_MAGIC[2], ASSET_MAGIC[3] };
 
-    eastl::unique_ptr<GameFile> file = GameFilesystem::Open(path, FileMode::Write);
+    std::unique_ptr<GameFile> file = GameFilesystem::Open(path, FileMode::Write);
 
     memcpy(header.magic, magic, sizeof(magic));
 

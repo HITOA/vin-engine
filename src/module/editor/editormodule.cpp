@@ -1,5 +1,5 @@
 #include "editormodule.hpp"
-
+#include "vinpch.hpp"
 #include "renderer/rendering.hpp"
 #include "imgui_internal.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -64,8 +64,8 @@ void Vin::EditorModule::OnEvent(EventHandler handler)
 			cwk_path_normalize(event->paths[i], buff, sizeof(buff));
 
 			{
-				eastl::string_view str{ buff };
-				eastl::replace(buff, (char*)str.end(), '\\', '/');
+				//std::string_view str{ buff };
+				//std::replace(str.begin(), str.end(), '\\', '/');
 			}
 
 			const char* relativepath;

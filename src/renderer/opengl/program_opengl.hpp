@@ -40,6 +40,7 @@ namespace Vin {
 		unsigned int m_ProgramId{ 0 };
 		bool m_IsShaderComplete{ true };
 		bool m_IsProgramComplete{ false };
-		eastl::fixed_vector<unsigned int, 5, false> m_Shaders{};
+		std::array<unsigned int, 5> m_Shaders{};
+		int m_ShaderCount{ 0 };
 	};
 }

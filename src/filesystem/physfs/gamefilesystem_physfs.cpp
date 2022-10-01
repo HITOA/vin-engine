@@ -20,9 +20,9 @@ void Vin::PhysfsGameFilesystemApi::Mount(const char* path)
 	PHYSFS_setWriteDir(path);
 }
 
-eastl::vector<eastl::string> Vin::PhysfsGameFilesystemApi::GetSeatchPath()
+std::vector<std::string> Vin::PhysfsGameFilesystemApi::GetSeatchPath()
 {
-	eastl::vector<eastl::string> r{};
+	std::vector<std::string> r{};
 
 	char** pathes = PHYSFS_getSearchPath();
 	for (char** i = pathes; *i != NULL; ++i) {
@@ -33,7 +33,7 @@ eastl::vector<eastl::string> Vin::PhysfsGameFilesystemApi::GetSeatchPath()
 	return r;
 }
 
-eastl::string Vin::PhysfsGameFilesystemApi::GetAppRoot()
+std::string Vin::PhysfsGameFilesystemApi::GetAppRoot()
 {
 	return PHYSFS_getBaseDir();
 }
@@ -48,16 +48,16 @@ bool Vin::PhysfsGameFilesystemApi::Exists(const char* filepath)
 	return PHYSFS_exists(filepath);
 }
 
-eastl::unique_ptr<Vin::GameFile> Vin::PhysfsGameFilesystemApi::Open(const char* filepath, FileMode mod)
+std::unique_ptr<Vin::GameFile> Vin::PhysfsGameFilesystemApi::Open(const char* filepath, FileMode mod)
 {
 	if (!Exists(filepath))
 		return nullptr;
-	return eastl::make_unique<PhysfsGameFile>(filepath, mod);
+	return std::make_unique<PhysfsGameFile>(filepath, mod);
 }
 
-eastl::unique_ptr<Vin::GameFile> Vin::PhysfsGameFilesystemApi::Create(const char* filepath)
+std::unique_ptr<Vin::GameFile> Vin::PhysfsGameFilesystemApi::Create(const char* filepath)
 {
-	return eastl::make_unique<PhysfsGameFile>(filepath, FileMode::Write);
+	return std::make_unique<PhysfsGameFile>(filepath, FileMode::Write);
 }
 
 void Vin::PhysfsGameFilesystemApi::Delete(const char* filepath)

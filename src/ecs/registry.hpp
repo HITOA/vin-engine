@@ -7,12 +7,12 @@
 #include "entity.hpp"
 #include "archetype.hpp"
 
-template<size_t N, typename WordType>
-struct eastl::hash<eastl::bitset<N, WordType>> {
-	size_t operator()(eastl::bitset<N, WordType> v) const {
+/*template<size_t N>
+struct std::hash<std::bitset<N>> {
+	size_t operator()(std::bitset<N> v) const {
 		return 0;
 	}
-};
+};*/
 
 namespace Vin {
 
@@ -172,7 +172,7 @@ namespace Vin {
 		template<typename... Args>
 		inline ArchetypeIdx AddEntityComponents(Args... args) {
 			const AssetTypeId ids[sizeof...(Args)]{ ComponentTrait::GetId<Args>()... };
-			eastl::bitset<VINECS_MAX_COMPONENT_COUNT> archetypeId{};
+			std::bitset<VINECS_MAX_COMPONENT_COUNT> archetypeId{};
 
 			for (AssetTypeId id : ids)
 				archetypeId[id] = true;
@@ -198,7 +198,7 @@ namespace Vin {
 		}
 
 		inline ArchetypeIdx AddEntityComponents(ComponentTrait* traits, byte* datas, usize count) {
-			eastl::bitset<VINECS_MAX_COMPONENT_COUNT> archetypeId{};
+			std::bitset<VINECS_MAX_COMPONENT_COUNT> archetypeId{};
 
 			for (usize i = 0; i < count; i++)
 				archetypeId[traits[i].id] = true;
@@ -223,9 +223,9 @@ namespace Vin {
 	private:
 		EntityManager m_EntityManager{};
 
-		eastl::vector<Archetype<memlayout>> m_Archetypes{};
-		eastl::hash_map<eastl::bitset<VINECS_MAX_COMPONENT_COUNT>, ArchetypeIdx> m_ArchetypeMap{};
-		eastl::hash_map<EntityId, ArchetypeIdx> m_EntityArchetypeMap{};
+		std::vector<Archetype<memlayout>> m_Archetypes{};
+		std::unordered_map<std::bitset<VINECS_MAX_COMPONENT_COUNT>, ArchetypeIdx> m_ArchetypeMap{};
+		std::unordered_map<EntityId, ArchetypeIdx> m_EntityArchetypeMap{};
 	};
 
 }

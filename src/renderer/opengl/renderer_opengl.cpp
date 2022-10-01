@@ -51,13 +51,13 @@ void Vin::OpenGLRenderingApi::Clear(float r, float g, float b, float a)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Vin::OpenGLRenderingApi::DrawArrays(const eastl::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount)
+void Vin::OpenGLRenderingApi::DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount)
 {
 	vertexArray->Bind();
 	glDrawArrays(GL_TRIANGLES, 0, verticiesCount);
 }
 
-void Vin::OpenGLRenderingApi::DrawIndexed(const eastl::shared_ptr<VertexArray>& vertexArray, size_t indexCount)
+void Vin::OpenGLRenderingApi::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount)
 {
 	vertexArray->Bind();
 	glDrawElements(GL_TRIANGLES, indexCount,

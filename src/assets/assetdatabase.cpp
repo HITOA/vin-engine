@@ -1,8 +1,7 @@
 #include "assetdatabase.hpp"
-#include "EASTL/sort.h"
 
-eastl::hash_map<Vin::AssetId, Vin::AssetHolder> Vin::AssetDatabase::s_Database{};
-eastl::hash_map<eastl::string, Vin::AssetId> Vin::AssetDatabase::s_Pathes{};
+std::unordered_map<Vin::AssetId, Vin::AssetHolder> Vin::AssetDatabase::s_Database{};
+std::unordered_map<std::string, Vin::AssetId> Vin::AssetDatabase::s_Pathes{};
 Vin::AssetRegistry Vin::AssetDatabase::s_Registry{};
 
 bool Vin::AssetDatabase::LoadRegistry(const char* path)

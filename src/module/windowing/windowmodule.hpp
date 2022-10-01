@@ -41,7 +41,7 @@ namespace Vin {
 	private:
 		Asset<WindowInfo> m_Info;
 		GLFWwindow* m_Window;
-		eastl::unique_ptr<GraphicsContext> m_Context;
+		std::unique_ptr<GraphicsContext> m_Context;
 
 		friend void WindowResizeCallback(GLFWwindow* window, int width, int height);
 		friend void WindowCloseCallback(GLFWwindow* window);

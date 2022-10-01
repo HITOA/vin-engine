@@ -8,9 +8,9 @@
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 #include <tiny_gltf.h>
 
-eastl::shared_ptr<Vin::StaticMesh> Vin::LoadGLB(const char* path)
+std::shared_ptr<Vin::StaticMesh> Vin::LoadGLB(const char* path)
 {
-	eastl::shared_ptr<RawFile> src = Resources::Load<RawFile>(path);
+	std::shared_ptr<RawFile> src = Resources::Load<RawFile>(path);
 
 	if (!src) {
 		Vin::Logger::Err("File {} does not exists.", path);
@@ -45,5 +45,5 @@ eastl::shared_ptr<Vin::StaticMesh> Vin::LoadGLB(const char* path)
 	Logger::Log("INDICES, {}", mesh.primitives[0].indices);
 
 	return nullptr;
-	//eastl::shared_ptr<StaticMesh> staticmesh = eastl::make_shared<StaticMesh>(;
+	//std::shared_ptr<StaticMesh> staticmesh = std::make_shared<StaticMesh>(;
 }

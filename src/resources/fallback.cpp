@@ -1,10 +1,10 @@
 #include "fallback.hpp"
 #include "logger/logger.hpp"
 
-eastl::shared_ptr<Vin::Texture> Vin::Fallback::GetFallbackTexture()
+std::shared_ptr<Vin::Texture> Vin::Fallback::GetFallbackTexture()
 {
     static char fallbackTextureData[16]{ 255, 0, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 0, 255, 255 };
-    static eastl::shared_ptr<Vin::Texture> fallbackTexture;
+    static std::shared_ptr<Vin::Texture> fallbackTexture;
     if (!fallbackTexture) {
         fallbackTexture = Texture::Create(2, 2, TextureFormat::BGRA32, true);
         fallbackTexture->SetData(fallbackTextureData);
@@ -14,7 +14,7 @@ eastl::shared_ptr<Vin::Texture> Vin::Fallback::GetFallbackTexture()
     return fallbackTexture;
 }
 
-eastl::shared_ptr<Vin::Program> Vin::Fallback::GetFallbackProgram()
+std::shared_ptr<Vin::Program> Vin::Fallback::GetFallbackProgram()
 {
     static const char* fallbackVertexShader = 
         "#version 330 core\n"
@@ -27,7 +27,7 @@ eastl::shared_ptr<Vin::Program> Vin::Fallback::GetFallbackProgram()
         "out vec4 FragColor;\n"
         "void main() {FragColor=vec4(1, 0, 1, 1);}";
 
-    static eastl::shared_ptr<Program> fallbackProgram;
+    static std::shared_ptr<Program> fallbackProgram;
     if (!fallbackProgram) {
         fallbackProgram = Program::Create();
         fallbackProgram->AddShader(ShaderType::VertexShader, fallbackVertexShader);

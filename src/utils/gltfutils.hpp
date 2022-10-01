@@ -4,5 +4,5 @@
 #include "scene/mesh.hpp"
 
 namespace Vin {
-	eastl::shared_ptr<StaticMesh> LoadGLB(const char* path);
+	std::shared_ptr<StaticMesh> LoadGLB(const char* path);
 }

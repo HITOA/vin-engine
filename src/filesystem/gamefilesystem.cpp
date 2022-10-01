@@ -25,13 +25,13 @@ void Vin::GameFilesystem::Mount(const char* path)
 	s_GameFilesystemApi->Mount(path);
 }
 
-eastl::vector<eastl::string> Vin::GameFilesystem::GetSeatchPath()
+std::vector<std::string> Vin::GameFilesystem::GetSeatchPath()
 {
 	VIN_ASSERT(s_GameFilesystemApi != nullptr, "Game file system not initialized.");
 	return s_GameFilesystemApi->GetSeatchPath();
 }
 
-eastl::string Vin::GameFilesystem::GetAppRoot()
+std::string Vin::GameFilesystem::GetAppRoot()
 {
 	return s_GameFilesystemApi->GetAppRoot();
 }
@@ -47,13 +47,13 @@ bool Vin::GameFilesystem::Exists(const char* filepath)
 	return s_GameFilesystemApi->Exists(filepath);
 }
 
-eastl::unique_ptr<Vin::GameFile> Vin::GameFilesystem::Open(const char* filepath, FileMode mod)
+std::unique_ptr<Vin::GameFile> Vin::GameFilesystem::Open(const char* filepath, FileMode mod)
 {
 	VIN_ASSERT(s_GameFilesystemApi != nullptr, "Game file system not initialized.");
 	return s_GameFilesystemApi->Open(filepath, mod);
 }
 
-eastl::unique_ptr<Vin::GameFile> Vin::GameFilesystem::Create(const char* filepath)
+std::unique_ptr<Vin::GameFile> Vin::GameFilesystem::Create(const char* filepath)
 {
 	VIN_ASSERT(s_GameFilesystemApi != nullptr, "Game file system not initialized.");
 	return s_GameFilesystemApi->Create(filepath);

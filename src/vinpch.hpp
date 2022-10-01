@@ -5,18 +5,16 @@
 #include <iostream>
 #include <ctime>
 
-#include <EASTL/type_traits.h>
+#include <algorithm>
 
-#include <EASTL/shared_ptr.h>
-#include <EASTL/weak_ptr.h>
-#include <EASTL/unique_ptr.h>
+#include <vector>
+#include <array>
+#include <string>
 
-#include <EASTL/fixed_vector.h>
-#include <EASTL/hash_map.h>
+#include <map>
+#include <set>
+#include <unordered_map>
+#include <unordered_set>
 
-#include <EASTL/vector_set.h>
-
-#include <EASTL/string.h>
-
-#include <EASTL/bitset.h>
-#include <EASTL/array.h>
+#include <bitset>
+#include <memory>

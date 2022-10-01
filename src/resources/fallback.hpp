@@ -8,8 +8,8 @@ namespace Vin {
 
 	class Fallback {
 	public:
-		static eastl::shared_ptr<Texture> GetFallbackTexture();
-		static eastl::shared_ptr<Program> GetFallbackProgram();
+		static std::shared_ptr<Texture> GetFallbackTexture();
+		static std::shared_ptr<Program> GetFallbackProgram();
 	};
 
 }

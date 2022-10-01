@@ -12,9 +12,9 @@ namespace Vin {
 	* Data required to render one geometry.
 	*/
 	struct Primitive {
-		eastl::vector<eastl::shared_ptr<VertexBuffer>> vbos{};
-		eastl::shared_ptr<IndexBuffer> ibo{};
-		eastl::shared_ptr<VertexArray> vao{};
+		std::vector<std::shared_ptr<VertexBuffer>> vbos{};
+		std::shared_ptr<IndexBuffer> ibo{};
+		std::shared_ptr<VertexArray> vao{};
 		bool indexed{ true }; //If the primitive is rendered using indices or not.
 		//int m_Material{ -1 }; //Material used to render this primitive, index relative to the scene it belong
 		Material* material{};
@@ -32,14 +32,14 @@ namespace Vin {
 
 		void AddPrimitive(Primitive primitive);
 
-		eastl::vector<Primitive>::iterator begin() { return m_Primitives.begin(); }
-		eastl::vector<Primitive>::iterator end() { return m_Primitives.end(); }
-		eastl::vector<Primitive>::const_iterator begin() const { return m_Primitives.begin(); }
-		eastl::vector<Primitive>::const_iterator end() const { return m_Primitives.end(); }
-		eastl::vector<Primitive>::const_iterator cbegin() const { return m_Primitives.cbegin(); }
-		eastl::vector<Primitive>::const_iterator cend() const { return m_Primitives.cend(); }
+		std::vector<Primitive>::iterator begin() { return m_Primitives.begin(); }
+		std::vector<Primitive>::iterator end() { return m_Primitives.end(); }
+		std::vector<Primitive>::const_iterator begin() const { return m_Primitives.begin(); }
+		std::vector<Primitive>::const_iterator end() const { return m_Primitives.end(); }
+		std::vector<Primitive>::const_iterator cbegin() const { return m_Primitives.cbegin(); }
+		std::vector<Primitive>::const_iterator cend() const { return m_Primitives.cend(); }
 	private:
-		eastl::vector<Primitive> m_Primitives{};
+		std::vector<Primitive> m_Primitives{};
 	};
 
 	/** 

@@ -26,7 +26,7 @@ namespace Vin {
 	struct RenderTextureLayout {
 		size_t width, height;
 		size_t sample;
-		eastl::vector<RenderBufferSpecification> attachements;
+		std::vector<RenderBufferSpecification> attachements;
 	};
 
 	class RenderTexture {
@@ -38,6 +38,6 @@ namespace Vin {
 
 		virtual void Resize(int width, int height) = 0;
 
-		static eastl::shared_ptr<RenderTexture> Create();
+		static std::shared_ptr<RenderTexture> Create();
 	};
 }

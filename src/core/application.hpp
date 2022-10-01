@@ -8,9 +8,9 @@
 #include "core/event.hpp"
 #include "core/timer.hpp"
 
-#ifndef VINAPP_MAX_MODULE_COUNT
-#define VINAPP_MAX_MODULE_COUNT 128
-#endif
+//#ifndef VINAPP_MAX_MODULE_COUNT
+//#define VINAPP_MAX_MODULE_COUNT 128
+//#endif
 
 int main(int argc, char* argv[]);
 
@@ -68,7 +68,7 @@ namespace Vin {
 
 	private:
 		AppInfo m_AppInfo{};
-		eastl::fixed_vector<Module*, VINAPP_MAX_MODULE_COUNT, false> m_Modules{};
+		std::vector<Module*> m_Modules{};
 
 		bool m_Running;
 		VinTimer m_Timer;

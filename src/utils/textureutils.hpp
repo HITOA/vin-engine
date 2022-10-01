@@ -7,12 +7,12 @@
 
 namespace Vin {
 
-	eastl::shared_ptr<Vin::Texture> LoadTexture(const char* path, bool mipmap = true) {
-		eastl::shared_ptr<Vin::Image> img = Vin::Resources::Load<Vin::Image>(path);
+	std::shared_ptr<Vin::Texture> LoadTexture(const char* path, bool mipmap = true) {
+		std::shared_ptr<Vin::Image> img = Vin::Resources::Load<Vin::Image>(path);
 		if (img.get() == nullptr)
 			return nullptr;
 
-		eastl::shared_ptr<Vin::Texture> texture = Vin::Texture::Create(
+		std::shared_ptr<Vin::Texture> texture = Vin::Texture::Create(
 			img->GetWidth(), img->GetHeight(), 
 			img->GetChannels() > 3 ? Vin::TextureFormat::RGBA32 : Vin::TextureFormat::RGB24, mipmap);
 		texture->SetData(img->GetData());

@@ -44,8 +44,8 @@ namespace Vin {
 		static void Init();
 		static void Terminate();
 		static void Mount(const char* path);
-		static eastl::vector<eastl::string> GetSeatchPath();
-		static eastl::string GetAppRoot();
+		static std::vector<std::string> GetSeatchPath();
+		static std::string GetAppRoot();
 		static const char* GetRealDir(const char* filename);
 		static bool Exists(const char* filepath);
 		/**
@@ -55,8 +55,8 @@ namespace Vin {
 		 *
 		 * \return Return a valid file handle if success, -1 on failure.
 		 */
-		static eastl::unique_ptr<GameFile> Open(const char* filepath, FileMode mod);
-		static eastl::unique_ptr<GameFile> Create(const char* filepath);
+		static std::unique_ptr<GameFile> Open(const char* filepath, FileMode mod);
+		static std::unique_ptr<GameFile> Create(const char* filepath);
 		static void Delete(const char* filepath);
 
 	protected:
@@ -67,12 +67,12 @@ namespace Vin {
 			virtual ~GameFilesystemApi() {};
 
 			virtual void Mount(const char* path) = 0;
-			virtual eastl::vector<eastl::string> GetSeatchPath() = 0;
-			virtual eastl::string GetAppRoot() = 0;
+			virtual std::vector<std::string> GetSeatchPath() = 0;
+			virtual std::string GetAppRoot() = 0;
 			virtual const char* GetRealDir(const char* filename) = 0;
 			virtual bool Exists(const char* filepath) = 0;
-			virtual eastl::unique_ptr<GameFile> Open(const char* filepath, FileMode mod) = 0;
-			virtual eastl::unique_ptr<GameFile> Create(const char* filepath) = 0;
+			virtual std::unique_ptr<GameFile> Open(const char* filepath, FileMode mod) = 0;
+			virtual std::unique_ptr<GameFile> Create(const char* filepath) = 0;
 			virtual void Delete(const char* filepath) = 0;
 		} *s_GameFilesystemApi;
 	};

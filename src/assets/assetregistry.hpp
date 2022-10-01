@@ -36,7 +36,7 @@ namespace Vin {
 	private:
 		char m_Name[64];
 		char m_Path[256];
-		eastl::vector<AssetRegistryPath> m_Pathes{};
+		std::vector<AssetRegistryPath> m_Pathes{};
 
 		friend class AssetRegistrySerializer;
 	};

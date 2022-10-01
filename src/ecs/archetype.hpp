@@ -124,10 +124,10 @@ namespace Vin {
 		ArchetypeComponentContainer(const ArchetypeComponentContainer&) = delete;
 		
 		ArchetypeComponentContainer(ArchetypeComponentContainer&& rhs) noexcept : 
-			m_Data{ eastl::exchange(rhs.m_Data, nullptr) },
-			m_Layout{ eastl::move(rhs.m_Layout) },
-			m_Count{ eastl::exchange(rhs.m_Count, 0) },
-			m_Capacity{ eastl::exchange(rhs.m_Capacity, 0) } {}
+			m_Data{ std::exchange(rhs.m_Data, nullptr) },
+			m_Layout{ std::move(rhs.m_Layout) },
+			m_Count{ std::exchange(rhs.m_Count, 0) },
+			m_Capacity{ std::exchange(rhs.m_Capacity, 0) } {}
 
 		~ArchetypeComponentContainer() {
 			if (m_Data == nullptr)
@@ -279,8 +279,8 @@ namespace Vin {
 	template<ArchetypeMemoryLayout memlayout>
 	struct Archetype {
 		ArchetypeComponentContainer<memlayout> archetype{};
-		eastl::vector<EntityId> entityIds{};
-		eastl::hash_map<EntityId, usize> entityidx{};
+		std::vector<EntityId> entityIds{};
+		std::unordered_map<EntityId, usize> entityidx{};
 
 		Archetype(ArchetypeComponentLayout layout) : archetype{ layout } {};
 	};

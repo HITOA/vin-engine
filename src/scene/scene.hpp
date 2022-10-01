@@ -10,7 +10,7 @@ namespace Vin{
 	private:
 		Registry<layout> m_Registry{};
 
-		eastl::vector<Material> m_Materials{};
-		eastl::vector<Primitive> m_Primitives{};
+		std::vector<Material> m_Materials{};
+		std::vector<Primitive> m_Primitives{};
 	};
 }

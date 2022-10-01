@@ -1,6 +1,6 @@
 #include "logger.hpp"
 
-eastl::fixed_vector<std::ostream*, 8, true> Vin::Logger::m_LogOutputs{};
+std::vector<std::ostream*> Vin::Logger::m_LogOutputs{};
 
 void Vin::Logger::AddLogOutputStream(std::ostream* out)
 {

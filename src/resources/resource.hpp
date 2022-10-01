@@ -26,7 +26,7 @@ namespace Vin {
 	public:
 		virtual ~Resource() {};
 
-		virtual void Load(eastl::unique_ptr<GameFile> file) = 0;
+		virtual void Load(std::unique_ptr<GameFile> file) = 0;
 		virtual void Unload() = 0;
 
 		ResourceHandle GetHandle() {

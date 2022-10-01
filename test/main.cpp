@@ -31,12 +31,12 @@ unsigned short indices[] = {
 char fallbacktexture[4]{ 255, 0, 255, 0 };
 
 class MyModule : public Vin::Module {
-	eastl::shared_ptr<Vin::Program> program;
-	eastl::shared_ptr<Vin::VertexBuffer> vbo;
-	eastl::shared_ptr<Vin::IndexBuffer> ibo;
-	eastl::shared_ptr<Vin::VertexArray> vao;
-	eastl::shared_ptr<Vin::Texture> tex;
-	eastl::shared_ptr<Vin::Material> mat;
+	std::shared_ptr<Vin::Program> program;
+	std::shared_ptr<Vin::VertexBuffer> vbo;
+	std::shared_ptr<Vin::IndexBuffer> ibo;
+	std::shared_ptr<Vin::VertexArray> vao;
+	std::shared_ptr<Vin::Texture> tex;
+	std::shared_ptr<Vin::Material> mat;
 
 	double t = 0;
 
@@ -51,8 +51,8 @@ class MyModule : public Vin::Module {
 		Vin::GameFilesystem::Mount("./bin");
 		//Vin::AssetDatabase::AddRegistry("mainregistry.registry");
 
-		eastl::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
-		eastl::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
+		std::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
+		std::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
 
 		if (vsfile && fsfile) {
 			program = Vin::Program::Create();
@@ -66,7 +66,7 @@ class MyModule : public Vin::Module {
 		Vin::Resources::Unload(vsfile);
 		Vin::Resources::Unload(fsfile);
 
-		mat = eastl::make_shared<Vin::Material>(program);
+		mat = std::make_shared<Vin::Material>(program);
 
 		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
 
@@ -154,7 +154,7 @@ class AssetTestModule : public Vin::Module {
 
 		TestAsset testAsset{};
 
-		Vin::Asset<TestAsset> asset1 = Vin::AssetDatabase::AddAsset(eastl::move(testAsset), 12);
+		Vin::Asset<TestAsset> asset1 = Vin::AssetDatabase::AddAsset(std::move(testAsset), 12);
 		Vin::Asset<TestAsset> asset2 = Vin::AssetDatabase::GetAsset<TestAsset>(12);
 
 		asset2->v = 14;
@@ -170,7 +170,7 @@ public:
 		Vin::WindowInfo winfo{};
 		winfo.title = "Test Application";
 
-		Vin::AssetDatabase::AddAsset<Vin::WindowInfo>(eastl::move(winfo), VIN_WINDOWINFO_ASSETID);
+		Vin::AssetDatabase::AddAsset<Vin::WindowInfo>(std::move(winfo), VIN_WINDOWINFO_ASSETID);
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();

@@ -7,13 +7,13 @@
 namespace Vin {
 	struct MaterialTextureData {
 		bool used{ false };
-		eastl::shared_ptr<Texture> texture{ nullptr };
+		std::shared_ptr<Texture> texture{ nullptr };
 	};
 
 	class Material {
 	public:
 		Material() = delete;
-		Material(eastl::shared_ptr<Program> program);
+		Material(std::shared_ptr<Program> program);
 
 	public:
 		void Bind();
@@ -56,11 +56,11 @@ namespace Vin {
 		void SetMat4(int location, float* values);
 		void SetMat4(const char* name, float* values) { SetMat4(GetField(name), values); };
 
-		void SetTexture(int location, eastl::shared_ptr<Texture> texture);
-		void SetTexture(const char* name, eastl::shared_ptr<Texture> texture) { SetTexture(GetField(name), texture); };
+		void SetTexture(int location, std::shared_ptr<Texture> texture);
+		void SetTexture(const char* name, std::shared_ptr<Texture> texture) { SetTexture(GetField(name), texture); };
 
 	private:
-		eastl::shared_ptr<Program> m_Program{ nullptr };
+		std::shared_ptr<Program> m_Program{ nullptr };
 		MaterialTextureData m_Textures[16]{};
 	};
 }

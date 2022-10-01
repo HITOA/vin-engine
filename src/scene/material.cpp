@@ -2,7 +2,7 @@
 #include "resources/fallback.hpp"
 #include "logger/logger.hpp"
 
-Vin::Material::Material(eastl::shared_ptr<Program> program) : 
+Vin::Material::Material(std::shared_ptr<Program> program) : 
     m_Program{ program }, m_Textures{}
 {
     if (!m_Program || !m_Program->IsProgramComplete())
@@ -90,7 +90,7 @@ void Vin::Material::SetMat4(int location, float* values)
     m_Program->SetMat4(location, values);
 }
 
-void Vin::Material::SetTexture(int location, eastl::shared_ptr<Texture> texture)
+void Vin::Material::SetTexture(int location, std::shared_ptr<Texture> texture)
 {
     if (!texture)
         texture = Fallback::GetFallbackTexture();

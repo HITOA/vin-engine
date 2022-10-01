@@ -19,7 +19,6 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
 
-add_subdirectory(${EXTERNAL_PATH}/EASTL)
 add_subdirectory(${EXTERNAL_PATH}/cwalk)
 add_subdirectory(${EXTERNAL_PATH}/fmt)
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
@@ -45,7 +44,6 @@ target_link_libraries(
 	cwalk
 	glad_library 
 	glfw 
-	EASTL
 	lua_static 
 	physfs-static 
 	GTest::gtest_main

@@ -11,7 +11,7 @@
 namespace Vin {
 	class Image : public Resource {
 	public:
-		void Load(eastl::unique_ptr<GameFile> file) final {
+		void Load(std::unique_ptr<GameFile> file) final {
 			size_t filesize = file->GetSize();
 
 			char* buff = new char[filesize];
