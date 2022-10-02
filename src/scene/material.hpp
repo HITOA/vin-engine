@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vinpch.hpp"
+#include "core/base.hpp"
 #include "renderer/program.hpp"
 #include "renderer/texture.hpp"
 

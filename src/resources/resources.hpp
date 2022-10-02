@@ -2,9 +2,8 @@
 
 #include "vinpch.hpp"
 #include "resource.hpp"
-#include "filesystem/gamefilesystem.hpp"
 #include "core/allocator.hpp"
-#include <assert.hpp>
+#include "core/assert.hpp"
 #include "logger/logger.hpp"
 
 namespace Vin {

@@ -2,7 +2,7 @@
 
 #include "resource.hpp"
 
-namespace Vin {
+/*namespace Vin {
 
 	class RawFile : public Resource {
 	public:
@@ -29,4 +29,4 @@ namespace Vin {
 		size_t size;
 	};
 
-}
+}*/

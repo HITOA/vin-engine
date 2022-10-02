@@ -1,6 +1,6 @@
 #include "texture.hpp"
 
-#include <assert.hpp>
+#include "core/assert.hpp"
 #include "renderer/renderer.hpp"
 #include "opengl/texture_opengl.hpp"
 

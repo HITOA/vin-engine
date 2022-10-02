@@ -8,7 +8,7 @@
 namespace Vin {
 
 	std::shared_ptr<Vin::Texture> LoadTexture(const char* path, bool mipmap = true) {
-		std::shared_ptr<Vin::Image> img = Vin::Resources::Load<Vin::Image>(path);
+		/*std::shared_ptr<Vin::Image> img = Vin::Resources::Load<Vin::Image>(path);
 		if (img.get() == nullptr)
 			return nullptr;
 
@@ -19,7 +19,8 @@ namespace Vin {
 
 		Vin::Resources::Unload(img);
 
-		return texture;
+		return texture;*/
+		return nullptr;
 	}
 
 }

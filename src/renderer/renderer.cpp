@@ -1,6 +1,6 @@
 #include "renderer.hpp"
 
-#include <assert.hpp>
+#include "core/assert.hpp"
 
 #include "opengl/renderer_opengl.hpp"
 

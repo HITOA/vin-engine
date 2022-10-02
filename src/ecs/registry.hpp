@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bitset.hpp>
 #include "vinpch.hpp"
 
 #include "query.hpp"

@@ -1,6 +1,6 @@
 #include "program.hpp"
 
-#include <assert.hpp>
+#include "core/assert.hpp"
 
 #include "renderer/renderer.hpp"
 

@@ -1,6 +1,6 @@
 #include "windowmodule.hpp"
 
-#include <assert.hpp>
+#include "core/assert.hpp"
 #include <GLFW/glfw3.h>
 
 #include "assets/assetdatabase.hpp"

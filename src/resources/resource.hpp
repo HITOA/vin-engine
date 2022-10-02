@@ -1,7 +1,6 @@
 #pragma once
 
 #include "vinpch.hpp"
-#include "filesystem/gamefilesystem.hpp"
 
 namespace Vin {
 	typedef unsigned int ResourceHandle;
@@ -26,7 +25,7 @@ namespace Vin {
 	public:
 		virtual ~Resource() {};
 
-		virtual void Load(std::unique_ptr<GameFile> file) = 0;
+		//virtual void Load(std::unique_ptr<GameFile> file) = 0;
 		virtual void Unload() = 0;
 
 		ResourceHandle GetHandle() {

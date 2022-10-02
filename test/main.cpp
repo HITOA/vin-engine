@@ -1,7 +1,5 @@
 #include <vin.hpp>
 
-#include <filesystem/gamefilesystem.hpp>
-
 #include <module/windowing/windowmodule.hpp>
 #include <module/rendering/renderingmodule.hpp>
 #include <module/editor/editormodule.hpp>
@@ -30,7 +28,7 @@ unsigned short indices[] = {
 
 char fallbacktexture[4]{ 255, 0, 255, 0 };
 
-class MyModule : public Vin::Module {
+/*class MyModule : public Vin::Module {
 	std::shared_ptr<Vin::Program> program;
 	std::shared_ptr<Vin::VertexBuffer> vbo;
 	std::shared_ptr<Vin::IndexBuffer> ibo;
@@ -142,25 +140,16 @@ class MyModule : public Vin::Module {
 		if (Vin::WindowCloseEvent* event = handler.GetEvent<Vin::WindowCloseEvent>())
 			GetApp()->Stop();
 	}
-};
+};*/
 
-struct TestAsset {
-	int v = 12;
-};
-
-class AssetTestModule : public Vin::Module {
+class TestModule : public Vin::Module {
 	void Start() {
-		Vin::GameFilesystem::Mount("./bin");
+		Vin::Logger::Log("Module started.");
+	}
 
-		TestAsset testAsset{};
-
-		Vin::Asset<TestAsset> asset1 = Vin::AssetDatabase::AddAsset(std::move(testAsset), 12);
-		Vin::Asset<TestAsset> asset2 = Vin::AssetDatabase::GetAsset<TestAsset>(12);
-
-		asset2->v = 14;
-		
-		Vin::Logger::Log("{}", asset1->v);
-		Vin::Logger::Log("{}", asset2->v);
+	void OnEvent(Vin::EventHandler handler) {
+		if (Vin::WindowCloseEvent* event = handler.GetEvent<Vin::WindowCloseEvent>())
+			GetApp()->Stop();
 	}
 };
 
@@ -174,9 +163,7 @@ public:
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();
-		AddModule<Vin::EditorModule>();
-		AddModule<MyModule>();
-		//AddModule<AssetTestModule>();
+		AddModule<TestModule>();
 	}
 };
 

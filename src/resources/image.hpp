@@ -8,7 +8,7 @@
 #include <stb_image.h>
 #pragma warning(pop)
 
-namespace Vin {
+/*namespace Vin {
 	class Image : public Resource {
 	public:
 		void Load(std::unique_ptr<GameFile> file) final {
@@ -46,4 +46,4 @@ namespace Vin {
 		int m_Width, m_Height, m_Channels;
 		unsigned char* m_Data;
 	};
-}
+}*/

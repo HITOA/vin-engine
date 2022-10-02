@@ -1,12 +1,10 @@
 #include "assetregistry.hpp"
-#include "filesystem/gamefilesystem.hpp"
 #include "core/assert.hpp"
-#include <physfs.h>
 #include "logger/logger.hpp"
 
 bool Vin::AssetRegistrySerializer::Load(AssetRegistry& registry, const char* path)
 {
-    if (!GameFilesystem::Exists(path))
+    /*if (!GameFilesystem::Exists(path))
         return false;
 
     std::unique_ptr<GameFile> file = GameFilesystem::Open(path, FileMode::Read);
@@ -19,14 +17,14 @@ bool Vin::AssetRegistrySerializer::Load(AssetRegistry& registry, const char* pat
     memcpy(registry.m_Path, header.path, sizeof(registry.m_Name));
     registry.m_Pathes.resize(header.count);
     for (AssetRegistryPath& registrypath : registry.m_Pathes)
-        file->ReadBytes(registrypath.path, ASSET_REGISTRY_PATH_LENGTH);
+        file->ReadBytes(registrypath.path, ASSET_REGISTRY_PATH_LENGTH);*/
 
     return true;
 }
 
 bool Vin::AssetRegistrySerializer::Save(AssetRegistry& registry)
 {
-    static const char magic[4] = { ASSET_REGISTRY_MAGIC[0], ASSET_REGISTRY_MAGIC[1], ASSET_REGISTRY_MAGIC[2], ASSET_REGISTRY_MAGIC[3] };
+    /*static const char magic[4] = {ASSET_REGISTRY_MAGIC[0], ASSET_REGISTRY_MAGIC[1], ASSET_REGISTRY_MAGIC[2], ASSET_REGISTRY_MAGIC[3]};
     
     std::unique_ptr<GameFile> file = GameFilesystem::Create(registry.GetRegistryPath());
 
@@ -44,7 +42,7 @@ bool Vin::AssetRegistrySerializer::Save(AssetRegistry& registry)
     file->WriteType(header);
 
     for (AssetRegistryPath& registrypath : registry.m_Pathes)
-        file->WriteType(registrypath);
+        file->WriteType(registrypath);*/
 
     return true;
 }

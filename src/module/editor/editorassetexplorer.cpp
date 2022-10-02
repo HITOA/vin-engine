@@ -6,7 +6,6 @@
 
 #include "assets/assetdatabase.hpp"
 
-#include "filesystem/gamefilesystem.hpp"
 #include "logger/logger.hpp"
 
 void Vin::EditorAssetExplorer::Draw(bool* drawWindow)

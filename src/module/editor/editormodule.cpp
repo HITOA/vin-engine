@@ -7,10 +7,8 @@
 #include "module/windowing/windowmodule.hpp"
 #include "assets/assetdatabase.hpp"
 #include "editordebugconsole.hpp"
-#include "filesystem/gamefilesystem.hpp"
 
 #include <GLFW/glfw3.h>
-#include <cwalk.h>
 
 void Vin::EditorModule::Init()
 {

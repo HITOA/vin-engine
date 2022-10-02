@@ -1,6 +1,6 @@
 #include "program_opengl.hpp"
 
-#include <assert.hpp>
+#include "core/assert.hpp"
 #include "logger/logger.hpp"
 
 #include "glad/gl.h"

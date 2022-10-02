@@ -10,7 +10,7 @@
 
 std::shared_ptr<Vin::StaticMesh> Vin::LoadGLB(const char* path)
 {
-	std::shared_ptr<RawFile> src = Resources::Load<RawFile>(path);
+	/*std::shared_ptr<RawFile> src = Resources::Load<RawFile>(path);
 
 	if (!src) {
 		Vin::Logger::Err("File {} does not exists.", path);
@@ -43,7 +43,7 @@ std::shared_ptr<Vin::StaticMesh> Vin::LoadGLB(const char* path)
 		Logger::Log("{}, {}", pair.first, pair.second);
 	}
 	Logger::Log("INDICES, {}", mesh.primitives[0].indices);
-
+	*/
 	return nullptr;
 	//std::shared_ptr<StaticMesh> staticmesh = std::make_shared<StaticMesh>(;
 }

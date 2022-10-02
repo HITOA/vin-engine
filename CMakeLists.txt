@@ -18,11 +18,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
+set(LZ4_BUNDLED_MODE ON)
 
 add_subdirectory(${EXTERNAL_PATH}/fmt)
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
 add_subdirectory(${EXTERNAL_PATH}/imgui)
+add_subdirectory(${EXTERNAL_PATH}/lz4/build/cmake)
 add_subdirectory(${EXTERNAL_PATH}/mimalloc)
 add_subdirectory(${EXTERNAL_PATH}/tinygltf)
 
@@ -39,6 +41,7 @@ target_link_libraries(
 	glad_library 
 	glfw 
 	imgui
+	lz4_static
 	mimalloc-static
 	fmt
 	tinygltf

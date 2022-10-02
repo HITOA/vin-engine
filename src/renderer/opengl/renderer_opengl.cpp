@@ -1,7 +1,7 @@
 #include "renderer_opengl.hpp"
 
 #include "core/base.hpp">
-#include <assert.hpp>
+#include "core/assert.hpp"
 #include "logger/logger.hpp"
 
 #include <glad/gl.h>
