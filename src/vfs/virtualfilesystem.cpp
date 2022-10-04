@@ -2,6 +2,8 @@
 
 bool Vin::VirtualFileSystem::AddFileSystem(std::shared_ptr<FileSystem> fs, bool priority)
 {
+	if (!fs->IsValid())
+		return false;
 	if (priority)
 		m_FileSystems.insert(m_FileSystems.begin(), fs);
 	else
@@ -28,7 +30,7 @@ std::unique_ptr<Vin::File> Vin::VirtualFileSystem::Open(std::string_view path, F
 {
 	std::unique_ptr<File> file{ nullptr };
 	for (auto& fs : m_FileSystems)
-		if (file = fs->Open(path, mode))
+		if ((file = fs->Open(path, mode))->IsValid())
 			break;
 	return file;
 }

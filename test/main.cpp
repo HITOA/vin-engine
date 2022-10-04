@@ -13,6 +13,12 @@
 
 #include "ecs/registry.hpp"
 
+#include "vfs/impl/native/nativefs.hpp"
+#include "vfs/virtualfilesystem.hpp"
+
+#include "utils/pakmaker.hpp"
+#include "vfs/impl/pak/pakfs.hpp"
+
 float vertices[] = {
 	// positions          // colors           // texture coords
 	 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
@@ -145,6 +151,44 @@ char fallbacktexture[4]{ 255, 0, 255, 0 };
 class TestModule : public Vin::Module {
 	void Start() {
 		Vin::Logger::Log("Module started.");
+
+		Vin::VirtualFileSystem vfs{};
+		vfs.AddFileSystem(std::make_shared<Vin::NativeFS>(Vin::NativeFS{ "./bin" }));
+		Vin::Logger::Log( "exists : {}", vfs.Exists("data/vs.glsl") );
+
+		std::unique_ptr<Vin::File> file = vfs.Open("data/vs.glsl", Vin::FileMode::Read);
+
+		char buff[5012];
+		Vin::Logger::Log("Eof ? : {}", file->IsEof());
+
+		size_t l = file->ReadBytes(buff, sizeof(buff));
+		buff[l] = 0;
+		Vin::Logger::Log("Read length : {}", l);
+		Vin::Logger::Log("Read : {}", buff);
+		Vin::Logger::Log("File length : {}", file->GetSize());
+		Vin::Logger::Log("Eof ? : {}", file->IsEof());
+
+		file->Close();
+
+		Vin::PakMaker pm{};
+		pm.AddFile("D:/VIN/vin-engine/build/bin/data/container.jpg", "pute/container.jpg", true);
+		pm.AddFile("D:/VIN/vin-engine/build/bin/data/vin.glsl", "pute/vin.glsl", true);
+		pm.Save("test.pak");
+
+		vfs.AddFileSystem(std::make_shared<Vin::PakFS>("test.pak"));
+		Vin::Logger::Log("{}", vfs.Exists("pute/container.jpg"));
+
+		std::unique_ptr<Vin::File> file2 = vfs.Open("pute/vin.glsl", Vin::FileMode::Read);
+
+		Vin::Logger::Log("Eof ? : {}", file2->IsEof());
+
+		size_t l2 = file2->ReadBytes(buff, sizeof(buff));
+		buff[l2] = 0;
+		Vin::Logger::Log("Read length : {}", l2);
+		Vin::Logger::Log("Read : {}", buff);
+		Vin::Logger::Log("File length : {}", file2->GetSize());
+		Vin::Logger::Log("Eof ? : {}", file2->IsEof());
+
 	}
 
 	void OnEvent(Vin::EventHandler handler) {

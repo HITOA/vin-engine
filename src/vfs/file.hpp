@@ -14,6 +14,11 @@ namespace Vin {
 
 	class File { //Base class for implementing fs (NativeFile, GameFile)
 	public:
+		virtual ~File() { Close(); };
+
+	public:
+		virtual void Close() {};
+
 		virtual bool IsValid() = 0;
 		//Virtual function to work on file
 		virtual size_t ReadBytes(char* buff, size_t buffsize) = 0;

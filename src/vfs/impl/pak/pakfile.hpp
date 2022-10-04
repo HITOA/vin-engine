@@ -6,11 +6,11 @@
 #include "vfs/file.hpp"
 
 namespace Vin {
-	
-	class NativeFile : public File {
-	public:
-		NativeFile(const std::filesystem::path& path, FileMode mode);
 
+	class PakFile : public File {
+	public:
+		PakFile(char* buff, size_t buffsize); //Data must be uncompressed
+		
 	public:
 		void Close() final;
 
@@ -25,8 +25,9 @@ namespace Vin {
 		void SetPos(size_t pos) final;
 
 	private:
-		std::fstream m_FileStream{};
-		std::filesystem::path m_Path{};
+		char* m_Buff;
+		size_t m_BuffSize;
+		size_t m_BuffIdx;
 	};
 
 }

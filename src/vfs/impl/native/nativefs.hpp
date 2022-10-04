@@ -13,6 +13,8 @@ namespace Vin {
 		NativeFS(std::string_view root);
 
 	public:
+		bool IsValid() final;
+
 		std::unique_ptr<File> Open(std::string_view path, FileMode mode) final;
 		bool Exists(std::string_view path) final;
 

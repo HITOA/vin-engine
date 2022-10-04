@@ -6,6 +6,11 @@ Vin::NativeFS::NativeFS(std::string_view root) : m_Root{ root }
 	m_Root = std::filesystem::absolute(m_Root);
 }
 
+bool Vin::NativeFS::IsValid()
+{
+	return std::filesystem::exists(m_Root);
+}
+
 std::unique_ptr<Vin::File> Vin::NativeFS::Open(std::string_view path, FileMode mode)
 {
 	std::filesystem::path fullpath = m_Root / std::filesystem::path(path);

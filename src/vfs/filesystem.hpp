@@ -8,6 +8,10 @@ namespace Vin {
 
 	class FileSystem { //Base class for implementing fs (NativeFS, GameFS..)
 	public:
+		virtual ~FileSystem() {};
+
+	public:
+		virtual bool IsValid() = 0;
 		//Virtual fs function (Open, Exists, Delete..)
 		virtual std::unique_ptr<File> Open(std::string_view path, FileMode mode) = 0;
 		virtual bool Exists(std::string_view path) = 0;

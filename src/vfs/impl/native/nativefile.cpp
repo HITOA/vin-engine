@@ -1,6 +1,6 @@
 #include "nativefile.hpp"
 
-Vin::NativeFile::NativeFile(const std::filesystem::path& path, FileMode mode) {
+Vin::NativeFile::NativeFile(const std::filesystem::path& path, FileMode mode) : m_Path{ path } {
 	static std::ios_base::openmode openmode{};
 
 	switch (mode)
@@ -21,6 +21,11 @@ Vin::NativeFile::NativeFile(const std::filesystem::path& path, FileMode mode) {
 	m_FileStream = std::fstream{ path, openmode };
 }
 
+void Vin::NativeFile::Close()
+{
+	m_FileStream.close();
+}
+
 bool Vin::NativeFile::IsValid()
 {
 	return m_FileStream.is_open();
@@ -28,16 +33,14 @@ bool Vin::NativeFile::IsValid()
 
 size_t Vin::NativeFile::ReadBytes(char* buff, size_t buffsize)
 {
-	size_t currpos = GetPos();
 	m_FileStream.read(buff, buffsize);
-	return GetPos() - currpos;
+	return m_FileStream.gcount();
 }
 
 size_t Vin::NativeFile::WriteBytes(char* buff, size_t buffsize)
 {
-	size_t currpos = m_FileStream.tellp();
 	m_FileStream.write(buff, buffsize);
-	return (size_t)m_FileStream.tellp() - currpos;
+	return m_FileStream.gcount();
 }
 
 bool Vin::NativeFile::IsEof()
@@ -47,11 +50,7 @@ bool Vin::NativeFile::IsEof()
 
 size_t Vin::NativeFile::GetSize()
 {
-	size_t currpos = GetPos();
-	m_FileStream.seekg(std::ios_base::end);
-	size_t size = m_FileStream.tellg();
-	m_FileStream.seekg(currpos);
-	return size;
+	return std::filesystem::file_size(m_Path);
 }
 
 size_t Vin::NativeFile::GetPos()
