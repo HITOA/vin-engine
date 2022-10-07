@@ -163,7 +163,7 @@ void Vin::EditorModule::SetImGuiStyle()
 
 void Vin::EditorModule::Begin()
 {
-	Asset<WindowInfo> windowInfo = AssetDatabase::GetAsset<WindowInfo>(VIN_WINDOWINFO_ASSETID);
+	Asset<WindowInfo> windowInfo = AssetDatabase::GetAsset<WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(windowInfo->width, windowInfo->height);

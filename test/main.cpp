@@ -1,5 +1,7 @@
 #include <vin.hpp>
 
+#include "assets/serdes/textureserdes.hpp"
+
 #include <module/windowing/windowmodule.hpp>
 #include <module/rendering/renderingmodule.hpp>
 #include <module/editor/editormodule.hpp>
@@ -12,12 +14,9 @@
 #include "assets/assetdatabase.hpp"
 
 #include "ecs/registry.hpp"
-
-#include "vfs/impl/native/nativefs.hpp"
-#include "vfs/virtualfilesystem.hpp"
+#include "vfs/vfs.hpp"
 
 #include "utils/pakmaker.hpp"
-#include "vfs/impl/pak/pakfs.hpp"
 
 float vertices[] = {
 	// positions          // colors           // texture coords
@@ -52,7 +51,9 @@ char fallbacktexture[4]{ 255, 0, 255, 0 };
 	void Start() {
 		Vin::Logger::Log("Module is working.");
 
-		Vin::GameFilesystem::Mount("./bin");
+		//Vin::GameFilesystem::Mount("./bin");
+		Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./bin"));
+
 		//Vin::AssetDatabase::AddRegistry("mainregistry.registry");
 
 		std::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
@@ -149,46 +150,80 @@ char fallbacktexture[4]{ 255, 0, 255, 0 };
 };*/
 
 class TestModule : public Vin::Module {
+	Vin::Asset<Vin::Texture> tex;
+	std::shared_ptr<Vin::Program> program;
+	std::shared_ptr<Vin::VertexBuffer> vbo;
+	std::shared_ptr<Vin::IndexBuffer> ibo;
+	std::shared_ptr<Vin::VertexArray> vao;
+	std::shared_ptr<Vin::Material> mat;
+
 	void Start() {
 		Vin::Logger::Log("Module started.");
+		Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./bin"));
+		
+		{
+			Vin::Asset<std::string> vsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/vs.glsl");
+			Vin::Asset<std::string> fsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/fs.glsl");
 
-		Vin::VirtualFileSystem vfs{};
-		vfs.AddFileSystem(std::make_shared<Vin::NativeFS>(Vin::NativeFS{ "./bin" }));
-		Vin::Logger::Log( "exists : {}", vfs.Exists("data/vs.glsl") );
+			program = Vin::Program::Create();
 
-		std::unique_ptr<Vin::File> file = vfs.Open("data/vs.glsl", Vin::FileMode::Read);
+			program->AddShader(Vin::ShaderType::VertexShader, vsfile->data());
+			program->AddShader(Vin::ShaderType::FragmentShader, fsfile->data());
 
-		char buff[5012];
-		Vin::Logger::Log("Eof ? : {}", file->IsEof());
+			program->CompileProgram();
 
-		size_t l = file->ReadBytes(buff, sizeof(buff));
-		buff[l] = 0;
-		Vin::Logger::Log("Read length : {}", l);
-		Vin::Logger::Log("Read : {}", buff);
-		Vin::Logger::Log("File length : {}", file->GetSize());
-		Vin::Logger::Log("Eof ? : {}", file->IsEof());
+			Vin::AssetDatabase::Unload(vsfile);
+			Vin::AssetDatabase::Unload(fsfile);
+		}
 
-		file->Close();
+		mat = std::make_shared<Vin::Material>(program);
 
-		Vin::PakMaker pm{};
-		pm.AddFile("D:/VIN/vin-engine/build/bin/data/container.jpg", "pute/container.jpg", true);
-		pm.AddFile("D:/VIN/vin-engine/build/bin/data/vin.glsl", "pute/vin.glsl", true);
-		pm.Save("test.pak");
+		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
 
-		vfs.AddFileSystem(std::make_shared<Vin::PakFS>("test.pak"));
-		Vin::Logger::Log("{}", vfs.Exists("pute/container.jpg"));
+		vbo->SetData(&vertices, sizeof(float) * 32, 0);
 
-		std::unique_ptr<Vin::File> file2 = vfs.Open("pute/vin.glsl", Vin::FileMode::Read);
+		Vin::VertexBufferLayout layout{
+			{ Vin::VertexAttribute::Position, Vin::VertexAttributeType::Float3 },
+			{ Vin::VertexAttribute::Color, Vin::VertexAttributeType::Float3 },
+			{ Vin::VertexAttribute::TextureCoord0, Vin::VertexAttributeType::Float2 }
+		};
 
-		Vin::Logger::Log("Eof ? : {}", file2->IsEof());
+		Vin::Logger::Log("Layout stride is : {}", layout.GetStride());
 
-		size_t l2 = file2->ReadBytes(buff, sizeof(buff));
-		buff[l2] = 0;
-		Vin::Logger::Log("Read length : {}", l2);
-		Vin::Logger::Log("Read : {}", buff);
-		Vin::Logger::Log("File length : {}", file2->GetSize());
-		Vin::Logger::Log("Eof ? : {}", file2->IsEof());
+		vbo->SetBufferLayout(layout);
 
+		ibo = Vin::IndexBuffer::Create(Vin::BufferIndexType::UnsignedInt16);
+
+		ibo->SetData(&indices, 6);
+
+		vao = Vin::VertexArray::Create();
+
+		vao->AddVertexBuffer(vbo);
+		vao->SetIndexBuffer(ibo);
+
+		tex = Vin::AssetDatabase::LoadAsset<Vin::Texture>("data/aerial_grass_rock_diff_1k.jpg");
+		mat->SetTexture("ourTexture", tex);
+	}
+
+	void Render() {
+		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
+
+		Vin::Matrix4x4<float> mat4{ Vin::Matrix4x4<float>::identity };
+
+		Vin::Scale(mat4, Vin::Vector3<float>{1000, 1000, 1000});
+		Vin::Rotate(mat4, Vin::Vector3<float>{1.0f, 0, 0}, 90.0f * (float)Vin::deg2rad);
+		Vin::Translate(mat4, Vin::Vector3<float>{0, -6.0f, -6.0f});
+
+		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
+		mat4 = mat4 * projection;
+
+		mat->SetMat4("vin_matrix_mvp", mat4.data);
+		//mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
+
+		Vin::Renderer::Clear(0.85, 0.85, 1.0, 1.0f);
+
+		mat->Bind();
+		Vin::Renderer::DrawIndexed(vao);
 	}
 
 	void OnEvent(Vin::EventHandler handler) {
@@ -203,10 +238,11 @@ public:
 		Vin::WindowInfo winfo{};
 		winfo.title = "Test Application";
 
-		Vin::AssetDatabase::AddAsset<Vin::WindowInfo>(std::move(winfo), VIN_WINDOWINFO_ASSETID);
+		Vin::AssetDatabase::AddAsset<Vin::WindowInfo>(std::move(winfo), VIN_WINDOWINFO_ASSETPATH);
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();
+		AddModule<Vin::EditorModule>();
 		AddModule<TestModule>();
 	}
 };

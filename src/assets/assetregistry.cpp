@@ -2,7 +2,7 @@
 #include "core/assert.hpp"
 #include "logger/logger.hpp"
 
-bool Vin::AssetRegistrySerializer::Load(AssetRegistry& registry, const char* path)
+/*bool Vin::AssetRegistrySerializer::Load(AssetRegistry& registry, const char* path)
 {
     /*if (!GameFilesystem::Exists(path))
         return false;
@@ -17,7 +17,7 @@ bool Vin::AssetRegistrySerializer::Load(AssetRegistry& registry, const char* pat
     memcpy(registry.m_Path, header.path, sizeof(registry.m_Name));
     registry.m_Pathes.resize(header.count);
     for (AssetRegistryPath& registrypath : registry.m_Pathes)
-        file->ReadBytes(registrypath.path, ASSET_REGISTRY_PATH_LENGTH);*/
+        file->ReadBytes(registrypath.path, ASSET_REGISTRY_PATH_LENGTH);
 
     return true;
 }
@@ -42,7 +42,7 @@ bool Vin::AssetRegistrySerializer::Save(AssetRegistry& registry)
     file->WriteType(header);
 
     for (AssetRegistryPath& registrypath : registry.m_Pathes)
-        file->WriteType(registrypath);*/
+        file->WriteType(registrypath);
 
     return true;
 }
@@ -91,6 +91,6 @@ void Vin::AssetRegistry::SetRegistryPath(char path[256])
 const char* Vin::AssetRegistry::GetRegistryPath()
 {
     return m_Path;
-}
+}*/
 
 

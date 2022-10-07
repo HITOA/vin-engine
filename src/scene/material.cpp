@@ -92,8 +92,10 @@ void Vin::Material::SetMat4(int location, float* values)
 
 void Vin::Material::SetTexture(int location, std::shared_ptr<Texture> texture)
 {
-    if (!texture)
+    if (!texture) {
+        Vin::Logger::Err("Bad texture provided. switching to fallback texture.");
         texture = Fallback::GetFallbackTexture();
+    }
     
     if (location < 0 || location > 16)
         return;

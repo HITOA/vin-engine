@@ -8,6 +8,8 @@
 
 #include <algorithm>
 
+#include <optional>
+
 #include <vector>
 #include <array>
 #include <string>

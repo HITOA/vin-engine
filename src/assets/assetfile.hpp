@@ -6,7 +6,7 @@
 #define ASSET_MAGIC "\xE9\x23\xE6\x0E"
 
 namespace Vin {
-	enum class AssetType {
+	/*enum class AssetType {
 		None,
 		Unkown,
 		Shader,
@@ -32,5 +32,5 @@ namespace Vin {
 
 		static bool Load(const char* path, AssetHeader& header, void* buff, usize buffsize);
 		static bool Save(const char* path, AssetHeader& header, void* buff, usize buffsize);
-	};
+	};*/
 }

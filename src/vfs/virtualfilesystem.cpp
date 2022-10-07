@@ -42,3 +42,30 @@ bool Vin::VirtualFileSystem::Exists(std::string_view path)
 			return true;
 	return false;
 }
+
+Vin::VirtualFileSystem Vin::VFS::m_Vfs{};
+
+bool Vin::VFS::AddFileSystem(std::shared_ptr<FileSystem> fs, bool priority)
+{
+	return m_Vfs.AddFileSystem(fs, priority);
+}
+
+bool Vin::VFS::RemoveFileSystem(std::shared_ptr<FileSystem> fs)
+{
+	return m_Vfs.RemoveFileSystem(fs);
+}
+
+bool Vin::VFS::SetWriteFileSystem(std::weak_ptr<FileSystem> fs)
+{
+	return m_Vfs.SetWriteFileSystem(fs);
+}
+
+std::unique_ptr<Vin::File> Vin::VFS::Open(std::string_view path, FileMode mode)
+{
+	return m_Vfs.Open(path, mode);
+}
+
+bool Vin::VFS::Exists(std::string_view path)
+{
+	return m_Vfs.Exists(path);
+}

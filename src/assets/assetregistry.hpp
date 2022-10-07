@@ -7,7 +7,7 @@
 
 namespace Vin {
 
-	struct AssetRegistryHeader {
+	/*struct AssetRegistryHeader {
 		char magic[4];
 		char name[64];
 		char path[256];
@@ -45,5 +45,5 @@ namespace Vin {
 	public:
 		static bool Load(AssetRegistry& registry, const char* path);
 		static bool Save(AssetRegistry& registry);
-	};
+	};*/
 }

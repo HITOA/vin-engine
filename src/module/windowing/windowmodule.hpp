@@ -5,7 +5,7 @@
 #include "renderer/graphicscontext.hpp"
 #include "assets/asset.hpp"
 
-#define VIN_WINDOWINFO_ASSETID MAX_ASSET_ID_VALUE - 1
+#define VIN_WINDOWINFO_ASSETPATH "//Core/WindowInfo"
 
 struct GLFWwindow;
 

@@ -8,10 +8,10 @@
 #define ASSET_ID_CORE_COUNT 256
 
 namespace Vin {
-	typedef ui32 AssetId;
+	typedef usize AssetHandle;
 	typedef usize AssetTypeId;
 
-	//static AssetId GenerateAssetId();
+	AssetHandle GetNextAssetHandle();
 
 	struct AssetTypeTrait {
 	public:
@@ -48,34 +48,49 @@ namespace Vin {
 	class Asset {
 	public:
 		Asset() = default;
-		Asset(std::shared_ptr<T> ptr, AssetId assetId) : m_Ptr{ ptr }, m_AssetId{ assetId } {};
+		Asset(std::shared_ptr<T> ptr, AssetHandle assethandle) : m_Ptr{ ptr }, m_AssetHandle{ assethandle } {};
 
 	public:
 		T* operator->() {
 			return m_Ptr.get();
 		}
 
+		operator std::shared_ptr<T>() const {
+			return m_Ptr;
+		}
+
 	private:
 		std::shared_ptr<T> m_Ptr{ nullptr };
-		AssetId m_AssetId{ 0 };
+		AssetHandle m_AssetHandle{};
+
+		friend class AssetDatabase;
 	};
 
 	class AssetHolder {
 	public:
-		AssetHolder() : m_Ptr{ nullptr }, m_TypeId{ 0 } {};
-		AssetHolder(std::shared_ptr<void> ptr, AssetTypeId typeId) : m_Ptr{ ptr }, m_TypeId{ typeId } {};
-		AssetHolder(AssetHolder& holder) : m_Ptr{ holder.m_Ptr }, m_TypeId{ holder.m_TypeId } {};
+		AssetHolder() : m_Ptr{ nullptr }, m_TypeId{ 0 }, m_Path{} {};
+		AssetHolder(std::shared_ptr<void> ptr, AssetTypeId typeId, const std::string& path) : m_Ptr{ ptr }, m_TypeId{ typeId }, m_Path{ path } {};
+		AssetHolder(AssetHolder& holder) : m_Ptr{ holder.m_Ptr }, m_TypeId{ holder.m_TypeId }, m_Path{ holder.m_Path } {};
 
 	public:
 		template<typename T>
-		Asset<T> GetAsset(AssetId assetId) {
+		Asset<T> GetAsset(AssetHandle assethandle) {
 			if (AssetTypeTrait::GetId<T>() != m_TypeId)
 				return Asset<T>{ nullptr, 0 };
-			return Asset<T>{ std::static_pointer_cast<T>(m_Ptr), assetId };
+			return Asset<T>{ std::static_pointer_cast<T>(m_Ptr), assethandle };
 		};
+
+		std::string GetPath() {
+			return m_Path;
+		}
+
+		usize GetRefCount() {
+			return m_Ptr.use_count();
+		}
 
 	private:
 		std::shared_ptr<void> m_Ptr{ nullptr };
 		AssetTypeId m_TypeId{ 0 };
+		std::string m_Path{};
 	};
 }

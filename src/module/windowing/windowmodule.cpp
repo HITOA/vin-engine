@@ -40,7 +40,7 @@ void Vin::WindowDropCallback(GLFWwindow* window, int count, const char** paths)
 
 void Vin::WindowModule::Init()
 {
-	m_Info = AssetDatabase::AddAsset<WindowInfo>(WindowInfo{}, VIN_WINDOWINFO_ASSETID);
+	m_Info = AssetDatabase::AddAsset<WindowInfo>(WindowInfo{}, VIN_WINDOWINFO_ASSETPATH);
 
 	if (!_isGlfwInit) {
 		int status = glfwInit();

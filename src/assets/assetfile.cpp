@@ -1,7 +1,7 @@
 #include "assetfile.hpp"
 //#include "filesystem/gamefilesystem.hpp"
 
-bool Vin::AssetFileSerializer::Load(const char* path, AssetHeader& header, void* buff, usize buffsize)
+/*bool Vin::AssetFileSerializer::Load(const char* path, AssetHeader& header, void* buff, usize buffsize)
 {
     /*if (!GameFilesystem::Exists(path))
         return false;
@@ -17,7 +17,7 @@ bool Vin::AssetFileSerializer::Load(const char* path, AssetHeader& header, void*
         return false;
 
     if (buffsize != file->ReadBytes((char*)buff, buffsize))
-        return false;*/
+        return false;
 
     return true;
 }
@@ -34,7 +34,7 @@ bool Vin::AssetFileSerializer::Save(const char* path, AssetHeader& header, void*
         return false;
 
     file->WriteType(header);
-    file->WriteBytes((char*)buff, buffsize);*/
+    file->WriteBytes((char*)buff, buffsize);
 
     return true;
-}
+}*/
