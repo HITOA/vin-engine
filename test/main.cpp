@@ -6,7 +6,6 @@
 #include <module/rendering/renderingmodule.hpp>
 #include <module/editor/editormodule.hpp>
 
-#include <utils/textureutils.hpp>
 #include <utils/gltfutils.hpp>
 
 #include "scene/mesh.hpp"
@@ -31,131 +30,18 @@ unsigned short indices[] = {
 	1, 2, 3
 };
 
-char fallbacktexture[4]{ 255, 0, 255, 0 };
-
-/*class MyModule : public Vin::Module {
-	std::shared_ptr<Vin::Program> program;
-	std::shared_ptr<Vin::VertexBuffer> vbo;
-	std::shared_ptr<Vin::IndexBuffer> ibo;
-	std::shared_ptr<Vin::VertexArray> vao;
-	std::shared_ptr<Vin::Texture> tex;
-	std::shared_ptr<Vin::Material> mat;
-
-	double t = 0;
-
-	double updateT = 0;
-	double processT = 0;
-	int updateC = 0;
-	int processC = 0;
-
-	void Start() {
-		Vin::Logger::Log("Module is working.");
-
-		//Vin::GameFilesystem::Mount("./bin");
-		Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./bin"));
-
-		//Vin::AssetDatabase::AddRegistry("mainregistry.registry");
-
-		std::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
-		std::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
-
-		if (vsfile && fsfile) {
-			program = Vin::Program::Create();
-
-			program->AddShader(Vin::ShaderType::VertexShader, vsfile->GetData());
-			program->AddShader(Vin::ShaderType::FragmentShader, fsfile->GetData());
-
-			program->CompileProgram();
-		}
-
-		Vin::Resources::Unload(vsfile);
-		Vin::Resources::Unload(fsfile);
-
-		mat = std::make_shared<Vin::Material>(program);
-
-		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
-
-		vbo->SetData(&vertices, sizeof(float) * 32, 0);
-
-		Vin::VertexBufferLayout layout{
-			{ Vin::VertexAttribute::Position, Vin::VertexAttributeType::Float3 },
-			{ Vin::VertexAttribute::Color, Vin::VertexAttributeType::Float3 },
-			{ Vin::VertexAttribute::TextureCoord0, Vin::VertexAttributeType::Float2 }
-		};
-
-		Vin::Logger::Log("Layout stride is : {}", layout.GetStride());
-
-		vbo->SetBufferLayout(layout);
-
-		ibo = Vin::IndexBuffer::Create(Vin::BufferIndexType::UnsignedInt16);
-
-		ibo->SetData(&indices, 6);
-
-		vao = Vin::VertexArray::Create();
-
-		vao->AddVertexBuffer(vbo);
-		vao->SetIndexBuffer(ibo);
-
-		tex = Vin::LoadTexture("data/aerial_grass_rock_diff_1k.jpg");
-		mat->SetTexture("ourTexture", tex);
-	}
-
-	void Process() {
-		processT += GetApp()->GetDeltaTime().GetMillisecond();
-		processC += 1;
-
-		if (processT > 1000) {
-			//Vin::Logger::Log("Average process rate : {} ps ({} ms)", round(1000 / (processT / processC)), (processT / processC));
-			processT = 0;
-			processC = 0;
-		}
-	}
-
-	void Update() {
-		updateT += GetApp()->GetDeltaTime().GetMillisecond();
-		updateC += 1;
-
-		if (updateT > 1000) {
-			//Vin::Logger::Log("Average update rate : {} ps ({} ms)", round(1000 / (updateT / updateC)), (updateT / updateC));
-			updateT = 0;
-			updateC = 0;
-		}
-	}
-
-	void Render() {
-		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETID);
-
-		Vin::Matrix4x4<float> mat4{ Vin::Matrix4x4<float>::identity };
-
-		Vin::Scale(mat4, Vin::Vector3<float>{1000, 1000, 1000});
-		Vin::Rotate(mat4, Vin::Vector3<float>{1.0f, 0, 0}, 90.0f * (float)Vin::deg2rad);
-		Vin::Translate(mat4, Vin::Vector3<float>{0, -6.0f, -6.0f});
-
-		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
-		mat4 = mat4 * projection;
-
-		mat->SetMat4("vin_matrix_mvp", mat4.data);
-		//mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
-
-		Vin::Renderer::Clear(0.85, 0.85, 1.0, 1.0f);
-
-		mat->Bind();
-		Vin::Renderer::DrawIndexed(vao);
-	}
-
-	void OnEvent(Vin::EventHandler handler) {
-		if (Vin::WindowCloseEvent* event = handler.GetEvent<Vin::WindowCloseEvent>())
-			GetApp()->Stop();
-	}
-};*/
-
 class TestModule : public Vin::Module {
 	Vin::Asset<Vin::Texture> tex;
 	std::shared_ptr<Vin::Program> program;
 	std::shared_ptr<Vin::VertexBuffer> vbo;
 	std::shared_ptr<Vin::IndexBuffer> ibo;
 	std::shared_ptr<Vin::VertexArray> vao;
-	std::shared_ptr<Vin::Material> mat;
+	Vin::Material mat;
+
+	double updateT = 0;
+	double processT = 0;
+	int updateC = 0;
+	int processC = 0;
 
 	void Start() {
 		Vin::Logger::Log("Module started.");
@@ -176,7 +62,7 @@ class TestModule : public Vin::Module {
 			Vin::AssetDatabase::Unload(fsfile);
 		}
 
-		mat = std::make_shared<Vin::Material>(program);
+		mat = Vin::Material{ program };
 
 		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
 
@@ -202,7 +88,34 @@ class TestModule : public Vin::Module {
 		vao->SetIndexBuffer(ibo);
 
 		tex = Vin::AssetDatabase::LoadAsset<Vin::Texture>("data/aerial_grass_rock_diff_1k.jpg");
-		mat->SetTexture("ourTexture", tex);
+		mat.SetTexture("ourTexture", tex);
+
+		Vin::Logger::Log("Asset count : {}", Vin::AssetDatabase::GetAssetCount());
+		Vin::AssetDatabase::UnloadUnused();
+		Vin::Logger::Log("Asset count : {}", Vin::AssetDatabase::GetAssetCount());
+	}
+
+	void Process() {
+		processT += GetApp()->GetDeltaTime().GetMillisecond();
+		processC += 1;
+
+		if (processT > 1000) {
+			//Vin::Logger::Log("Average process rate : {} ps ({} ms)", round(1000 / (processT / processC)), (processT / processC));
+			processT = 0;
+			processC = 0;
+		}
+	}
+
+	void Update() {
+		updateT += GetApp()->GetDeltaTime().GetMillisecond();
+		updateC += 1;
+
+		if (updateT > 1000) {
+			//Vin::Logger::Log("Average update rate : {} ps ({} ms)", round(1000 / (updateT / updateC)), (updateT / updateC));
+
+			updateT = 0;
+			updateC = 0;
+		}
 	}
 
 	void Render() {
@@ -217,12 +130,12 @@ class TestModule : public Vin::Module {
 		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
 		mat4 = mat4 * projection;
 
-		mat->SetMat4("vin_matrix_mvp", mat4.data);
+		mat.SetMat4("vin_matrix_mvp", mat4.data);
 		//mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
 
 		Vin::Renderer::Clear(0.85, 0.85, 1.0, 1.0f);
 
-		mat->Bind();
+		mat.Bind();
 		Vin::Renderer::DrawIndexed(vao);
 	}
 

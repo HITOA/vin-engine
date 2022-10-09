@@ -7,10 +7,6 @@
 
 #include "logger/logger.hpp"
 
-#include "resources/resources.hpp"
-#include "resources/image.hpp"
-#include "resources/rawfile.hpp"
-
 #include "math/math.hpp"
 
 #include "renderer/rendering.hpp"

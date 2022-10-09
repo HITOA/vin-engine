@@ -101,7 +101,7 @@ namespace Vin {
 			static AssetHandle handlebuff[UNLOADUNUSED_MAX_ONCE]{};
 			size_t idx = 0;
 			for (auto& it : s_Database) {
-				if (it.second.GetRefCount() <= 1) {
+				if (it.second.GetRefCount() <= 1 && !((int)it.second.GetFlags() & (int)AssetFlag::Persistent)) {
 					handlebuff[idx] = it.first;
 					idx++;
 				}
@@ -119,6 +119,10 @@ namespace Vin {
 
 		static size_t GetAssetCount() {
 			return s_Database.size();
+		}
+
+		static void SetAssetFlags(AssetHandle handle, AssetFlag flags) {
+			s_Database[handle].m_Flags = flags;
 		}
 	private:
 		static std::unordered_map<AssetHandle, AssetHolder> s_Database;

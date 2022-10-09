@@ -1,6 +1,4 @@
 #include "gltfutils.hpp"
-#include "resources/resources.hpp"
-#include "resources/rawfile.hpp"
 
 //#define TINYGLTF_NO_FS
 #define TINYGLTF_IMPLEMENTATION

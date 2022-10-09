@@ -51,6 +51,10 @@ namespace Vin {
 		Asset(std::shared_ptr<T> ptr, AssetHandle assethandle) : m_Ptr{ ptr }, m_AssetHandle{ assethandle } {};
 
 	public:
+		void SetFlags(AssetFlag flags) {
+			AssetDatabase::SetAssetFlags(m_AssetHandle, flags);
+		}
+
 		T* operator->() {
 			return m_Ptr.get();
 		}
@@ -68,9 +72,12 @@ namespace Vin {
 
 	class AssetHolder {
 	public:
-		AssetHolder() : m_Ptr{ nullptr }, m_TypeId{ 0 }, m_Path{} {};
-		AssetHolder(std::shared_ptr<void> ptr, AssetTypeId typeId, const std::string& path) : m_Ptr{ ptr }, m_TypeId{ typeId }, m_Path{ path } {};
-		AssetHolder(AssetHolder& holder) : m_Ptr{ holder.m_Ptr }, m_TypeId{ holder.m_TypeId }, m_Path{ holder.m_Path } {};
+		AssetHolder() :
+			m_Ptr{ nullptr }, m_TypeId{ 0 }, m_Path{}, m_Flags{ AssetFlag::None } {};
+		AssetHolder(std::shared_ptr<void> ptr, AssetTypeId typeId, const std::string& path) : 
+			m_Ptr{ ptr }, m_TypeId{ typeId }, m_Path{ path }, m_Flags{ AssetFlag::None } {};
+		AssetHolder(AssetHolder& holder) : 
+			m_Ptr{ holder.m_Ptr }, m_TypeId{ holder.m_TypeId }, m_Path{ holder.m_Path }, m_Flags{ holder.m_Flags } {};
 
 	public:
 		template<typename T>
@@ -88,9 +95,16 @@ namespace Vin {
 			return m_Ptr.use_count();
 		}
 
+		AssetFlag GetFlags() {
+			return m_Flags;
+		}
+
 	private:
 		std::shared_ptr<void> m_Ptr{ nullptr };
 		AssetTypeId m_TypeId{ 0 };
 		std::string m_Path{};
+		AssetFlag m_Flags{ AssetFlag::None };
+
+		friend class AssetDatabase;
 	};
 }

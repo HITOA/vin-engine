@@ -13,7 +13,7 @@ namespace Vin {
 
 	class Material {
 	public:
-		Material() = delete;
+		Material() = default;
 		Material(std::shared_ptr<Program> program);
 
 	public:
