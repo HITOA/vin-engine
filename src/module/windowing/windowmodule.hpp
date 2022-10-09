@@ -3,18 +3,13 @@
 #include "vinpch.hpp"
 #include "core/application.hpp"
 #include "renderer/graphicscontext.hpp"
+#include "assets/asset.hpp"
 
-#define VIN_WINDOWINFO_ASSETNAME "//WindowInfo"
+#define VIN_WINDOWINFO_ASSETPATH "//Core/WindowInfo"
 
 struct GLFWwindow;
 
 namespace Vin {
-
-	enum class WindowEvent {
-		Close,
-		Resize
-	};
-
 	struct WindowResizeEvent {
 		int width, height;
 	};
@@ -23,10 +18,19 @@ namespace Vin {
 		bool closed;
 	};
 
+	struct WindowDropEvent {
+		int count;
+		const char** paths;
+	};
+
 	struct WindowInfo {
 		const char* title{ "Application" };
-		int width{ 600 };
-		int height{ 400 };
+		int width{ 1600 };
+		int height{ 900 };
+	};
+
+	struct GlfwWindowHolder {
+		GLFWwindow* window;
 	};
 
 	class WindowModule : public Module {
@@ -37,10 +41,11 @@ namespace Vin {
 	private:
 		Asset<WindowInfo> m_Info;
 		GLFWwindow* m_Window;
-		eastl::unique_ptr<GraphicsContext> m_Context;
+		std::unique_ptr<GraphicsContext> m_Context;
 
 		friend void WindowResizeCallback(GLFWwindow* window, int width, int height);
 		friend void WindowCloseCallback(GLFWwindow* window);
+		friend void WindowDropCallback(GLFWwindow* window, int count, const char** paths);
 	};
 
 }

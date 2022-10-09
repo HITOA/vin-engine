@@ -1,7 +1,9 @@
 #include "windowmodule.hpp"
 
-#include <assert.hpp>
+#include "core/assert.hpp"
 #include <GLFW/glfw3.h>
+
+#include "assets/assetdatabase.hpp"
 
 static bool _isGlfwInit = false;
 
@@ -28,9 +30,17 @@ void Vin::WindowCloseCallback(GLFWwindow* window)
 	winmod->DispatchEvent(handler);
 }
 
+void Vin::WindowDropCallback(GLFWwindow* window, int count, const char** paths)
+{
+	WindowModule* winmod = (WindowModule*)glfwGetWindowUserPointer(window);
+	EventHandler handler{};
+	handler.Bind(WindowDropEvent{ count, paths });
+	winmod->DispatchEvent(handler);
+}
+
 void Vin::WindowModule::Init()
 {
-	m_Info = CreateAsset<WindowInfo>(VIN_WINDOWINFO_ASSETNAME, WindowInfo{});
+	m_Info = AssetDatabase::AddAsset<WindowInfo>(WindowInfo{}, VIN_WINDOWINFO_ASSETPATH);
 
 	if (!_isGlfwInit) {
 		int status = glfwInit();
@@ -40,6 +50,7 @@ void Vin::WindowModule::Init()
 	}
 
 	m_Window = glfwCreateWindow(m_Info->width, m_Info->height, m_Info->title, nullptr, nullptr);
+
 	glfwSetWindowUserPointer(m_Window, this);
 
 	m_Context = GraphicsContext::Create(m_Window);
@@ -47,6 +58,7 @@ void Vin::WindowModule::Init()
 
 	glfwSetWindowSizeCallback(m_Window, WindowResizeCallback);
 	glfwSetWindowCloseCallback(m_Window, WindowCloseCallback);
+	glfwSetDropCallback(m_Window, WindowDropCallback);
 }
 
 void Vin::WindowModule::EarlyUpdate()

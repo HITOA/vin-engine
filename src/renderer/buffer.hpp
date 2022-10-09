@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vinpch.hpp"
-#include <assert.hpp>
+#include "core/assert.hpp"
 
 namespace Vin {
 	enum class BufferIndexType {
@@ -67,6 +67,10 @@ namespace Vin {
 		VertexBufferElement() = default;
 		VertexBufferElement(VertexAttribute attribute, VertexAttributeType type, bool normalized = false) : 
 			attribute{ attribute }, type { type }, offset{ 0 }, normalized{ normalized } {};
+
+		inline friend bool operator==(const VertexBufferElement& lhs, const VertexBufferElement& rhs) {
+			return lhs.attribute == rhs.attribute && lhs.type == rhs.type && lhs.normalized == rhs.normalized;
+		}
 	};
 
 	class VertexBufferLayout {
@@ -82,17 +86,38 @@ namespace Vin {
 			}
 		}
 
+		void AddVertexBufferElement(VertexBufferElement& element) {
+			m_Layout.push_back(element);
+			m_Layout[0].offset += m_Stride;
+			m_Stride += GetVertexAttributeTypeSize(element.type);
+		}
+
 		size_t GetStride() const { return m_Stride; }
 
-		eastl::vector<VertexBufferElement>::iterator begin() { return m_Layout.begin(); }
-		eastl::vector<VertexBufferElement>::iterator end() { return m_Layout.end(); }
-		eastl::vector<VertexBufferElement>::const_iterator begin() const { return m_Layout.begin(); }
-		eastl::vector<VertexBufferElement>::const_iterator end() const { return m_Layout.end(); }
-		eastl::vector<VertexBufferElement>::const_iterator cbegin() const { return m_Layout.cbegin(); }
-		eastl::vector<VertexBufferElement>::const_iterator cend() const { return m_Layout.cend(); }
+		std::vector<VertexBufferElement>::iterator begin() { return m_Layout.begin(); }
+		std::vector<VertexBufferElement>::iterator end() { return m_Layout.end(); }
+		std::vector<VertexBufferElement>::const_iterator begin() const { return m_Layout.begin(); }
+		std::vector<VertexBufferElement>::const_iterator end() const { return m_Layout.end(); }
+		std::vector<VertexBufferElement>::const_iterator cbegin() const { return m_Layout.cbegin(); }
+		std::vector<VertexBufferElement>::const_iterator cend() const { return m_Layout.cend(); }
+
+		inline friend bool operator==(const VertexBufferLayout& lhs, const VertexBufferLayout& rhs) {
+			if (lhs.m_Stride != rhs.m_Stride || lhs.m_Layout.size() != rhs.m_Layout.size())
+				return false;
+
+			auto itend = lhs.cend();
+			for (auto it1 = lhs.cbegin(), it2 = rhs.cbegin(); it1 != itend; ++it1, ++it2)
+				if (it1 != it2)
+					return false;
+			return true;
+		}
+
+		inline friend bool operator!=(const VertexBufferLayout& lhs, const VertexBufferLayout& rhs) {
+			return !(lhs == rhs);
+		}
 
 	private:
-		eastl::vector<VertexBufferElement> m_Layout;
+		std::vector<VertexBufferElement> m_Layout;
 		size_t m_Stride = 0;
 	};
 	
@@ -113,7 +138,7 @@ namespace Vin {
 
 		virtual void SetData(void* data, size_t size, size_t offset, bool resize = false) = 0;
 
-		static eastl::shared_ptr<VertexBuffer> Create(size_t size);
+		static std::shared_ptr<VertexBuffer> Create(size_t size);
 	};
 
 	class IndexBuffer : public Buffer{
@@ -125,6 +150,6 @@ namespace Vin {
 
 		virtual void SetData(void* data, size_t count) = 0;
 
-		static eastl::shared_ptr<IndexBuffer> Create(BufferIndexType type);
+		static std::shared_ptr<IndexBuffer> Create(BufferIndexType type);
 	};
 }

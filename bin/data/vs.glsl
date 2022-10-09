@@ -24,10 +24,10 @@ layout (location = TEXCOORD0_LOCATION) in vec2 aTexCoord;
 out vec3 ourColor;
 out vec2 TexCoord;
 
-uniform mat4 randommat;
+uniform mat4 vin_matrix_mvp;
 void main()
 {
-    gl_Position = (randommat * vec4(aPos.x, aPos.y, aPos.z, 1.0));
+    gl_Position = (vin_matrix_mvp * vec4(aPos.x, aPos.y, aPos.z, 1.0));
     ourColor = aColor;
     TexCoord = aTexCoord;
 }

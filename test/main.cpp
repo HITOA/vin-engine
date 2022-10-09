@@ -1,11 +1,21 @@
 #include <vin.hpp>
 
-#include <filesystem/gamefilesystem.hpp>
+#include "assets/serdes/textureserdes.hpp"
 
 #include <module/windowing/windowmodule.hpp>
 #include <module/rendering/renderingmodule.hpp>
+#include <module/editor/editormodule.hpp>
 
-#include <utils/textureutils.hpp>
+#include <utils/gltfutils.hpp>
+
+#include "scene/mesh.hpp"
+
+#include "assets/assetdatabase.hpp"
+
+#include "ecs/registry.hpp"
+#include "vfs/vfs.hpp"
+
+#include "utils/pakmaker.hpp"
 
 float vertices[] = {
 	// positions          // colors           // texture coords
@@ -20,14 +30,13 @@ unsigned short indices[] = {
 	1, 2, 3
 };
 
-class MyModule : public Vin::Module {
-	eastl::shared_ptr<Vin::Program> program;
-	eastl::shared_ptr<Vin::VertexBuffer> vbo;
-	eastl::shared_ptr<Vin::IndexBuffer> ibo;
-	eastl::shared_ptr<Vin::VertexArray> vao;
-	eastl::shared_ptr<Vin::Texture> tex;
-
-	double t = 0;
+class TestModule : public Vin::Module {
+	Vin::Asset<Vin::Texture> tex;
+	std::shared_ptr<Vin::Program> program;
+	std::shared_ptr<Vin::VertexBuffer> vbo;
+	std::shared_ptr<Vin::IndexBuffer> ibo;
+	std::shared_ptr<Vin::VertexArray> vao;
+	Vin::Material mat;
 
 	double updateT = 0;
 	double processT = 0;
@@ -35,33 +44,31 @@ class MyModule : public Vin::Module {
 	int processC = 0;
 
 	void Start() {
-		Vin::Logger::Log("Module is working.");
+		Vin::Logger::Log("Module started.");
+		Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./bin"));
+		
+		{
+			Vin::Asset<std::string> vsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/vs.glsl");
+			Vin::Asset<std::string> fsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/fs.glsl");
 
-		Vin::GameFilesystem::Mount("./bin");
-
-		eastl::shared_ptr<Vin::RawFile> vsfile = Vin::Resources::Load<Vin::RawFile>("data/vs.glsl");
-		eastl::shared_ptr<Vin::RawFile> fsfile = Vin::Resources::Load<Vin::RawFile>("data/fs.glsl");
-
-		if (vsfile && fsfile) {
 			program = Vin::Program::Create();
 
-			program->AddShader(Vin::ShaderType::VertexShader, vsfile->GetData());
-			program->AddShader(Vin::ShaderType::FragmentShader, fsfile->GetData());
+			program->AddShader(Vin::ShaderType::VertexShader, vsfile->data());
+			program->AddShader(Vin::ShaderType::FragmentShader, fsfile->data());
 
 			program->CompileProgram();
 
-			if (!program->IsShaderComplete())
-				Vin::Logger::Log("Program could not compile?");
+			Vin::AssetDatabase::Unload(vsfile);
+			Vin::AssetDatabase::Unload(fsfile);
 		}
 
-		Vin::Resources::Unload(vsfile);
-		Vin::Resources::Unload(fsfile);
+		mat = Vin::Material{ program };
 
 		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
 
 		vbo->SetData(&vertices, sizeof(float) * 32, 0);
 
-		Vin::VertexBufferLayout layout{ 
+		Vin::VertexBufferLayout layout{
 			{ Vin::VertexAttribute::Position, Vin::VertexAttributeType::Float3 },
 			{ Vin::VertexAttribute::Color, Vin::VertexAttributeType::Float3 },
 			{ Vin::VertexAttribute::TextureCoord0, Vin::VertexAttributeType::Float2 }
@@ -80,7 +87,12 @@ class MyModule : public Vin::Module {
 		vao->AddVertexBuffer(vbo);
 		vao->SetIndexBuffer(ibo);
 
-		tex = Vin::LoadTexture("data/container.jpg");
+		tex = Vin::AssetDatabase::LoadAsset<Vin::Texture>("data/aerial_grass_rock_diff_1k.jpg");
+		mat.SetTexture("ourTexture", tex);
+
+		Vin::Logger::Log("Asset count : {}", Vin::AssetDatabase::GetAssetCount());
+		Vin::AssetDatabase::UnloadUnused();
+		Vin::Logger::Log("Asset count : {}", Vin::AssetDatabase::GetAssetCount());
 	}
 
 	void Process() {
@@ -88,7 +100,7 @@ class MyModule : public Vin::Module {
 		processC += 1;
 
 		if (processT > 1000) {
-			Vin::Logger::Log("Average process rate : {} ps ({} ms)", round(1000 / (processT / processC)), (processT / processC));
+			//Vin::Logger::Log("Average process rate : {} ps ({} ms)", round(1000 / (processT / processC)), (processT / processC));
 			processT = 0;
 			processC = 0;
 		}
@@ -99,14 +111,15 @@ class MyModule : public Vin::Module {
 		updateC += 1;
 
 		if (updateT > 1000) {
-			Vin::Logger::Log("Average update rate : {} ps ({} ms)", round(1000 / (updateT / updateC)), (updateT / updateC));
+			//Vin::Logger::Log("Average update rate : {} ps ({} ms)", round(1000 / (updateT / updateC)), (updateT / updateC));
+
 			updateT = 0;
 			updateC = 0;
 		}
 	}
 
 	void Render() {
-		Vin::Asset<Vin::WindowInfo> windowInfo = GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETNAME);
+		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
 
 		Vin::Matrix4x4<float> mat4{ Vin::Matrix4x4<float>::identity };
 
@@ -117,12 +130,12 @@ class MyModule : public Vin::Module {
 		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
 		mat4 = mat4 * projection;
 
-		program->SetMat4("randommat", mat4.data);
+		mat.SetMat4("vin_matrix_mvp", mat4.data);
+		//mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
 
-		program->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
+		Vin::Renderer::Clear(0.85, 0.85, 1.0, 1.0f);
 
-		Vin::Renderer::Clear(0.3, 0.025, 0.06, 0.1f);
-		program->Bind();
+		mat.Bind();
 		Vin::Renderer::DrawIndexed(vao);
 	}
 
@@ -135,16 +148,20 @@ class MyModule : public Vin::Module {
 class TestApp : public Vin::App {
 public:
 	void Build() {
-		Vin::Logger::Log("Application starting.");
+		Vin::WindowInfo winfo{};
+		winfo.title = "Test Application";
+
+		Vin::AssetDatabase::AddAsset<Vin::WindowInfo>(std::move(winfo), VIN_WINDOWINFO_ASSETPATH);
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();
-		AddModule<MyModule>();
+		AddModule<Vin::EditorModule>();
+		AddModule<TestModule>();
 	}
 };
 
 Vin::App* Vin::CreateApp() {
-	Vin::Logger::AddDefaultLogOutputStream();
+	Logger::AddDefaultLogOutputStream();
 
 	return new TestApp{};
 }

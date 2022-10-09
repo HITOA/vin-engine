@@ -1,19 +1,20 @@
 #pragma once
 
 #include "vinpch.hpp"
+#include "core/base.hpp"
 #include "renderer/program.hpp"
 #include "renderer/texture.hpp"
 
 namespace Vin {
 	struct MaterialTextureData {
 		bool used{ false };
-		eastl::shared_ptr<Texture> texture{ nullptr };
+		std::shared_ptr<Texture> texture{ nullptr };
 	};
 
 	class Material {
 	public:
-		Material() = delete;
-		Material(eastl::shared_ptr<Program> program) : m_Program{ program }, m_Textures{} {};
+		Material() = default;
+		Material(std::shared_ptr<Program> program);
 
 	public:
 		void Bind();
@@ -56,13 +57,11 @@ namespace Vin {
 		void SetMat4(int location, float* values);
 		void SetMat4(const char* name, float* values) { SetMat4(GetField(name), values); };
 
-		void SetTexture(int location, eastl::shared_ptr<Texture> texture);
-		void SetTexture(const char* name, eastl::shared_ptr<Texture> texture) { SetTexture(GetField(name), texture); };
-
-		static eastl::shared_ptr<Material> Create(eastl::shared_ptr<Program> program);
+		void SetTexture(int location, std::shared_ptr<Texture> texture);
+		void SetTexture(const char* name, std::shared_ptr<Texture> texture) { SetTexture(GetField(name), texture); };
 
 	private:
-		eastl::shared_ptr<Program> m_Program{ nullptr };
+		std::shared_ptr<Program> m_Program{ nullptr };
 		MaterialTextureData m_Textures[16]{};
 	};
 }

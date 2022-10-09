@@ -1,6 +1,6 @@
 #include "program_opengl.hpp"
 
-#include <assert.hpp>
+#include "core/assert.hpp"
 #include "logger/logger.hpp"
 
 #include "glad/gl.h"
@@ -8,9 +8,8 @@
 Vin::OpenGLProgram::OpenGLProgram()
 {
 	m_ProgramId = glCreateProgram();
-	for (auto shaderId : m_Shaders)
-		glDeleteShader(shaderId);
-	m_Shaders.clear();
+	for (int i = 0; i < m_ShaderCount; ++i)
+		glDeleteShader(m_Shaders[i]);
 }
 
 Vin::OpenGLProgram::~OpenGLProgram()
@@ -34,32 +33,36 @@ bool Vin::OpenGLProgram::AddShader(ShaderType type, const char* src)
 	shaderId = glCreateShader(ParseShaderType(type));
 	glShaderSource(shaderId, 1, &src, NULL);
 	glCompileShader(shaderId);
-	if (!CheckForShaderCompilationErr(shaderId))
+	if (!CheckForShaderCompilationErr(shaderId)) {
+		m_IsShaderComplete = false;
 		return false;
-	m_Shaders.push_back(shaderId);
+	}
+	m_Shaders[m_ShaderCount] = shaderId;
+	++m_ShaderCount;
 	return true;
 }
 
 bool Vin::OpenGLProgram::CompileProgram()
 {
-	for (auto shaderId : m_Shaders)
-		glAttachShader(m_ProgramId, shaderId);
+	for (int i = 0; i < m_ShaderCount; ++i)
+		glAttachShader(m_ProgramId, m_Shaders[i]);
 
 	glLinkProgram(m_ProgramId);
 	if (!CheckForProgramCompilationErr(m_ProgramId))
 		return false;
 
-	for (auto shaderId : m_Shaders)
-		glDeleteShader(shaderId);
+	for (int i = 0; i < m_ShaderCount; ++i)
+		glDeleteShader(m_Shaders[i]);
 
-	m_IsComplete = true;
-	m_Shaders.clear();
+	m_IsProgramComplete = true;
+	m_ShaderCount = 0;
+
 	return true;
 }
 
-bool Vin::OpenGLProgram::IsShaderComplete()
+bool Vin::OpenGLProgram::IsProgramComplete()
 {
-	return m_IsComplete;
+	return m_IsProgramComplete && m_IsShaderComplete;
 }
 
 int Vin::OpenGLProgram::GetField(const char* name)

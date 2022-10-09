@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vinbase.hpp>
+#include "core/base.hpp">
 #include "vinpch.hpp"
 #include "renderer/buffer.hpp"
 #include "renderer/vertexarray.hpp"
@@ -8,10 +8,16 @@
 
 namespace Vin {
 
-	struct SubMeshData {
-		eastl::shared_ptr<VertexBuffer> vbo{};
-		eastl::shared_ptr<IndexBuffer> ibo{};
-		eastl::shared_ptr<VertexArray> vao{};
+	/**
+	* Data required to render one geometry.
+	*/
+	struct Primitive {
+		std::vector<std::shared_ptr<VertexBuffer>> vbos{};
+		std::shared_ptr<IndexBuffer> ibo{};
+		std::shared_ptr<VertexArray> vao{};
+		bool indexed{ true }; //If the primitive is rendered using indices or not.
+		//int m_Material{ -1 }; //Material used to render this primitive, index relative to the scene it belong
+		Material* material{};
 	};
 
 	/**
@@ -22,23 +28,18 @@ namespace Vin {
 	 */
 	class StaticMesh {
 	public:
-		StaticMesh() = delete;
-		StaticMesh(VertexBufferLayout layout);
+		StaticMesh() = default;
 
-	public:
-		void AddSubMeshData(SubMeshData&& submesh);
-		void AddSubMesh(void* vertices, usize vertexCount, void* indices, usize indexCount);
+		void AddPrimitive(Primitive primitive);
 
-		void AddMaterial(eastl::shared_ptr<Material> material);
-
-		VertexBufferLayout GetVertexLayout() const;
-		bool HasVertexAttribute(VertexAttribute attribute) const;
-		VertexAttributeType GetVertexAttributeType(VertexAttribute attribute) const;
+		std::vector<Primitive>::iterator begin() { return m_Primitives.begin(); }
+		std::vector<Primitive>::iterator end() { return m_Primitives.end(); }
+		std::vector<Primitive>::const_iterator begin() const { return m_Primitives.begin(); }
+		std::vector<Primitive>::const_iterator end() const { return m_Primitives.end(); }
+		std::vector<Primitive>::const_iterator cbegin() const { return m_Primitives.cbegin(); }
+		std::vector<Primitive>::const_iterator cend() const { return m_Primitives.cend(); }
 	private:
-		VertexBufferLayout m_VertexLayout{};
-
-		eastl::fixed_vector<eastl::shared_ptr<Material>, 8, true> m_Materials{};
-		eastl::fixed_vector<SubMeshData, 8, true> m_SubMeshes{};
+		std::vector<Primitive> m_Primitives{};
 	};
 
 	/** 

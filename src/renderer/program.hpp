@@ -22,7 +22,7 @@ namespace Vin {
 
 		virtual bool AddShader(ShaderType type, const char* src) = 0;
 		virtual bool CompileProgram() = 0;
-		virtual bool IsShaderComplete() = 0;
+		virtual bool IsProgramComplete() = 0;
 
 		virtual int GetField(const char* name) = 0;
 
@@ -62,6 +62,6 @@ namespace Vin {
 		virtual void SetMat4(int location, float* values) = 0;
 		virtual void SetMat4(const char* name, float* values) { SetMat4(GetField(name), values); };
 
-		static eastl::shared_ptr<Program> Create();
+		static std::shared_ptr<Program> Create();
 	};
 }

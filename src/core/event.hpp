@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vinbase.hpp>
-#include <allocator.hpp>
+#include "core/base.hpp">
+#include "core/allocator.hpp"
 
 #include "vinpch.hpp"
 

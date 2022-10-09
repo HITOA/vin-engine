@@ -15,7 +15,7 @@ namespace Vin {
 
 		bool AddShader(ShaderType type, const char* src) final;
 		bool CompileProgram() final;
-		bool IsShaderComplete() final;
+		bool IsProgramComplete() final;
 
 		int GetField(const char* name) final;
 
@@ -38,7 +38,9 @@ namespace Vin {
 		bool CheckForProgramCompilationErr(unsigned int programId);
 	private:
 		unsigned int m_ProgramId{ 0 };
-		bool m_IsComplete{ false };
-		eastl::fixed_vector<unsigned int, 5, false> m_Shaders{};
+		bool m_IsShaderComplete{ true };
+		bool m_IsProgramComplete{ false };
+		std::array<unsigned int, 5> m_Shaders{};
+		int m_ShaderCount{ 0 };
 	};
 }

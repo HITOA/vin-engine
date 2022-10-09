@@ -1,21 +1,21 @@
 #pragma once
 
-#include <vinbase.hpp>
+#include "core/base.hpp">
 
 #define VINECS_MAX_COMPONENT_COUNT 512
 
 namespace Vin {
-	typedef usize ComponentId;
+	typedef usize AssetTypeId;
 
 	struct ComponentTrait {
 	public:
-		ComponentId id;
+		AssetTypeId id;
 		usize size;
 
 	public:
 		template<typename T>
-		static const ComponentId GetId() {
-			static const ComponentId id = ++lastId;
+		static const AssetTypeId GetId() {
+			static const AssetTypeId id = ++lastId;
 			return id;
 		}
 		template<typename T>
@@ -30,10 +30,8 @@ namespace Vin {
 			return trait;
 		}
 	private:
-		static ComponentId lastId;
+		static AssetTypeId lastId;
 	};
 
-	ComponentId ComponentTrait::lastId{ 0 };
-
-	
+	AssetTypeId ComponentTrait::lastId{ 0 };
 }

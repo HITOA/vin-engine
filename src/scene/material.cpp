@@ -1,4 +1,16 @@
 #include "material.hpp"
+#include "resources/fallback.hpp"
+#include "logger/logger.hpp"
+
+Vin::Material::Material(std::shared_ptr<Program> program) : 
+    m_Program{ program }, m_Textures{}
+{
+    if (!m_Program || !m_Program->IsProgramComplete())
+        m_Program = Fallback::GetFallbackProgram();
+
+    for (usize i = 0; i < 16; i++)
+        m_Textures[i].used = false;
+}
 
 void Vin::Material::Bind()
 {
@@ -10,7 +22,10 @@ void Vin::Material::Bind()
 
 int Vin::Material::GetField(const char* name)
 {
-    return m_Program->GetField(name);
+    int location = m_Program->GetField(name);
+    if (location == -1)
+        Logger::Warn("Property \"{}\" does not exists.", name);
+    return location;
 }
 
 void Vin::Material::SetFloat(int location, float value)
@@ -70,16 +85,21 @@ void Vin::Material::SetMat3(int location, float* values)
 
 void Vin::Material::SetMat4(int location, float* values)
 {
+    if (!m_Program->IsProgramComplete())
+        return;
     m_Program->SetMat4(location, values);
 }
 
-void Vin::Material::SetTexture(int location, eastl::shared_ptr<Texture> texture)
+void Vin::Material::SetTexture(int location, std::shared_ptr<Texture> texture)
 {
+    if (!texture) {
+        Vin::Logger::Err("Bad texture provided. switching to fallback texture.");
+        texture = Fallback::GetFallbackTexture();
+    }
+    
+    if (location < 0 || location > 16)
+        return;
+
     m_Textures[location].texture = texture;
     m_Textures[location].used = true;
-}
-
-eastl::shared_ptr<Vin::Material> Vin::Material::Create(eastl::shared_ptr<Program> program)
-{
-    return eastl::make_shared<Material>(program);
 }

@@ -10,16 +10,17 @@ Install both if not already installed.
   
 Clone the repository : ```git clone --recursive https://github.com/HITOA/vin-engine.git```   
    
-Install jinj2 package : ```pip install jinj2```   
+Install jinja2 package : ```pip install jinja2```   
 Generate with cmake : ```cmake -B"./build" .```   
 
 ## TODO  
--Custom Allocator  
--Custom STL  
--Refacto, some things are not modular enough (Most importante things is removing dependency between Rendering API and Windowing API)  
-    Ideally, things are separated into module. (Math module, Rendering module, Windowing module, etc..)
--Render graph & Render queue obviously  
--ECS (Based of bevy ecs system)
+- Reduce number of dependency:
+    - Remplace eastl by custom stl
+    - Remplace Physfs&cwalk by custom file system
+
+- Replace const char* by Vin::StringView from vin_base
+
+- Loading GLTF/GLB (2.0) model.
 
 ## Source
 A lot of useful source for developing a game engine stuff :
@@ -37,3 +38,4 @@ Bevy : https://github.com/bevyengine/bevy
 An Entity component system with data locality : https://indiegamedev.net/2020/05/19/an-entity-component-system-with-data-locality-in-cpp/  
 Building an ECS : https://ajmmertens.medium.com/building-an-ecs-1-where-are-my-entities-and-components-63d07c7da742  
 ES wiki : http://entity-systems.wikidot.com/  
+Quake PAK format specification : https://quakewiki.org/wiki/.pak

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vinbase.hpp>
-#include <allocator.hpp>
+#include "core/base.hpp"
+#include "core/allocator.hpp"
 #include <cstring>
 
 #include "vinpch.hpp"
@@ -52,7 +52,7 @@ namespace Vin {
 			return layout[idx];
 		}
 
-		inline ComponentIdx GetComponentIdx(ComponentId id) {
+		inline ComponentIdx GetComponentIdx(AssetTypeId id) {
 			return indices[id];
 		}
 
@@ -124,10 +124,10 @@ namespace Vin {
 		ArchetypeComponentContainer(const ArchetypeComponentContainer&) = delete;
 		
 		ArchetypeComponentContainer(ArchetypeComponentContainer&& rhs) noexcept : 
-			m_Data{ eastl::exchange(rhs.m_Data, nullptr) },
-			m_Layout{ eastl::move(rhs.m_Layout) },
-			m_Count{ eastl::exchange(rhs.m_Count, 0) },
-			m_Capacity{ eastl::exchange(rhs.m_Capacity, 0) } {}
+			m_Data{ std::exchange(rhs.m_Data, nullptr) },
+			m_Layout{ std::move(rhs.m_Layout) },
+			m_Count{ std::exchange(rhs.m_Count, 0) },
+			m_Capacity{ std::exchange(rhs.m_Capacity, 0) } {}
 
 		~ArchetypeComponentContainer() {
 			if (m_Data == nullptr)
@@ -141,7 +141,7 @@ namespace Vin {
 		bool MatchLayout(bool permissive = false) {
 			if (sizeof...(Args) != m_Layout.GetSize() && !permissive)
 				return false;
-			const ComponentId ids[sizeof...(Args)]{ ComponentTrait::GetId<Args>()... };
+			const AssetTypeId ids[sizeof...(Args)]{ ComponentTrait::GetId<Args>()... };
 
 			for (usize i = 0; i < sizeof...(Args); ++i)
 				if (m_Layout.GetComponentIdx(ids[i]) == -1)
@@ -279,8 +279,8 @@ namespace Vin {
 	template<ArchetypeMemoryLayout memlayout>
 	struct Archetype {
 		ArchetypeComponentContainer<memlayout> archetype{};
-		eastl::vector<EntityId> entityIds{};
-		eastl::hash_map<EntityId, usize> entityidx{};
+		std::vector<EntityId> entityIds{};
+		std::unordered_map<EntityId, usize> entityidx{};
 
 		Archetype(ArchetypeComponentLayout layout) : archetype{ layout } {};
 	};

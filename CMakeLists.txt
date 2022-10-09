@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
+cmake_policy(SET CMP0079 NEW)
 project(vin)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -17,34 +18,33 @@ set(CMAKE_CXX_STANDARD 17)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(EXTERNAL_PATH ${CMAKE_SOURCE_DIR}/3rdparty)
 set(GLAD_SOURCES_DIR ${EXTERNAL_PATH}/glad)
+set(LZ4_BUNDLED_MODE ON)
 
-add_subdirectory(${EXTERNAL_PATH}/EASTL)
 add_subdirectory(${EXTERNAL_PATH}/fmt)
 add_subdirectory(${EXTERNAL_PATH}/glad/cmake)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
-add_subdirectory(${EXTERNAL_PATH}/googletest)
-add_subdirectory(${EXTERNAL_PATH}/Lua)
-add_subdirectory(${EXTERNAL_PATH}/physfs)
-add_subdirectory(${EXTERNAL_PATH}/vin-base)
+add_subdirectory(${EXTERNAL_PATH}/imgui)
+add_subdirectory(${EXTERNAL_PATH}/lz4/build/cmake)
+add_subdirectory(${EXTERNAL_PATH}/mimalloc)
+add_subdirectory(${EXTERNAL_PATH}/tinygltf)
 
 glad_add_library(glad_library STATIC API gl:core=4.6)
 
 include_directories(${EXTERNAL_PATH}/stb)
 
-file(GLOB_RECURSE vin_engine_src "src/*.cpp" "src/*.hpp")
+file(GLOB_RECURSE vin_engine_src "src/*.cpp" "src/*.hpp" "src/*.h")
 
 add_library(vin_engine STATIC ${vin_engine_src})
 
 target_link_libraries(
 	vin_engine 
-	vin_base
 	glad_library 
 	glfw 
-	EASTL
-	lua_static 
-	physfs-static 
-	GTest::gtest_main
+	imgui
+	lz4_static
+	mimalloc-static
 	fmt
+	tinygltf
 )
 
 target_precompile_headers(vin_engine PUBLIC src/vinpch.hpp)
@@ -57,5 +57,4 @@ add_executable(vin_test
 target_link_libraries(
   vin_test
   vin_engine
-  GTest::gtest_main
 )

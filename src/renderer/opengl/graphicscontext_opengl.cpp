@@ -1,6 +1,6 @@
 #include "graphicscontext_opengl.hpp"
 
-#include <assert.hpp>
+#include "core/assert.hpp"
 #include <glad/gl.h>
 
 Vin::OpenGLContext::OpenGLContext(GLFWwindow* window) : m_Window{ window }

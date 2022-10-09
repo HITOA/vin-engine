@@ -42,7 +42,7 @@ namespace Vin {
 		virtual void SetData(void* data) = 0;
 		virtual void Bind(unsigned short location) = 0;
 
-		static eastl::shared_ptr<Texture> Create(size_t width, size_t height, TextureFormat format = TextureFormat::RGBA32, bool mipmap = true);
+		static std::shared_ptr<Texture> Create(size_t width, size_t height, TextureFormat format = TextureFormat::RGBA32, bool mipmap = true);
 	};
 
 }

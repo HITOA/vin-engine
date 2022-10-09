@@ -5,21 +5,6 @@
 	path = 3rdparty/glad
 	url = https://github.com/Dav1dde/glad.git
 	branch = glad2
-[submodule "3rdparty/Lua"]
-	path = 3rdparty/Lua
-	url = https://github.com/walterschell/Lua.git
-[submodule "3rdparty/physfs"]
-	path = 3rdparty/physfs
-	url = https://github.com/icculus/physfs.git
-[submodule "3rdparty/googletest"]
-	path = 3rdparty/googletest
-	url = https://github.com/google/googletest.git
 [submodule "3rdparty/fmt"]
 	path = 3rdparty/fmt
 	url = https://github.com/fmtlib/fmt.git
-[submodule "3rdparty/EASTL"]
-	path = 3rdparty/EASTL
-	url = https://github.com/electronicarts/EASTL.git
-[submodule "3rdparty/vin-base"]
-	path = 3rdparty/vin-base
-	url = https://github.com/HITOA/vin-base.git
