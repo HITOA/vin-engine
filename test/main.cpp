@@ -89,10 +89,6 @@ class TestModule : public Vin::Module {
 
 		tex = Vin::AssetDatabase::LoadAsset<Vin::Texture>("data/aerial_grass_rock_diff_1k.jpg");
 		mat.SetTexture("ourTexture", tex);
-
-		Vin::Logger::Log("Asset count : {}", Vin::AssetDatabase::GetAssetCount());
-		Vin::AssetDatabase::UnloadUnused();
-		Vin::Logger::Log("Asset count : {}", Vin::AssetDatabase::GetAssetCount());
 	}
 
 	void Process() {

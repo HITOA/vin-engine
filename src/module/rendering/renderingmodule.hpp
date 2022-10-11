@@ -2,12 +2,14 @@
 
 #include "core/application.hpp"
 
+#define VIN_RENDERCONTEXT_BASEPATH "//Core/RenderContext"
+
 namespace Vin {
 
 	class RenderingModule : public Module {
 	public:
-		void Init() final;
-		void OnEvent(EventHandler handler) final;
+		virtual void Init();
+		virtual void OnEvent(EventHandler handler);
 	};
 
 }

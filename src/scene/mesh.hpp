@@ -15,17 +15,10 @@ namespace Vin {
 		std::vector<std::shared_ptr<VertexBuffer>> vbos{};
 		std::shared_ptr<IndexBuffer> ibo{};
 		std::shared_ptr<VertexArray> vao{};
+		std::shared_ptr<Material> material{};
 		bool indexed{ true }; //If the primitive is rendered using indices or not.
-		//int m_Material{ -1 }; //Material used to render this primitive, index relative to the scene it belong
-		Material* material{};
 	};
 
-	/**
-	 * Implementing with static VBO. Used for mesh that don't change at runtime.
-	 * Can contain any number of submesh and material. 
-	 * submesh 0 will be rendered with material 0, submesh 1 with material 1, etc. with modulo for the index.
-	 * Each submesh/material is one drawcall.
-	 */
 	class StaticMesh {
 	public:
 		StaticMesh() = default;
