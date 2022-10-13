@@ -2,6 +2,8 @@
 
 #include "vinpch.hpp"
 
+#include "bindable.hpp"
+
 namespace Vin {
 
 	enum class TextureFormat {
@@ -26,7 +28,7 @@ namespace Vin {
 		MirroredRepeat
 	};
 
-	class Texture {
+	class Texture : public Bindable<unsigned short> {
 	public:
 		virtual ~Texture() {};
 
@@ -40,7 +42,6 @@ namespace Vin {
 		virtual void SetWrapping(TextureWrapping wrapping) = 0;
 
 		virtual void SetData(void* data) = 0;
-		virtual void Bind(unsigned short location) = 0;
 
 		static std::shared_ptr<Texture> Create(size_t width, size_t height, TextureFormat format = TextureFormat::RGBA32, bool mipmap = true);
 	};

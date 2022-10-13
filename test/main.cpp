@@ -28,15 +28,20 @@ float vertices[] = {
 unsigned short indices[] = {
 	0, 1, 3,
 	1, 2, 3
-};
+}; 
 
 class TestModule : public Vin::Module {
 	Vin::Asset<Vin::Texture> tex;
 	std::shared_ptr<Vin::Program> program;
+	std::shared_ptr<Vin::Program> program2;
+
 	std::shared_ptr<Vin::VertexBuffer> vbo;
 	std::shared_ptr<Vin::IndexBuffer> ibo;
 	std::shared_ptr<Vin::VertexArray> vao;
+
+	std::shared_ptr<Vin::RenderTarget> renderTarget;
 	Vin::Material mat;
+	Vin::Material mat2;
 
 	double updateT = 0;
 	double processT = 0;
@@ -62,7 +67,23 @@ class TestModule : public Vin::Module {
 			Vin::AssetDatabase::Unload(fsfile);
 		}
 
+		{
+			Vin::Asset<std::string> vsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/blit/blitvs.glsl");
+			Vin::Asset<std::string> fsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/blit/blitfs.glsl");
+
+			program2 = Vin::Program::Create();
+
+			program2->AddShader(Vin::ShaderType::VertexShader, vsfile->data());
+			program2->AddShader(Vin::ShaderType::FragmentShader, fsfile->data());
+
+			program2->CompileProgram();
+
+			Vin::AssetDatabase::Unload(vsfile);
+			Vin::AssetDatabase::Unload(fsfile);
+		}
+
 		mat = Vin::Material{ program };
+		mat2 = Vin::Material{ program2 };
 
 		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
 
@@ -89,6 +110,17 @@ class TestModule : public Vin::Module {
 
 		tex = Vin::AssetDatabase::LoadAsset<Vin::Texture>("data/aerial_grass_rock_diff_1k.jpg");
 		mat.SetTexture("ourTexture", tex);
+
+		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
+
+		Vin::RenderTargetSpecification spec{ (size_t)windowInfo->width, (size_t)windowInfo->height, 8 };
+		spec.AddRenderBuffer({ Vin::RenderBufferFormat::RGBA32, true });
+		spec.AddRenderBuffer({ Vin::RenderBufferFormat::DEPTH24_STENCIL8, false });
+
+		renderTarget = Vin::RenderTarget::Create(spec);
+
+		mat2.SetInt("texSamples", renderTarget->GetSpecification().sample);
+		mat2.SetTexture("srcTexture", renderTarget->GetTexture(0));
 	}
 
 	void Process() {
@@ -119,7 +151,7 @@ class TestModule : public Vin::Module {
 
 		Vin::Matrix4x4<float> mat4{ Vin::Matrix4x4<float>::identity };
 
-		Vin::Scale(mat4, Vin::Vector3<float>{1000, 1000, 1000});
+		Vin::Scale(mat4, Vin::Vector3<float>{100, 100, 100});
 		Vin::Rotate(mat4, Vin::Vector3<float>{1.0f, 0, 0}, 90.0f * (float)Vin::deg2rad);
 		Vin::Translate(mat4, Vin::Vector3<float>{0, -6.0f, -6.0f});
 
@@ -129,15 +161,28 @@ class TestModule : public Vin::Module {
 		mat.SetMat4("vin_matrix_mvp", mat4.data);
 		//mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
 
+		mat.SetTexture("ourTexture", tex);
+
+		renderTarget->Bind();
+
 		Vin::Renderer::Clear(0.85, 0.85, 1.0, 1.0f);
 
 		mat.Bind();
+		Vin::Renderer::DrawIndexed(vao);
+
+		renderTarget->Unbind(); 
+		
+		Vin::Renderer::Clear(0, 0, 0, 1.0f);
+
+		mat2.Bind();
 		Vin::Renderer::DrawIndexed(vao);
 	}
 
 	void OnEvent(Vin::EventHandler handler) {
 		if (Vin::WindowCloseEvent* event = handler.GetEvent<Vin::WindowCloseEvent>())
 			GetApp()->Stop();
+		if (Vin::WindowResizeEvent* event = handler.GetEvent<Vin::WindowResizeEvent>())
+			renderTarget->Resize(event->width, event->height);
 	}
 };
 

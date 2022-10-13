@@ -4,11 +4,13 @@
 #include "core/base.hpp"
 #include "renderer/program.hpp"
 #include "renderer/texture.hpp"
+#include "renderer/framebuffer.hpp"
+#include "renderer/bindable.hpp"
 
 namespace Vin {
 	struct MaterialTextureData {
 		bool used{ false };
-		std::shared_ptr<Texture> texture{ nullptr };
+		std::shared_ptr<Bindable<unsigned short>> texture{ nullptr };
 	};
 
 	class Material {
@@ -59,6 +61,9 @@ namespace Vin {
 
 		void SetTexture(int location, std::shared_ptr<Texture> texture);
 		void SetTexture(const char* name, std::shared_ptr<Texture> texture) { SetTexture(GetField(name), texture); };
+
+		void SetTexture(int location, std::shared_ptr<RenderTexture> renderTexture);
+		void SetTexture(const char* name, std::shared_ptr<RenderTexture> renderTexture) { SetTexture(GetField(name), renderTexture); };
 
 	private:
 		std::shared_ptr<Program> m_Program{ nullptr };

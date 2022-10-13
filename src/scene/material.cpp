@@ -103,3 +103,16 @@ void Vin::Material::SetTexture(int location, std::shared_ptr<Texture> texture)
     m_Textures[location].texture = texture;
     m_Textures[location].used = true;
 }
+
+void Vin::Material::SetTexture(int location, std::shared_ptr<RenderTexture> renderTexture)
+{
+    if (!renderTexture) {
+        Vin::Logger::Err("Bad render texture provided. switching to fallback texture.");
+    }
+
+    if (location < 0 || location > 16)
+        return;
+
+    m_Textures[location].texture = renderTexture;
+    m_Textures[location].used = true;
+}
