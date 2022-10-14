@@ -31,6 +31,7 @@ add_subdirectory(${EXTERNAL_PATH}/tinygltf)
 glad_add_library(glad_library STATIC API gl:core=4.6)
 
 include_directories(${EXTERNAL_PATH}/stb)
+include_directories(${EXTERNAL_PATH}/tinyobjloader)
 
 file(GLOB_RECURSE vin_engine_src "src/*.cpp" "src/*.hpp" "src/*.h")
 

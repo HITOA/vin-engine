@@ -17,6 +17,7 @@ namespace Vin {
 		std::shared_ptr<VertexArray> vao{};
 		std::shared_ptr<Material> material{};
 		bool indexed{ true }; //If the primitive is rendered using indices or not.
+		size_t vertexCount{ 0 };
 	};
 
 	class StaticMesh {

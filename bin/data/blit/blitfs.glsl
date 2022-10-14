@@ -12,5 +12,5 @@ void main()
     for (int i = 0; i < texSamples; i++)
         color += texelFetch(srcTexture, ivec2(gl_FragCoord.xy), i);
 
-    FragColor = color / float(texSamples);
+    FragColor = (color / float(texSamples));
 }

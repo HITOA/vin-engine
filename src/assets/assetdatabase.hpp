@@ -37,20 +37,22 @@ namespace Vin {
 		template<typename T>
 		static Asset<T> LoadAsset(const std::string& path) {
 			std::string normalizedpath = NormalizeStringPath(path);
-			if (s_AssetsPath.count(normalizedpath) > 0)
+			if (s_AssetsPath.count(normalizedpath) > 0) {
+				Logger::Warn("Asset \"{}\" is already loaded.", path);
 				return GetAsset<T>(path);
+			}
 
 			std::unique_ptr<File> file = VFS::Open(normalizedpath, FileMode::Read);
 
 			if (!file->IsValid()) {
-				Logger::Log("Wasn't able to open asset : \"{}\"", normalizedpath);
+				Logger::Err("Wasn't able to open asset : \"{}\"", normalizedpath);
 				return Asset<T>{};
 			}
 
 			std::shared_ptr<T> resource = AssetDeserializer<T>::Deserialize(std::move(file));
 
 			if (!resource) {
-				Logger::Log("Wasn't able to load asset : \"{}\"", normalizedpath);
+				Logger::Err("Wasn't able to load asset : \"{}\"", normalizedpath);
 				return Asset<T>{};
 			}
 

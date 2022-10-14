@@ -18,16 +18,18 @@
 #define BLENDINDICES_LOCATION 13
 
 layout (location = POSITION_LOCATION) in vec3 aPos;
-layout (location = COLOR_LOCATION) in vec3 aColor;
+layout (location = NORMAL_LOCATION) in vec3 aNormal;
 layout (location = TEXCOORD0_LOCATION) in vec2 aTexCoord;
 
-out vec3 ourColor;
+out vec3 normal;
 out vec2 TexCoord;
+out vec3 pos;
 
 uniform mat4 vin_matrix_mvp;
 void main()
 {
     gl_Position = (vin_matrix_mvp * vec4(aPos.x, aPos.y, aPos.z, 1.0));
-    ourColor = aColor;
+    normal = aNormal;
     TexCoord = aTexCoord;
+    pos = aPos;
 }

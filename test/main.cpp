@@ -1,6 +1,7 @@
 #include <vin.hpp>
 
 #include "assets/serdes/textureserdes.hpp"
+#include "assets/serdes/staticmesheserdes.hpp"
 
 #include <module/windowing/windowmodule.hpp>
 #include <module/rendering/renderingmodule.hpp>
@@ -42,6 +43,8 @@ class TestModule : public Vin::Module {
 	std::shared_ptr<Vin::RenderTarget> renderTarget;
 	Vin::Material mat;
 	Vin::Material mat2;
+	
+	Vin::Asset<Vin::StaticMesh> mesh;
 
 	double updateT = 0;
 	double processT = 0;
@@ -121,6 +124,8 @@ class TestModule : public Vin::Module {
 
 		mat2.SetInt("texSamples", renderTarget->GetSpecification().sample);
 		mat2.SetTexture("srcTexture", renderTarget->GetTexture(0));
+
+		mesh = Vin::AssetDatabase::LoadAsset<Vin::StaticMesh>("data/suzane.obj");
 	}
 
 	void Process() {
@@ -169,6 +174,21 @@ class TestModule : public Vin::Module {
 
 		mat.Bind();
 		Vin::Renderer::DrawIndexed(vao);
+
+		Vin::Matrix4x4<float> mat42{ Vin::Matrix4x4<float>::identity };
+
+		Vin::Scale(mat42, Vin::Vector3<float>{0.1f, 0.1f, 0.1f});
+		Vin::Rotate(mat42, Vin::Vector3<float>{0, 1.0f, 0}, -15.0f * (float)Vin::deg2rad);
+		Vin::Translate(mat42, Vin::Vector3<float>{0, 0.0f, -5.0f});
+
+		Vin::Matrix4x4<float> projection2 = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
+		mat42 = mat42 * projection2;
+
+		mat.SetMat4("vin_matrix_mvp", mat42.data);
+		
+		for (auto& it = mesh->begin(); it != mesh->end(); ++it) {
+			Vin::Renderer::DrawArrays(it->vao, it->vertexCount);
+		}
 
 		renderTarget->Unbind(); 
 		
