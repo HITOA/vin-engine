@@ -55,6 +55,10 @@ namespace Vin {
 			AssetDatabase::SetAssetFlags(m_AssetHandle, flags);
 		}
 
+		T* Get() {
+			return m_Ptr.get();
+		}
+
 		T* operator->() {
 			return m_Ptr.get();
 		}

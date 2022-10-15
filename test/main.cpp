@@ -18,6 +18,8 @@
 
 #include "utils/pakmaker.hpp"
 
+#include "utils/shaderutils.hpp"
+
 float vertices[] = {
 	// positions          // colors           // texture coords
 	 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
@@ -54,36 +56,9 @@ class TestModule : public Vin::Module {
 	void Start() {
 		Vin::Logger::Log("Module started.");
 		Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./bin"));
-		
-		{
-			Vin::Asset<std::string> vsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/vs.glsl");
-			Vin::Asset<std::string> fsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/fs.glsl");
 
-			program = Vin::Program::Create();
-
-			program->AddShader(Vin::ShaderType::VertexShader, vsfile->data());
-			program->AddShader(Vin::ShaderType::FragmentShader, fsfile->data());
-
-			program->CompileProgram();
-
-			Vin::AssetDatabase::Unload(vsfile);
-			Vin::AssetDatabase::Unload(fsfile);
-		}
-
-		{
-			Vin::Asset<std::string> vsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/blit/blitvs.glsl");
-			Vin::Asset<std::string> fsfile = Vin::AssetDatabase::LoadAsset<std::string>("data/blit/blitfs.glsl");
-
-			program2 = Vin::Program::Create();
-
-			program2->AddShader(Vin::ShaderType::VertexShader, vsfile->data());
-			program2->AddShader(Vin::ShaderType::FragmentShader, fsfile->data());
-
-			program2->CompileProgram();
-
-			Vin::AssetDatabase::Unload(vsfile);
-			Vin::AssetDatabase::Unload(fsfile);
-		}
+		program = Vin::LoadProgram("data/vs.glsl", "data/fs.glsl");
+		program2 = Vin::LoadProgram("data/blit/blitvs.glsl", "data/blit/blitfs.glsl");
 
 		mat = Vin::Material{ program };
 		mat2 = Vin::Material{ program2 };
