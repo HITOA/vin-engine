@@ -23,7 +23,7 @@ Generate with cmake : ```cmake -B"./build" .```
 - Loading GLTF/GLB (2.0) model.
 
 ## Source
-A lot of useful source for developing a game engine stuff :
+A lot of useful source for developing game engine related stuff :
 
 Game Programming Patterns (Robert Nystrom) : https://gameprogrammingpatterns.com/contents.html  
 Learn Vulkan : https://vulkan-tutorial.com/  
@@ -39,4 +39,4 @@ An Entity component system with data locality : https://indiegamedev.net/2020/05
 Building an ECS : https://ajmmertens.medium.com/building-an-ecs-1-where-are-my-entities-and-components-63d07c7da742  
 ES wiki : http://entity-systems.wikidot.com/  
 Quake PAK format specification : https://quakewiki.org/wiki/.pak  
-Order your graphics draw calls around : http://realtimecollisiondetection.net/blog/?p=86http://realtimecollisiondetection.net/blog/?p=86
+Order your graphics draw calls around : http://realtimecollisiondetection.net/blog/?p=86
