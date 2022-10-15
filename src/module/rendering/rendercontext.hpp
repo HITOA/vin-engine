@@ -9,6 +9,6 @@ namespace Vin {
 	class RenderContext {
 	private:
 		std::shared_ptr<Camera> m_Camera{};
-		
+		RenderQueue m_Queue{};
 	};
 }

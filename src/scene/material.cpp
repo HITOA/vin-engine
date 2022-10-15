@@ -116,3 +116,25 @@ void Vin::Material::SetTexture(int location, std::shared_ptr<RenderTexture> rend
     m_Textures[location].texture = renderTexture;
     m_Textures[location].used = true;
 }
+
+void Vin::Material::SetTransparency(bool v) {
+    m_Transparency = v;
+}
+
+bool Vin::Material::GetTransparency() {
+    return m_Transparency;
+}
+
+unsigned int Vin::Material::GetId() {
+    Program::IdType top = m_Program->GetId();
+    Texture::IdType bottom{};
+
+    for (usize i = 0; i < 16; ++i)
+        if (m_Textures[i].used)
+            bottom += m_Textures[i].texture->GetId();
+
+    unsigned int id{ 0 };
+    id += bottom;
+    id += (top << sizeof(Program::IdType));
+    return id;
+}

@@ -65,8 +65,13 @@ namespace Vin {
 		void SetTexture(int location, std::shared_ptr<RenderTexture> renderTexture);
 		void SetTexture(const char* name, std::shared_ptr<RenderTexture> renderTexture) { SetTexture(GetField(name), renderTexture); };
 
+		void SetTransparency(bool v);
+		bool GetTransparency();
+
+		unsigned int GetId();
 	private:
 		std::shared_ptr<Program> m_Program{ nullptr };
 		MaterialTextureData m_Textures[16]{};
+		bool m_Transparency{ false };
 	};
 }

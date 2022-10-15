@@ -16,5 +16,5 @@ void main()
     vec3 lightDir = normalize(lightPos - pos);
     float diff = max(dot(norm, lightDir), 0.0);
     //FragColor = vec4(ourColor * color, 1.0f);
-    FragColor = vec4(diff * texture(ourTexture, TexCoord * 100).xyz, 1.0);
+    FragColor = vec4(diff * texture(ourTexture, TexCoord * 100).xyz, 1.0f);
 }

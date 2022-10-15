@@ -2,6 +2,8 @@
 
 #include "vinpch.hpp"
 
+#include "core/identifiable.hpp"
+
 namespace Vin {
 	enum class ShaderType {
 		Unknown = 0,
@@ -13,7 +15,7 @@ namespace Vin {
 		FragmentShader
 	};
 
-	class Program {
+	class Program : public Identifiable<Program, unsigned short> {
 	public:
 		virtual ~Program() {};
 

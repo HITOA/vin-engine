@@ -45,6 +45,7 @@ class TestModule : public Vin::Module {
 	std::shared_ptr<Vin::RenderTarget> renderTarget;
 	Vin::Material mat;
 	Vin::Material mat2;
+	Vin::Material mat3;
 	
 	Vin::Asset<Vin::StaticMesh> mesh;
 
@@ -61,6 +62,7 @@ class TestModule : public Vin::Module {
 		program2 = Vin::LoadProgram("data/blit/blitvs.glsl", "data/blit/blitfs.glsl");
 
 		mat = Vin::Material{ program };
+		mat3 = Vin::Material{ program };
 		mat2 = Vin::Material{ program2 };
 
 		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
@@ -101,6 +103,17 @@ class TestModule : public Vin::Module {
 		mat2.SetTexture("srcTexture", renderTarget->GetTexture(0));
 
 		mesh = Vin::AssetDatabase::LoadAsset<Vin::StaticMesh>("data/suzane.obj");
+
+		Vin::Logger::Log("program1 id : {}", program->GetId());
+		Vin::Logger::Log("program2 id : {}", program2->GetId());
+		Vin::Logger::Log("program1 id : {}", program->GetId());
+		Vin::Logger::Log("program2 id : {}", program2->GetId());
+		Vin::Logger::Log("texture id : {}", tex->GetId());
+
+		Vin::Logger::Log("Material1 id : {}", mat.GetId());
+		Vin::Logger::Log("Material2 id : {}", mat2.GetId());
+		Vin::Logger::Log("Material3 id : {}", mat3.GetId());
+		
 	}
 
 	void Process() {
