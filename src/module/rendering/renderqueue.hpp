@@ -7,6 +7,8 @@
 namespace Vin {
 	class RenderQueue {
 	public:
+		void PushRenderTask(std::shared_ptr<Camera> camera, Primitive& primitive);
+
 		void Sort();
 
 		std::vector<RenderTask>::iterator begin() { return m_Queue.begin(); }

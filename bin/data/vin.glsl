@@ -48,10 +48,4 @@ uniform mat4 vin_matrix_view;
 uniform mat4 vin_matrix_projection;
 uniform mat4 vin_matrix_mvp;
 
-/*layout(binding = 0) uniform Transform {
-    mat4 model;
-    mat4 view;
-    mat4 projection;
-} transform;*/
-
 #endif //VIN_SHADER_UTILS

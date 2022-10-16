@@ -2,10 +2,14 @@
 
 #include "renderer/renderer.hpp"
 #include "module/windowing/windowmodule.hpp"
+#include "assets/assetdatabase.hpp"
+#include "rendercontext.hpp"
 
 void Vin::RenderingModule::Init()
 {
 	Renderer::Init();
+
+	AssetDatabase::AddAsset(RenderContext{}, VIN_RENDERCONTEXT_BASEPATH);
 }
 
 void Vin::RenderingModule::OnEvent(EventHandler handler)

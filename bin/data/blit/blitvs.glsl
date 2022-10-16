@@ -2,9 +2,9 @@
 
 #define POSITION_LOCATION 0
 
-layout (location = POSITION_LOCATION) in vec3 aPos;
+layout (location = POSITION_LOCATION) in vec3 position;
 
 void main()
 {
-    gl_Position = vec4(aPos, 1.0f);
+    gl_Position = vec4(position, 1.0f);
 }

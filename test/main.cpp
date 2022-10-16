@@ -22,10 +22,10 @@
 
 float vertices[] = {
 	// positions          // colors           // texture coords
-	 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+	 1.0f,  1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f,   // top right
 	 1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-	-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-	-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+	-1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f,   // bottom left
+	-1.0f,  1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 };
 
 unsigned short indices[] = {
@@ -48,6 +48,8 @@ class TestModule : public Vin::Module {
 	Vin::Material mat3;
 	
 	Vin::Asset<Vin::StaticMesh> mesh;
+
+	double t = 0;
 
 	double updateT = 0;
 	double processT = 0;
@@ -89,18 +91,18 @@ class TestModule : public Vin::Module {
 		vao->SetIndexBuffer(ibo);
 
 		tex = Vin::AssetDatabase::LoadAsset<Vin::Texture>("data/aerial_grass_rock_diff_1k.jpg");
-		mat.SetTexture("ourTexture", tex);
+		mat.SetTexture("_MainTex", tex);
 
 		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
 
 		Vin::RenderTargetSpecification spec{ (size_t)windowInfo->width, (size_t)windowInfo->height, 8 };
-		spec.AddRenderBuffer({ Vin::RenderBufferFormat::RGBA32, true });
+		spec.AddRenderBuffer({ Vin::RenderBufferFormat::RGBA16F, true });
 		spec.AddRenderBuffer({ Vin::RenderBufferFormat::DEPTH24_STENCIL8, false });
 
 		renderTarget = Vin::RenderTarget::Create(spec);
 
-		mat2.SetInt("texSamples", renderTarget->GetSpecification().sample);
-		mat2.SetTexture("srcTexture", renderTarget->GetTexture(0));
+		mat2.SetInt("_MainTexSample", renderTarget->GetSpecification().sample);
+		mat2.SetTexture("_MainTex", renderTarget->GetTexture(0));
 
 		mesh = Vin::AssetDatabase::LoadAsset<Vin::StaticMesh>("data/suzane.obj");
 
@@ -114,6 +116,7 @@ class TestModule : public Vin::Module {
 		Vin::Logger::Log("Material2 id : {}", mat2.GetId());
 		Vin::Logger::Log("Material3 id : {}", mat3.GetId());
 		
+		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{100, 100}.data);
 	}
 
 	void Process() {
@@ -142,11 +145,15 @@ class TestModule : public Vin::Module {
 	void Render() {
 		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
 
+		t += GetApp()->GetDeltaTime().GetMillisecond() / 100;
+
 		Vin::Matrix4x4<float> mat4{ Vin::Matrix4x4<float>::identity };
 
 		Vin::Scale(mat4, Vin::Vector3<float>{100, 100, 100});
 		Vin::Rotate(mat4, Vin::Vector3<float>{1.0f, 0, 0}, 90.0f * (float)Vin::deg2rad);
-		Vin::Translate(mat4, Vin::Vector3<float>{0, -6.0f, -6.0f});
+		Vin::Translate(mat4, Vin::Vector3<float>{0, -3.0f, -6.0f});
+
+		mat.SetMat4("vin_matrix_model", mat4.data);
 
 		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
 		mat4 = mat4 * projection;
@@ -154,7 +161,7 @@ class TestModule : public Vin::Module {
 		mat.SetMat4("vin_matrix_mvp", mat4.data);
 		//mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
 
-		mat.SetTexture("ourTexture", tex);
+		mat.SetTexture("_MainTex", tex);
 
 		renderTarget->Bind();
 
@@ -166,8 +173,10 @@ class TestModule : public Vin::Module {
 		Vin::Matrix4x4<float> mat42{ Vin::Matrix4x4<float>::identity };
 
 		Vin::Scale(mat42, Vin::Vector3<float>{0.1f, 0.1f, 0.1f});
-		Vin::Rotate(mat42, Vin::Vector3<float>{0, 1.0f, 0}, -15.0f * (float)Vin::deg2rad);
-		Vin::Translate(mat42, Vin::Vector3<float>{0, 0.0f, -5.0f});
+		Vin::Rotate(mat42, Vin::Vector3<float>{0, 1.0f, 0}, (float)(-t * (float)Vin::deg2rad));
+		Vin::Translate(mat42, Vin::Vector3<float>{0, -2.0f, -10.0f});
+
+		mat.SetMat4("vin_matrix_model", mat42.data);
 
 		Vin::Matrix4x4<float> projection2 = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
 		mat42 = mat42 * projection2;

@@ -2,18 +2,18 @@
 
 #include "data/vin.glsl"
 
-VIN_POSITION vec3 aPos;
-VIN_NORMAL vec3 aNormal;
-VIN_TEXCOORD0 vec2 aTexCoord;
+VIN_POSITION vec3 _position;
+VIN_NORMAL vec3 _normal;
+VIN_TEXCOORD0 vec2 _texcoord0;
 
 out vec3 normal;
-out vec2 TexCoord;
-out vec3 pos;
+out vec2 texcoord0;
+out vec3 position;
 
 void main()
 {
-    gl_Position = (vin_matrix_mvp * vec4(aPos.x, aPos.y, aPos.z, 1.0));
-    normal = aNormal;
-    TexCoord = aTexCoord;
-    pos = aPos;
+    gl_Position = (vin_matrix_mvp * vec4(_position, 1.0));
+    normal = (vin_matrix_model * vec4(_normal, 0.0)).xyz;
+    texcoord0 = _texcoord0;
+    position = _position;
 }

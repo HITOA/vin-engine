@@ -4,11 +4,14 @@
 
 #include "renderqueue.hpp"
 #include "scene/camera.hpp"
+#include "scene/light.hpp"
+
+#define MAX_LIGHT_COUNT 16
 
 namespace Vin {
-	class RenderContext {
-	private:
-		std::shared_ptr<Camera> m_Camera{};
-		RenderQueue m_Queue{};
+	struct RenderContext {
+		Light m_MainLight{}; //Main Directional Light
+		Light m_Lights[MAX_LIGHT_COUNT]{}; //Additional Light
+		RenderQueue m_Queue{}; //RenderQueue
 	};
 }

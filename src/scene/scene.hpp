@@ -7,10 +7,15 @@
 namespace Vin{
 	template<ArchetypeMemoryLayout layout>
 	class Scene {
+	public:
+		void Render() {
+
+		}
+
+		Registry& operator->() {
+			return m_Registry;
+		}
 	private:
 		Registry<layout> m_Registry{};
-
-		std::vector<Material> m_Materials{};
-		std::vector<Primitive> m_Primitives{};
 	};
 }

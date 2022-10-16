@@ -1,16 +1,16 @@
 #version 330 core
 
-out vec4 FragColor;
+out vec4 fragcolor;
 
-uniform int texSamples;
-uniform sampler2DMS srcTexture;
+uniform sampler2DMS _MainTex;
+uniform int _MainTexSample;
 
 void main()
 {
     vec4 color = vec4(0.0);
 
-    for (int i = 0; i < texSamples; i++)
-        color += texelFetch(srcTexture, ivec2(gl_FragCoord.xy), i);
+    for (int i = 0; i < _MainTexSample; i++)
+        color += texelFetch(_MainTex, ivec2(gl_FragCoord.xy), i);
 
-    FragColor = (color / float(texSamples));
+    fragcolor = (color / float(_MainTexSample));
 }

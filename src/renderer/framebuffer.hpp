@@ -7,6 +7,8 @@
 namespace Vin {
 
 	enum class RenderBufferFormat {
+		RGBA16F, //HDR
+		RGBA32F, //HDR
 		RGBA32,
 		RGB24,
 		RG16,

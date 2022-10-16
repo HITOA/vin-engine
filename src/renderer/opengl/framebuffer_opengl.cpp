@@ -100,6 +100,8 @@ void Vin::OpenGLRenderTarget::Destroy()
 unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferFormat(RenderBufferFormat format)
 {
 	switch (format) {
+	case RenderBufferFormat::RGBA32F: return GL_RGBA32F;
+	case RenderBufferFormat::RGBA16F: return GL_RGBA16F;
 	case RenderBufferFormat::RGBA32: return GL_RGBA;
 	case RenderBufferFormat::RGB24: return GL_RGB;
 	case RenderBufferFormat::RG16: return GL_RG16;
@@ -119,6 +121,8 @@ unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferFormat(RenderBufferFormat
 unsigned int Vin::OpenGLRenderTarget::ParseTextureAttachment(RenderBufferFormat format)
 {
 	switch (format) {
+	case RenderBufferFormat::RGBA32F: return GL_COLOR_ATTACHMENT0;
+	case RenderBufferFormat::RGBA16F: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::RGBA32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::RGB24: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::RG16: return GL_COLOR_ATTACHMENT0;
@@ -138,6 +142,8 @@ unsigned int Vin::OpenGLRenderTarget::ParseTextureAttachment(RenderBufferFormat 
 unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferAttachment(RenderBufferFormat format)
 {
 	switch (format) {
+	case RenderBufferFormat::RGBA32F: return GL_COLOR_ATTACHMENT0;
+	case RenderBufferFormat::RGBA16F: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::RGBA32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::RGB24: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::RG16: return GL_COLOR_ATTACHMENT0;
