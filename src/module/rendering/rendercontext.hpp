@@ -6,6 +6,7 @@
 #include "scene/camera.hpp"
 #include "scene/light.hpp"
 
+#define VIN_RENDERCONTEXT_BASEPATH "//Core/RenderContext"
 #define MAX_LIGHT_COUNT 16
 
 namespace Vin {

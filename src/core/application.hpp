@@ -95,6 +95,7 @@ namespace Vin {
 		virtual void Update() {};
 		virtual void LateUpdate() {};
 		virtual void Render() {};
+		virtual void LateRender() {};
 
 		virtual void OnEvent(EventHandler handler) {};
 

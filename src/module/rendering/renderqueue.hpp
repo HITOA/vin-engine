@@ -7,9 +7,10 @@
 namespace Vin {
 	class RenderQueue {
 	public:
-		void PushRenderTask(std::shared_ptr<Camera> camera, Primitive& primitive);
+		void PushRenderTask(std::shared_ptr<Camera> camera, Primitive& primitive, Matrix4x4<float> model);
 
 		void Sort();
+		void Clear();
 
 		std::vector<RenderTask>::iterator begin() { return m_Queue.begin(); }
 		std::vector<RenderTask>::iterator end() { return m_Queue.end(); }

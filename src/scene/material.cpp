@@ -10,6 +10,8 @@ Vin::Material::Material(std::shared_ptr<Program> program) :
 
     for (usize i = 0; i < 16; i++)
         m_Textures[i].used = false;
+
+    RecalculateId();
 }
 
 void Vin::Material::Bind()
@@ -23,8 +25,8 @@ void Vin::Material::Bind()
 int Vin::Material::GetField(const char* name)
 {
     int location = m_Program->GetField(name);
-    if (location == -1)
-        Logger::Warn("Property \"{}\" does not exists.", name);
+    //if (location == -1)
+        //Logger::Warn("Property \"{}\" does not exists.", name);
     return location;
 }
 
@@ -85,8 +87,6 @@ void Vin::Material::SetMat3(int location, float* values)
 
 void Vin::Material::SetMat4(int location, float* values)
 {
-    if (!m_Program->IsProgramComplete())
-        return;
     m_Program->SetMat4(location, values);
 }
 
@@ -102,6 +102,8 @@ void Vin::Material::SetTexture(int location, std::shared_ptr<Texture> texture)
 
     m_Textures[location].texture = texture;
     m_Textures[location].used = true;
+
+    RecalculateId();
 }
 
 void Vin::Material::SetTexture(int location, std::shared_ptr<RenderTexture> renderTexture)
@@ -115,6 +117,8 @@ void Vin::Material::SetTexture(int location, std::shared_ptr<RenderTexture> rend
 
     m_Textures[location].texture = renderTexture;
     m_Textures[location].used = true;
+
+    RecalculateId();
 }
 
 void Vin::Material::SetTransparency(bool v) {
@@ -126,6 +130,11 @@ bool Vin::Material::GetTransparency() {
 }
 
 unsigned int Vin::Material::GetId() {
+    return m_Id;
+}
+
+void Vin::Material::RecalculateId()
+{
     Program::IdType top = m_Program->GetId();
     Texture::IdType bottom{};
 
@@ -136,5 +145,5 @@ unsigned int Vin::Material::GetId() {
     unsigned int id{ 0 };
     id += bottom;
     id += (top << sizeof(Program::IdType));
-    return id;
+    m_Id = id;
 }

@@ -12,7 +12,7 @@ out vec3 position;
 
 void main()
 {
-    gl_Position = (vin_matrix_mvp * vec4(_position, 1.0));
+    gl_Position = ((vin_matrix_mvp) * vec4(_position, 1.0));
     normal = (vin_matrix_model * vec4(_normal, 0.0)).xyz;
     texcoord0 = _texcoord0;
     position = _position;

@@ -4,3 +4,4 @@
 #include "vector.hpp"
 #include "matrix.hpp"
 #include "transform.hpp"
+#include "quaternion.hpp"

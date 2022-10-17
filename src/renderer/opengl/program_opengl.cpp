@@ -5,6 +5,8 @@
 
 #include "glad/gl.h"
 
+static unsigned int currentlyBindedProgram{ 0 };
+
 Vin::OpenGLProgram::OpenGLProgram()
 {
 	m_ProgramId = glCreateProgram();
@@ -19,7 +21,10 @@ Vin::OpenGLProgram::~OpenGLProgram()
 
 void Vin::OpenGLProgram::Bind()
 {
-	glUseProgram(m_ProgramId);
+	if (currentlyBindedProgram != m_ProgramId) {
+		glUseProgram(m_ProgramId);
+		currentlyBindedProgram = m_ProgramId;
+	}
 }
 
 void Vin::OpenGLProgram::Unbind()
@@ -72,73 +77,73 @@ int Vin::OpenGLProgram::GetField(const char* name)
 
 void Vin::OpenGLProgram::SetFloat(int location, float value)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform1f(location, value);
 }
 
 void Vin::OpenGLProgram::SetFloat2(int location, float* values)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform2f(location, values[0], values[1]);
 }
 
 void Vin::OpenGLProgram::SetFloat3(int location, float* values)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform3f(location, values[0], values[1], values[2]);
 }
 
 void Vin::OpenGLProgram::SetFloat4(int location, float* values)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform4f(location, values[0], values[1], values[2], values[3]);
 }
 
 void Vin::OpenGLProgram::SetFloats(int location, float* values, size_t count)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform1fv(location, count, values);
 }
 
 void Vin::OpenGLProgram::SetInt(int location, int value)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform1i(location, value);
 }
 
 void Vin::OpenGLProgram::SetInt2(int location, int* values)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform2i(location, values[0], values[1]);
 }
 
 void Vin::OpenGLProgram::SetInt3(int location, int* values)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform3i(location, values[0], values[1], values[2]);
 }
 
 void Vin::OpenGLProgram::SetInt4(int location, int* values)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform4i(location, values[0], values[1], values[2], values[3]);
 }
 
 void Vin::OpenGLProgram::SetInts(int location, int* values, size_t count)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniform1iv(location, count, values);
 }
 
 void Vin::OpenGLProgram::SetMat3(int location, float* values)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniformMatrix3fv(location, 1, GL_FALSE, values);
 }
 
 void Vin::OpenGLProgram::SetMat4(int location, float* values)
 {
-	glUseProgram(m_ProgramId);
+	Bind();
 	glUniformMatrix4fv(location, 1, GL_FALSE, values);
 }
 

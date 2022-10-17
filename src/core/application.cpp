@@ -45,6 +45,8 @@ void Vin::App::Run()
 				mod->LateUpdate();
 			for (auto mod : m_Modules)
 				mod->Render();
+			for (auto mod : m_Modules)
+				mod->LateRender();
 		}
 
 		m_Timer.Wait(current.GetMillisecond() + GetMsPerProcess() - m_Timer.GetElapsedMillisecond());

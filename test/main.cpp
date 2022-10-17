@@ -33,21 +33,23 @@ unsigned short indices[] = {
 	1, 2, 3
 }; 
 
+struct SpeedRotation {
+	float speed{ 1 };
+
+	SpeedRotation(float speed) : speed{ speed } {};
+};
+
 class TestModule : public Vin::Module {
 	Vin::Asset<Vin::Texture> tex;
 	std::shared_ptr<Vin::Program> program;
 	std::shared_ptr<Vin::Program> program2;
 
-	std::shared_ptr<Vin::VertexBuffer> vbo;
-	std::shared_ptr<Vin::IndexBuffer> ibo;
-	std::shared_ptr<Vin::VertexArray> vao;
-
-	std::shared_ptr<Vin::RenderTarget> renderTarget;
 	Vin::Material mat;
-	Vin::Material mat2;
-	Vin::Material mat3;
 	
 	Vin::Asset<Vin::StaticMesh> mesh;
+
+	Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous> scene{};
+	std::shared_ptr<Vin::Camera> camera;
 
 	double t = 0;
 
@@ -56,67 +58,71 @@ class TestModule : public Vin::Module {
 	int updateC = 0;
 	int processC = 0;
 
+	static float r;
+
+	static void MoveRandomSystem(Vin::Query<Vin::ArchetypeMemoryLayout::Contiguous, Vin::Transform<float>, SpeedRotation> query) {
+		for (auto& [transform, sr] : query) {
+			transform->rotation = Vin::Quaternion<float>::Euler(Vin::Vector3<float>{ 0, (float)(r * Vin::deg2rad * sr->speed), 0 });
+		}
+	}
+
 	void Start() {
 		Vin::Logger::Log("Module started.");
 		Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./bin"));
 
 		program = Vin::LoadProgram("data/vs.glsl", "data/fs.glsl");
-		program2 = Vin::LoadProgram("data/blit/blitvs.glsl", "data/blit/blitfs.glsl");
 
 		mat = Vin::Material{ program };
-		mat3 = Vin::Material{ program };
-		mat2 = Vin::Material{ program2 };
-
-		vbo = Vin::VertexBuffer::Create(sizeof(float) * 32);
-
-		vbo->SetData(&vertices, sizeof(float) * 32, 0);
-
-		Vin::VertexBufferLayout layout{
-			{ Vin::VertexAttribute::Position, Vin::VertexAttributeType::Float3 },
-			{ Vin::VertexAttribute::Color, Vin::VertexAttributeType::Float3 },
-			{ Vin::VertexAttribute::TextureCoord0, Vin::VertexAttributeType::Float2 }
-		};
-
-		Vin::Logger::Log("Layout stride is : {}", layout.GetStride());
-
-		vbo->SetBufferLayout(layout);
-
-		ibo = Vin::IndexBuffer::Create(Vin::BufferIndexType::UnsignedInt16);
-
-		ibo->SetData(&indices, 6);
-
-		vao = Vin::VertexArray::Create();
-
-		vao->AddVertexBuffer(vbo);
-		vao->SetIndexBuffer(ibo);
 
 		tex = Vin::AssetDatabase::LoadAsset<Vin::Texture>("data/aerial_grass_rock_diff_1k.jpg");
 		mat.SetTexture("_MainTex", tex);
 
 		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
 
-		Vin::RenderTargetSpecification spec{ (size_t)windowInfo->width, (size_t)windowInfo->height, 8 };
-		spec.AddRenderBuffer({ Vin::RenderBufferFormat::RGBA16F, true });
-		spec.AddRenderBuffer({ Vin::RenderBufferFormat::DEPTH24_STENCIL8, false });
-
-		renderTarget = Vin::RenderTarget::Create(spec);
-
-		mat2.SetInt("_MainTexSample", renderTarget->GetSpecification().sample);
-		mat2.SetTexture("_MainTex", renderTarget->GetTexture(0));
+		camera = std::shared_ptr<Vin::Camera>{ new Vin::Camera{{windowInfo->width, windowInfo->height} } };
 
 		mesh = Vin::AssetDatabase::LoadAsset<Vin::StaticMesh>("data/suzane.obj");
 
-		Vin::Logger::Log("program1 id : {}", program->GetId());
-		Vin::Logger::Log("program2 id : {}", program2->GetId());
-		Vin::Logger::Log("program1 id : {}", program->GetId());
-		Vin::Logger::Log("program2 id : {}", program2->GetId());
-		Vin::Logger::Log("texture id : {}", tex->GetId());
+		for (auto& primitive : *mesh.Get()) {
+			primitive.material = std::make_shared<Vin::Material>(mat);
+		}
 
-		Vin::Logger::Log("Material1 id : {}", mat.GetId());
-		Vin::Logger::Log("Material2 id : {}", mat2.GetId());
-		Vin::Logger::Log("Material3 id : {}", mat3.GetId());
-		
-		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{100, 100}.data);
+		size_t k = 0;
+
+		for (int j = -3000; j <= 3000; j += 75) {
+			for (int i = -3000; i <= 3000; i += 75) {
+				++k;
+				scene->CreateEntity(
+					Vin::Transform<float>{Vin::Vector3<float>{(float)i, (float)j, -3000.0f}},
+					Vin::MeshRenderer{ mesh.Get() },
+					SpeedRotation{(float)(rand() % 100) / 25});
+			}
+		}
+
+		Vin::Logger::Log("Number of entity : {}", k);
+
+		scene->CreateEntity(
+			Vin::Transform<float>{Vin::Vector3<float>{0, 0.0f, -100.0f}}, 
+			Vin::MeshRenderer{ mesh.Get() },
+			SpeedRotation{ (float)(rand() % 100) / 25 });
+
+		scene->CreateEntity(
+			Vin::Transform<float>{Vin::Vector3<float>{-75.0f, 0.0f, -100.0f}},
+			Vin::MeshRenderer{ mesh.Get() },
+			SpeedRotation{ (float)(rand() % 100) / 25 });
+
+		scene->CreateEntity(
+			Vin::Transform<float>{Vin::Vector3<float>{75.0f, 0.0f, -100.0f}},
+			Vin::MeshRenderer{ mesh.Get() },
+			SpeedRotation{ (float)(rand() % 100) / 25 });
+
+		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{10, 10}.data);
+
+		scene.SetCamera(camera);
+
+		camera->SetFOV(95);
+		camera->SetNearPlane(10);
+		camera->SetFarPlane(3500);
 	}
 
 	void Process() {
@@ -124,7 +130,7 @@ class TestModule : public Vin::Module {
 		processC += 1;
 
 		if (processT > 1000) {
-			//Vin::Logger::Log("Average process rate : {} ps ({} ms)", round(1000 / (processT / processC)), (processT / processC));
+			Vin::Logger::Log("Average process rate : {} ps ({} ms)", round(1000 / (processT / processC)), (processT / processC));
 			processT = 0;
 			processC = 0;
 		}
@@ -135,73 +141,29 @@ class TestModule : public Vin::Module {
 		updateC += 1;
 
 		if (updateT > 1000) {
-			//Vin::Logger::Log("Average update rate : {} ps ({} ms)", round(1000 / (updateT / updateC)), (updateT / updateC));
+			Vin::Logger::Log("Average update rate : {} ps ({} ms)", round(1000 / (updateT / updateC)), (updateT / updateC));
 
 			updateT = 0;
 			updateC = 0;
 		}
+
+		r += GetApp()->GetDeltaTime().GetMillisecond() * 0.01;
 	}
 
 	void Render() {
-		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
-
-		t += GetApp()->GetDeltaTime().GetMillisecond() / 100;
-
-		Vin::Matrix4x4<float> mat4{ Vin::Matrix4x4<float>::identity };
-
-		Vin::Scale(mat4, Vin::Vector3<float>{100, 100, 100});
-		Vin::Rotate(mat4, Vin::Vector3<float>{1.0f, 0, 0}, 90.0f * (float)Vin::deg2rad);
-		Vin::Translate(mat4, Vin::Vector3<float>{0, -3.0f, -6.0f});
-
-		mat.SetMat4("vin_matrix_model", mat4.data);
-
-		Vin::Matrix4x4<float> projection = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
-		mat4 = mat4 * projection;
-
-		mat.SetMat4("vin_matrix_mvp", mat4.data);
-		//mat->SetFloat3("color", Vin::Color{ 0.2, (float)t, 0.2 }.data);
-
-		mat.SetTexture("_MainTex", tex);
-
-		renderTarget->Bind();
-
-		Vin::Renderer::Clear(0.85, 0.85, 1.0, 1.0f);
-
-		mat.Bind();
-		Vin::Renderer::DrawIndexed(vao);
-
-		Vin::Matrix4x4<float> mat42{ Vin::Matrix4x4<float>::identity };
-
-		Vin::Scale(mat42, Vin::Vector3<float>{0.1f, 0.1f, 0.1f});
-		Vin::Rotate(mat42, Vin::Vector3<float>{0, 1.0f, 0}, (float)(-t * (float)Vin::deg2rad));
-		Vin::Translate(mat42, Vin::Vector3<float>{0, -2.0f, -10.0f});
-
-		mat.SetMat4("vin_matrix_model", mat42.data);
-
-		Vin::Matrix4x4<float> projection2 = Vin::Perspective<float>(90 * Vin::deg2rad, (float)windowInfo->width / (float)windowInfo->height, 0.1, 1000);
-		mat42 = mat42 * projection2;
-
-		mat.SetMat4("vin_matrix_mvp", mat42.data);
-		
-		for (auto& it = mesh->begin(); it != mesh->end(); ++it) {
-			Vin::Renderer::DrawArrays(it->vao, it->vertexCount);
-		}
-
-		renderTarget->Unbind(); 
-		
-		Vin::Renderer::Clear(0, 0, 0, 1.0f);
-
-		mat2.Bind();
-		Vin::Renderer::DrawIndexed(vao);
+		scene->Process(MoveRandomSystem);
+		scene.Render();
 	}
 
 	void OnEvent(Vin::EventHandler handler) {
 		if (Vin::WindowCloseEvent* event = handler.GetEvent<Vin::WindowCloseEvent>())
 			GetApp()->Stop();
 		if (Vin::WindowResizeEvent* event = handler.GetEvent<Vin::WindowResizeEvent>())
-			renderTarget->Resize(event->width, event->height);
+			camera->Resize({ event->width, event->height });
 	}
 };
+
+float TestModule::r{ 0 };
 
 class TestApp : public Vin::App {
 public:
@@ -210,6 +172,9 @@ public:
 		winfo.title = "Test Application";
 
 		Vin::AssetDatabase::AddAsset<Vin::WindowInfo>(std::move(winfo), VIN_WINDOWINFO_ASSETPATH);
+
+		SetUpdateRate(249304934);
+		SetProcessRate(493849348);
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();

@@ -70,8 +70,12 @@ namespace Vin {
 
 		unsigned int GetId();
 	private:
+		void RecalculateId();
+
+	private:
 		std::shared_ptr<Program> m_Program{ nullptr };
 		MaterialTextureData m_Textures[16]{};
 		bool m_Transparency{ false };
+		unsigned int m_Id{};
 	};
 }

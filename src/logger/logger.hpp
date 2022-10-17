@@ -6,6 +6,7 @@
 
 #include "vectorfmt.hpp"
 #include "matrixfmt.hpp"
+#include "quaternionfmt.hpp"
 
 namespace Vin {
 

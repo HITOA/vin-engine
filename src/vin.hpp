@@ -10,3 +10,5 @@
 #include "math/math.hpp"
 
 #include "renderer/rendering.hpp"
+
+#include "scene/scene.hpp"

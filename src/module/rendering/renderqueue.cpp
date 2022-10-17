@@ -1,9 +1,9 @@
 #include "D:/VIN/vin-engine/build/CMakeFiles/vin_engine.dir/Debug/cmake_pch.hxx"
 #include "renderqueue.hpp"
 
-void Vin::RenderQueue::PushRenderTask(std::shared_ptr<Camera> camera, Primitive& primitive)
+void Vin::RenderQueue::PushRenderTask(std::shared_ptr<Camera> camera, Primitive& primitive, Matrix4x4<float> model)
 {
-	m_Queue.push_back(RenderTask{ camera, primitive });
+	m_Queue.push_back(RenderTask{ camera, primitive, model });
 }
 
 void Vin::RenderQueue::Sort()
@@ -11,4 +11,9 @@ void Vin::RenderQueue::Sort()
 	std::sort(m_Queue.begin(), m_Queue.end(), [](RenderTask& a, RenderTask& b) {
 		return a.GetId() > b.GetId();
 		});
+}
+
+void Vin::RenderQueue::Clear()
+{
+	m_Queue.clear();
 }

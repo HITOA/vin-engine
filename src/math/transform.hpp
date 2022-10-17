@@ -63,8 +63,10 @@ namespace Vin {
 
 	template<typename T>
 	Matrix4x4<T>& Translate(Matrix4x4<T>& result, const Vector3<T>& translation) {
-		Matrix4x4<T> mat{ Translate(translation) };
-		result = result * mat;
+		result(0, 3) += translation.x;
+		result(1, 3) += translation.y;
+		result(2, 3) += translation.z;
+
 		return result;
 	}
 
