@@ -13,14 +13,10 @@ namespace Vin{
 	template<ArchetypeMemoryLayout layout>
 	class Scene {
 	public:
-		void SetCamera(std::shared_ptr<Camera> camera) {
-			m_Camera = camera;
-		}
+		void Render(std::shared_ptr<Camera> camera) {
+			s_CurrentCamera = camera;
 
-		void Render() {
-			s_CurrentCamera = m_Camera;
-
-			m_Registry.Process(BuildRenderQueue);
+			m_Registry.Process(MeshRendererSystem);
 		}
 
 		Registry<layout>* operator->() {
@@ -28,14 +24,14 @@ namespace Vin{
 		}
 		
 	private:
-		static void BuildRenderQueue(Query<layout, Transform<float>, MeshRenderer> query) {
+		static void MeshRendererSystem(Query<layout, Transform<float>, MeshRenderer> query) {
 			Asset<RenderContext> ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_BASEPATH);
 
 			for (auto& [transform, meshrenderer] : query) {
 				if (!meshrenderer->isDynamicMesh) {
 					StaticMesh* mesh = meshrenderer->staticmesh;
 					for (auto& primitive : *mesh) {
-						ctx->m_Queue.PushRenderTask(s_CurrentCamera, primitive, transform->GetModelMatrix());
+						ctx->queue.PushRenderTask(s_CurrentCamera, primitive, transform->GetModelMatrix());
 					}
 				}
 			}
@@ -44,7 +40,6 @@ namespace Vin{
 	private:
 		static std::shared_ptr<Camera> s_CurrentCamera;
 
-		std::shared_ptr<Camera> m_Camera{};
 		Registry<layout> m_Registry{};
 	};
 

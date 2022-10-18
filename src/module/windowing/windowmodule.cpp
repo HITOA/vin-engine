@@ -66,7 +66,7 @@ void Vin::WindowModule::EarlyUpdate()
 	glfwPollEvents();
 }
 
-void Vin::WindowModule::Render()
+void Vin::WindowModule::LateRender()
 {
 	m_Context->SwapBuffer();
 }

@@ -42,7 +42,10 @@ namespace Vin {
 		void AddRenderBuffer(RenderBufferSpecification spec);
 	};
 
-	class RenderTexture : public Bindable<unsigned short> {};
+	class RenderTexture : public Bindable<unsigned short> {
+	public:
+		virtual size_t GetSampleCount() const = 0;
+	};
 
 	class RenderTarget {
 	public:

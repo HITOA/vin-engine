@@ -3,6 +3,8 @@
 #include "vinpch.hpp"
 
 #include "renderer/vertexarray.hpp"
+#include "renderer/framebuffer.hpp"
+#include "scene/material.hpp"
 
 namespace Vin {
 	enum class DrawingMode {
@@ -29,6 +31,11 @@ namespace Vin {
 		static void Clear(float r, float g, float b, float a);
 		static void DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount);
 		static void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount = 0);
+
+		static void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst);
+
+		static void BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst, Material mat);
+		static void BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst);
 	private:
 		static Api s_api;
 	protected:
@@ -42,6 +49,7 @@ namespace Vin {
 			virtual void Clear(float r, float g, float b, float a) = 0;
 			virtual void DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount) = 0;
 			virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount) = 0;
+			virtual void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst) = 0;
 		} *s_RenderingApi;
 	};
 
@@ -51,5 +59,6 @@ namespace Vin {
 		virtual void Clear(float r, float g, float b, float a) {};
 		virtual void DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount) {};
 		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount) {};
+		virtual void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst) {};
 	};
 }

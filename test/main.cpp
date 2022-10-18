@@ -42,10 +42,9 @@ struct SpeedRotation {
 class TestModule : public Vin::Module {
 	Vin::Asset<Vin::Texture> tex;
 	std::shared_ptr<Vin::Program> program;
-	std::shared_ptr<Vin::Program> program2;
 
 	Vin::Material mat;
-	
+
 	Vin::Asset<Vin::StaticMesh> mesh;
 
 	Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous> scene{};
@@ -74,10 +73,10 @@ class TestModule : public Vin::Module {
 
 		mat = Vin::Material{ program };
 
+		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
+
 		tex = Vin::AssetDatabase::LoadAsset<Vin::Texture>("data/aerial_grass_rock_diff_1k.jpg");
 		mat.SetTexture("_MainTex", tex);
-
-		Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
 
 		camera = std::shared_ptr<Vin::Camera>{ new Vin::Camera{{windowInfo->width, windowInfo->height} } };
 
@@ -118,8 +117,6 @@ class TestModule : public Vin::Module {
 
 		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{10, 10}.data);
 
-		scene.SetCamera(camera);
-
 		camera->SetFOV(95);
 		camera->SetNearPlane(10);
 		camera->SetFarPlane(3500);
@@ -152,7 +149,11 @@ class TestModule : public Vin::Module {
 
 	void Render() {
 		scene->Process(MoveRandomSystem);
-		scene.Render();
+		scene.Render(camera);
+	}
+
+	void LateRender() {
+		Vin::Renderer::Blit(camera->GetRenderTarget(), nullptr);
 	}
 
 	void OnEvent(Vin::EventHandler handler) {
@@ -178,7 +179,7 @@ public:
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();
-		AddModule<Vin::EditorModule>();
+		//AddModule<Vin::EditorModule>();
 		AddModule<TestModule>();
 	}
 };

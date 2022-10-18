@@ -12,11 +12,11 @@ void Vin::RenderingModule::Init()
 	AssetDatabase::AddAsset(RenderContext{}, VIN_RENDERCONTEXT_BASEPATH);
 }
 
-void Vin::RenderingModule::LateRender()
+void Vin::RenderingModule::Render()
 {
 	Asset<RenderContext> ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_BASEPATH);
 
-	RenderQueue& queue = ctx->m_Queue;
+	RenderQueue& queue = ctx->queue;
 	queue.Sort();
 
 	std::shared_ptr<Camera> currCamera{};
@@ -28,12 +28,12 @@ void Vin::RenderingModule::LateRender()
 	for (RenderTask& task : queue) {
 		if (task.GetCamera() != currCamera) {
 			currCamera = task.GetCamera();
-			//currCamera->Bind();
+			currCamera->Bind();
 
 			projection = currCamera->GetProjectionMatrix();
 			view = currCamera->GetViewMatrix();
 
-			Renderer::Clear(0.85, 0.85, 1.0, 1.0f);
+			Renderer::Clear(0.85, 0.85, 1.0f, 1.0f);
 		}
 
 		Primitive& primitive = task.GetPrimitive();

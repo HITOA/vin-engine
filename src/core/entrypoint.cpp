@@ -2,11 +2,17 @@
 #include "logger/logger.hpp"
 #include "renderer/renderer.hpp"
 
+#include "assets/assetdatabase.hpp"
+#include "vinshader.hpp"
+
+
 extern Vin::App* Vin::CreateApp();
 extern void Vin::DestroyApp(Vin::App* app);
 
 int main(int argc, char* argv[]) {
 	Vin::Renderer::SetApi(Vin::Renderer::Count);
+
+	Vin::AssetDatabase::AddAsset<std::string>(vinshader, "vin.glsl");
 
 	Vin::App* app = Vin::CreateApp();
 

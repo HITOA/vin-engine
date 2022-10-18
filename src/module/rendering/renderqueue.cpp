@@ -3,17 +3,17 @@
 
 void Vin::RenderQueue::PushRenderTask(std::shared_ptr<Camera> camera, Primitive& primitive, Matrix4x4<float> model)
 {
-	m_Queue.push_back(RenderTask{ camera, primitive, model });
+	queue.push_back(RenderTask{ camera, primitive, model });
 }
 
 void Vin::RenderQueue::Sort()
 {
-	std::sort(m_Queue.begin(), m_Queue.end(), [](RenderTask& a, RenderTask& b) {
+	std::sort(queue.begin(), queue.end(), [](RenderTask& a, RenderTask& b) {
 		return a.GetId() > b.GetId();
 		});
 }
 
 void Vin::RenderQueue::Clear()
 {
-	m_Queue.clear();
+	queue.clear();
 }

@@ -12,13 +12,13 @@ namespace Vin {
 		void Sort();
 		void Clear();
 
-		std::vector<RenderTask>::iterator begin() { return m_Queue.begin(); }
-		std::vector<RenderTask>::iterator end() { return m_Queue.end(); }
-		std::vector<RenderTask>::const_iterator begin() const { return m_Queue.begin(); }
-		std::vector<RenderTask>::const_iterator end() const { return m_Queue.end(); }
-		std::vector<RenderTask>::const_iterator cbegin() const { return m_Queue.cbegin(); }
-		std::vector<RenderTask>::const_iterator cend() const { return m_Queue.cend(); }
+		std::vector<RenderTask>::iterator begin() { return queue.begin(); }
+		std::vector<RenderTask>::iterator end() { return queue.end(); }
+		std::vector<RenderTask>::const_iterator begin() const { return queue.begin(); }
+		std::vector<RenderTask>::const_iterator end() const { return queue.end(); }
+		std::vector<RenderTask>::const_iterator cbegin() const { return queue.cbegin(); }
+		std::vector<RenderTask>::const_iterator cend() const { return queue.cend(); }
 	private:
-		std::vector<RenderTask> m_Queue{};
+		std::vector<RenderTask> queue{};
 	};
 }

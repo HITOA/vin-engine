@@ -4,7 +4,7 @@ Vin::Camera::Camera(Vector2<int> size, int samples, bool HDR)
 	: m_Size{ size }, m_Near{ 0.1 }, m_Far{ 1000 }, m_FOV{ 90 }, m_RenderTarget{}
 {
 	RenderTargetSpecification specification{ (size_t)size.x, (size_t)size.y, (size_t)samples };
-	specification.AddRenderBuffer({ HDR ? RenderBufferFormat::RGBA16F : RenderBufferFormat::RGBA32, true });
+	specification.AddRenderBuffer({ HDR ? RenderBufferFormat::RGBA16F : RenderBufferFormat::RGBA32, false });
 	specification.AddRenderBuffer({ RenderBufferFormat::DEPTH24_STENCIL8, false });
 
 	m_RenderTarget = RenderTarget::Create(specification);
@@ -69,4 +69,12 @@ Vin::Matrix4x4<float> Vin::Camera::GetProjectionMatrix()
 Vin::Matrix4x4<float> Vin::Camera::GetViewMatrix()
 {
 	return Matrix4x4<float>::identity;
+}
+
+std::shared_ptr<Vin::RenderTarget> Vin::Camera::GetRenderTarget() {
+	return m_RenderTarget;
+}
+
+std::shared_ptr<Vin::RenderTexture> Vin::Camera::GetRenderTexture() {
+	return m_RenderTarget->GetTexture(0);
 }

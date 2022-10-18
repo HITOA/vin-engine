@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.2)
 cmake_policy(SET CMP0079 NEW)
 project(vin)
 
+function(make_includable input_file output_file var_name)
+    file(READ ${input_file} content)
+    set(delim "RESOURCE_DELIM")
+    set(content "const char* ${var_name} = R\"${delim}(\n${content})${delim}\";")
+    file(WRITE ${output_file} "${content}")
+endfunction(make_includable)
+
+make_includable(src/resources/msblitfs.glsl generated/msblitfs.hpp msblitfs)
+make_includable(src/resources/msblitvs.glsl generated/msblitvs.hpp msblitvs)
+make_includable(src/resources/vin.glsl generated/vinshader.hpp vinshader)
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -33,7 +44,7 @@ glad_add_library(glad_library STATIC API gl:core=4.6)
 include_directories(${EXTERNAL_PATH}/stb)
 include_directories(${EXTERNAL_PATH}/tinyobjloader)
 
-file(GLOB_RECURSE vin_engine_src "src/*.cpp" "src/*.hpp" "src/*.h")
+file(GLOB_RECURSE vin_engine_src "src/*.cpp" "src/*.hpp" "src/*.h" "generated/*.hpp")
 
 add_library(vin_engine STATIC ${vin_engine_src})
 
@@ -50,6 +61,7 @@ target_link_libraries(
 
 target_precompile_headers(vin_engine PUBLIC src/vinpch.hpp)
 target_include_directories(vin_engine PUBLIC src)
+target_include_directories(vin_engine PUBLIC generated)
 
 add_executable(vin_test 
 	test/main.cpp

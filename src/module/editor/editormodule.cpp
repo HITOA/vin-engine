@@ -236,7 +236,7 @@ void Vin::EditorModule::DrawBottomBar()
 
 			double fps =  1 / GetApp()->GetDeltaTime().GetSecond();
 			fps = round(fps * 2) / 2;
-			ImGui::TextColored(ImVec4(0.50f, 0.50f, 1.00f, 1.00f), "Fps : %f", fps);
+			ImGui::TextColored(ImVec4(0.50f, 0.50f, 1.00f, 1.00f), "Fps : %f (%fms)", fps, GetApp()->GetDeltaTime().GetMillisecond());
 
 			ImGui::EndMenuBar();
 		}

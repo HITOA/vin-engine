@@ -3,6 +3,10 @@
 #include "core/assert.hpp"
 
 #include "opengl/renderer_opengl.hpp"
+#include "scene/material.hpp"
+
+#include "msblitvs.hpp"
+#include "msblitfs.hpp"
 
 Vin::Renderer::Api Vin::Renderer::s_api = Vin::Renderer::None;
 Vin::Renderer::RenderingApi* Vin::Renderer::s_RenderingApi = new NoneRenderingApi{};
@@ -60,4 +64,73 @@ void Vin::Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray,
 	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
 	indexCount = indexCount == 0 ? vertexArray->GetIndexBuffer()->GetCount() : indexCount;
 	s_RenderingApi->DrawIndexed(vertexArray, indexCount);
+}
+
+void Vin::Renderer::Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst)
+{
+	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
+	s_RenderingApi->Blit(src, dst);
+}
+
+void Vin::Renderer::BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst, Material mat)
+{
+	static float vertices[] = {
+		 1.0f,  1.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f,
+		-1.0f,  1.0f, 0.0f
+	};
+
+	static unsigned short indices[] = {
+		0, 1, 3,
+		1, 2, 3
+	};
+
+	static std::shared_ptr<VertexBuffer> vbo{};
+	static std::shared_ptr<IndexBuffer> ibo{};
+	static std::shared_ptr<VertexArray> vao{};
+
+	if (!vao) {
+		vbo = VertexBuffer::Create(sizeof(vertices));
+		vbo->SetBufferLayout({ {VertexAttribute::Position, VertexAttributeType::Float3} });
+		vbo->SetData(vertices, sizeof(vertices), 0);
+
+		ibo = IndexBuffer::Create(Vin::BufferIndexType::UnsignedInt16);
+		ibo->SetData(indices, sizeof(indices) / sizeof(short));
+
+		vao = VertexArray::Create();
+		vao->AddVertexBuffer(vbo);
+		vao->SetIndexBuffer(ibo);
+	}
+
+	if (dst)
+		dst->Bind();
+
+	mat.SetTexture("_MainTex", src);
+	mat.SetInt("_MainTexSample", src->GetSampleCount());
+
+	mat.Bind();
+
+	DrawIndexed(vao);
+
+	if (dst)
+		dst->Unbind();
+}
+
+void Vin::Renderer::BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst) {
+	static std::shared_ptr<Program> program{};
+	static Material mat{};
+
+	if (!program) {
+		program = Program::Create();
+
+		program->AddShader(Vin::ShaderType::VertexShader, msblitvs);
+		program->AddShader(Vin::ShaderType::FragmentShader, msblitfs);
+
+		program->CompileProgram();
+
+		mat = Material{ program };
+	}
+
+	BlitMultiSample(src, dst, mat);
 }

@@ -47,12 +47,17 @@ std::shared_ptr<Vin::RenderTexture> Vin::OpenGLRenderTarget::GetTexture(size_t i
 		return nullptr;
 	}
 
-	return std::make_shared<OpenGLRenderTexture>(&m_BufferIds[idx]);
+	return std::make_shared<OpenGLRenderTexture>(&m_BufferIds[idx], m_Specification.sample);
 }
 
 const Vin::RenderTargetSpecification& Vin::OpenGLRenderTarget::GetSpecification()
 {
 	return m_Specification;
+}
+
+unsigned int Vin::OpenGLRenderTarget::GetFrameBufferId()
+{
+	return m_FrameBufferId;
 }
 
 void Vin::OpenGLRenderTarget::Generate()
@@ -160,9 +165,14 @@ unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferAttachment(RenderBufferFo
 	return 0;
 }
 
-Vin::OpenGLRenderTexture::OpenGLRenderTexture(unsigned int* textureId) : m_TextureId{ textureId } {}
+Vin::OpenGLRenderTexture::OpenGLRenderTexture(unsigned int* textureId, size_t samplecount) : m_TextureId{ textureId }, m_SampleCount{ samplecount } {}
 
 void Vin::OpenGLRenderTexture::Bind(unsigned short location)
 {
 	glBindTextureUnit(location, *m_TextureId);
+}
+
+size_t Vin::OpenGLRenderTexture::GetSampleCount() const
+{
+	return m_SampleCount;
 }

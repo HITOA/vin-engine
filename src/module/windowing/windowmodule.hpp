@@ -37,7 +37,7 @@ namespace Vin {
 	public:
 		void Init() final;
 		void EarlyUpdate() final;
-		void Render() final;
+		void LateRender() final;
 	private:
 		Asset<WindowInfo> m_Info;
 		GLFWwindow* m_Window;

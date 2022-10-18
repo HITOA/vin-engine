@@ -1,6 +1,6 @@
 #version 330 core
 
-#include "data/vin.glsl"
+#include "vin.glsl"
 
 VIN_POSITION vec3 _position;
 VIN_NORMAL vec3 _normal;

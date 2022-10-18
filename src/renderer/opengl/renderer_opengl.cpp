@@ -4,6 +4,8 @@
 #include "core/assert.hpp"
 #include "logger/logger.hpp"
 
+#include "renderer/opengl/framebuffer_opengl.hpp"
+
 #include <glad/gl.h>
 
 void OpenGLMessageCallback(
@@ -20,7 +22,7 @@ void OpenGLMessageCallback(
 	case GL_DEBUG_SEVERITY_HIGH:         Vin::Logger::Err(message); return;
 	case GL_DEBUG_SEVERITY_MEDIUM:       Vin::Logger::Warn(message); return;
 	case GL_DEBUG_SEVERITY_LOW:          Vin::Logger::Log(message); return;
-	//case GL_DEBUG_SEVERITY_NOTIFICATION: Vin::Logger::Log(message); return;
+	case GL_DEBUG_SEVERITY_NOTIFICATION: Vin::Logger::Log(message); return;
 	}
 }
 
@@ -62,4 +64,22 @@ void Vin::OpenGLRenderingApi::DrawIndexed(const std::shared_ptr<VertexArray>& ve
 	vertexArray->Bind();
 	glDrawElements(GL_TRIANGLES, indexCount,
 		vertexArray->GetIndexBuffer()->GetIndexType() == BufferIndexType::UnsignedInt16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr);
+}
+
+void Vin::OpenGLRenderingApi::Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst)
+{
+	std::shared_ptr<OpenGLRenderTarget> glsrc = std::static_pointer_cast<OpenGLRenderTarget>(src);
+	std::shared_ptr<OpenGLRenderTarget> gldst = std::static_pointer_cast<OpenGLRenderTarget>(dst);
+
+	unsigned int srcid = glsrc ? glsrc->GetFrameBufferId() : 0;
+	unsigned int dstid = gldst ? gldst->GetFrameBufferId() : 0;
+
+	int srcwidth = src ? src->GetSpecification().width : 0;
+	int srcheight = src ? src->GetSpecification().height : 0;
+
+	int dstwidth = dst ? dst->GetSpecification().width : src->GetSpecification().width;
+	int dstheight = dst ? dst->GetSpecification().height : src->GetSpecification().height;
+	
+	glBlitNamedFramebuffer(srcid, dstid, 0, 0, srcwidth, srcheight, 0, 0, dstwidth, dstheight,
+		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
 }

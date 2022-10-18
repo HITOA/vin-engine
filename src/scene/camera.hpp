@@ -28,6 +28,9 @@ namespace Vin {
 
 		Matrix4x4<float> GetProjectionMatrix();
 		Matrix4x4<float> GetViewMatrix();
+
+		std::shared_ptr<RenderTarget> GetRenderTarget();
+		std::shared_ptr<RenderTexture> GetRenderTexture();
 	private:
 		std::shared_ptr<RenderTarget> m_RenderTarget{}; //viewport
 		Vector2<int> m_Size{}; //Width, height

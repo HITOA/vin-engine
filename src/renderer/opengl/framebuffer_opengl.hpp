@@ -6,11 +6,14 @@ namespace Vin {
 
 	class OpenGLRenderTexture : public RenderTexture {
 	public:
-		OpenGLRenderTexture(unsigned int* textureId);
+		OpenGLRenderTexture(unsigned int* textureId, size_t samplecount);
 
 		void Bind(unsigned short location);
+
+		size_t GetSampleCount() const;
 	private:
 		unsigned int* m_TextureId;
+		size_t m_SampleCount;
 	};
 
 	class OpenGLRenderTarget : public RenderTarget {
@@ -27,6 +30,8 @@ namespace Vin {
 
 		std::shared_ptr<RenderTexture> GetTexture(size_t idx);
 		const RenderTargetSpecification& GetSpecification();
+
+		unsigned int GetFrameBufferId();
 	private:
 		void Generate();
 		void Destroy();

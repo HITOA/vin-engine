@@ -14,7 +14,8 @@ Install jinja2 package : ```pip install jinja2```
 Generate with cmake : ```cmake -B"./build" .```   
 
 ## TODO  
-- Loading GLTF/GLB (2.0) model.
+- Loading GLTF/GLB (2.0) model.  
+- PostProcessing Chain system (Simple way to do postprocessing on a rendetarget, you pass the render target to a post process chain, then it end up with all the effect. you would add post process effect like chain.Add(postprocessmat))  
 
 ## Source
 A lot of useful source for developing game engine related stuff :
