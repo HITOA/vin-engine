@@ -32,6 +32,4 @@ namespace Vin {
 	private:
 		static AssetTypeId lastId;
 	};
-
-	AssetTypeId ComponentTrait::lastId{ 0 };
 }

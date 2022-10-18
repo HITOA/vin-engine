@@ -50,6 +50,8 @@ class TestModule : public Vin::Module {
 	Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous> scene{};
 	std::shared_ptr<Vin::Camera> camera;
 
+	std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> sponzascene{};
+
 	double t = 0;
 
 	double updateT = 0;
@@ -88,7 +90,7 @@ class TestModule : public Vin::Module {
 
 		size_t k = 0;
 
-		for (int j = -3000; j <= 3000; j += 75) {
+		/*for (int j = -3000; j <= 3000; j += 75) {
 			for (int i = -3000; i <= 3000; i += 75) {
 				++k;
 				scene->CreateEntity(
@@ -96,7 +98,7 @@ class TestModule : public Vin::Module {
 					Vin::MeshRenderer{ mesh.Get() },
 					SpeedRotation{(float)(rand() % 100) / 25});
 			}
-		}
+		}*/
 
 		Vin::Logger::Log("Number of entity : {}", k);
 
@@ -120,6 +122,8 @@ class TestModule : public Vin::Module {
 		camera->SetFOV(95);
 		camera->SetNearPlane(10);
 		camera->SetFarPlane(3500);
+
+		sponzascene = Vin::LoadGLTF("data/sponzagltf/Sponza.gltf");
 	}
 
 	void Process() {

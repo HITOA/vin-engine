@@ -1,8 +1,8 @@
 #pragma once
 
 #include "vinpch.hpp"
-#include "scene/mesh.hpp"
+#include "scene/scene.hpp"
 
 namespace Vin {
-	std::shared_ptr<StaticMesh> LoadGLB(const char* path);
+	std::shared_ptr<Scene<ArchetypeMemoryLayout::Contiguous>> LoadGLTF(std::string_view path);
 }
