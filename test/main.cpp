@@ -161,15 +161,15 @@ class TestModule : public Vin::Module {
 		Vin::Vector2<int> mouseDelta = Vin::Input::GetMousePosition() - mouseLastPos;
 		mouseLastPos = Vin::Input::GetMousePosition();
 
-		pitch += (float)mouseDelta.y * deltaTime * 0.002f;
-		yaw += (float)mouseDelta.x * deltaTime * 0.002f;
+		pitch -= (float)mouseDelta.y * deltaTime * 0.002f;
+		yaw -= (float)mouseDelta.x * deltaTime * 0.002f;
 
 		pitch = Vin::Clamp<float>(pitch, -90 * Vin::deg2rad, 90 * Vin::deg2rad);
 
-		Vin::Quaternion<float> qPitch = Vin::Quaternion<float>::Euler({ (float)mouseDelta.y * deltaTime * 0.002f, 0, 0 });
-		Vin::Quaternion<float> qYaw = Vin::Quaternion<float>::Euler({ 0, (float)mouseDelta.x * deltaTime * 0.002f, 0 });
+		Vin::Quaternion<float> qPitch = Vin::Quaternion<float>::Euler({ pitch, 0, 0 });
+		Vin::Quaternion<float> qYaw = Vin::Quaternion<float>::Euler({ 0, yaw, 0 });
 
-		camera->rotation = (qPitch * camera->rotation).Normalize();
+		camera->rotation = (qYaw * qPitch).Normalize();
 		//camera->rotation = (camera->rotation * qYaw).Normalize();
 
 		Vin::Vector3<float> translation{ 0.0f };
@@ -197,7 +197,7 @@ class TestModule : public Vin::Module {
 
 		translation *= deltaTime * 0.01f;
 
-		translation = (camera->rotation.Conjugate().GetRotationMatrix() * Vin::Vector4<float>{ translation.xyz, 1.0f }).xyz;
+		translation = (camera->rotation.GetRotationMatrix() * Vin::Vector4<float>{ translation.xyz, 1.0f }).xyz;
 
 		camera->position += translation;
 

@@ -68,7 +68,7 @@ Vin::Matrix4x4<float> Vin::Camera::GetProjectionMatrix()
 
 Vin::Matrix4x4<float> Vin::Camera::GetViewMatrix()
 {
-	return rotation.Conjugate().GetRotationMatrix() * Vin::Translate(-position);
+	return rotation.GetRotationMatrix() * Vin::Translate(-position);
 }
 
 std::shared_ptr<Vin::RenderTarget> Vin::Camera::GetRenderTarget() {
