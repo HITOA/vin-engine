@@ -1,4 +1,3 @@
-#include "D:/VIN/vin-engine/build/CMakeFiles/vin_engine.dir/Debug/cmake_pch.hxx"
 #include "pakmaker.hpp"
 #include "logger/logger.hpp"
 

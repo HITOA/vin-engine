@@ -1,4 +1,3 @@
-#include "D:/VIN/vin-engine/build/CMakeFiles/vin_engine.dir/Debug/cmake_pch.hxx"
 #include "renderqueue.hpp"
 
 void Vin::RenderQueue::PushRenderTask(std::shared_ptr<Camera> camera, Primitive& primitive, Matrix4x4<float> model)
