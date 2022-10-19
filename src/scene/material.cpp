@@ -18,8 +18,10 @@ void Vin::Material::Bind()
 {
     m_Program->Bind();
     for (usize i = 0; i < 16; ++i)
-        if (m_Textures[i].used)
+        if (m_Textures[i].used) {
+            m_Program->SetInt(i, i);
             m_Textures[i].texture->Bind(i);
+        }
 }
 
 int Vin::Material::GetField(const char* name)

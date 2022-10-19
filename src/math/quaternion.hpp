@@ -33,7 +33,12 @@ namespace Vin {
 		}
 
 		Quaternion<T> Conjugate() const {
-			return Quaternion{ w, -x, -y, -z };
+			return Quaternion<T>{ w, -x, -y, -z };
+		}
+
+		Quaternion<T> Inverse() const {
+			T length = Length();
+			return Quaternion<T>{ w / length, -x / length, -y / length, -z / length };
 		}
 
 		Matrix4x4<T> GetRotationMatrix() const {

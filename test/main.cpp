@@ -128,7 +128,7 @@ class TestModule : public Vin::Module {
 
 		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{10, 10}.data);
 
-		camera->SetFOV(90);
+		camera->SetFOV(52.5);
 		camera->SetNearPlane(0.1);
 		camera->SetFarPlane(1000);
 
@@ -187,10 +187,10 @@ class TestModule : public Vin::Module {
 			translation += Vin::Vector3<float>{ 1 , 0, 0 };
 		}
 		if (Vin::Input::IsKeyDown(Vin::Key::Space)) {
-			translation += Vin::Vector3<float>{ 0, 1, 0};
+			camera->position += Vin::Vector3<float>{ 0, 1 * deltaTime * 0.01f, 0};
 		}
 		if (Vin::Input::IsKeyDown(Vin::Key::LeftControl)) {
-			translation += Vin::Vector3<float>{ 0, -1, 0};
+			camera->position += Vin::Vector3<float>{ 0, -1 * deltaTime * 0.01f, 0};
 		}
 
 		translation = translation.Normalize();
@@ -198,6 +198,9 @@ class TestModule : public Vin::Module {
 		translation *= deltaTime * 0.01f;
 
 		translation = (camera->rotation.GetRotationMatrix() * Vin::Vector4<float>{ translation.xyz, 1.0f }).xyz;
+
+		if (Vin::Input::IsKeyDown(Vin::Key::LeftShift))
+			translation *= 3;
 
 		camera->position += translation;
 
@@ -255,7 +258,7 @@ public:
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();
-		AddModule<Vin::EditorModule>();
+		//AddModule<Vin::EditorModule>();
 		AddModule<TestModule>();
 	}
 };
