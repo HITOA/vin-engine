@@ -3,6 +3,7 @@
 #include "core/identifiable.hpp"
 #include "renderer/framebuffer.hpp"
 #include "math/math.hpp"
+#include "transform.hpp"
 
 namespace Vin {
 
@@ -37,6 +38,10 @@ namespace Vin {
 		float m_Near{};
 		float m_Far{};
 		float m_FOV{};
+
+	public:
+		Vector3<float> position{};
+		Quaternion<float> rotation{};
 	};
 
 }

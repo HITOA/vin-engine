@@ -158,6 +158,13 @@ namespace Vin {
 			return length;
 		}
 
+		Vector3<T> Normalize() const {
+			if (x == y == z == 0)
+				return *this;
+			T length = Length();
+			return Vector3<T>{ x / length, y / length, z / length};
+		}
+
 		//Assignment
 
 		Vector3<T>& operator=(const Vector3<T>& rhs) {

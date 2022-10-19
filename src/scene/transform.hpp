@@ -1,17 +1,20 @@
 #pragma once
 
+#include "ecs/registry.hpp"
 #include "math/math.hpp"
 
 namespace Vin {
 
 	template<typename T>
 	struct Transform {
+		EntityId parent{};
+
 		Vector3<T> position{};
 		Quaternion<T> rotation{};
 		Vector3<T> scale{};
 
-		Transform() : position{}, rotation{}, scale{ (T)1.0 } {};
-		Transform(Vector3<T> position) : position{ position }, rotation{}, scale{ (T)1.0 } {};
+		Transform() : parent{ 0 }, position {}, rotation{}, scale{ (T)1.0 } {};
+		Transform(Vector3<T> position) : parent{ 0 }, position{ position }, rotation{}, scale{ (T)1.0 } {};
 
 		Matrix4x4<T> GetModelMatrix() {
 			Matrix4x4<T> model{ Matrix4x4<T>::identity };

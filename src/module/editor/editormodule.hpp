@@ -10,7 +10,7 @@ namespace Vin {
 	public:
 		void Init();
 		void Stop();
-		void Render();
+		void LateRender();
 
 		void OnEvent(EventHandler handler);
 	private:

@@ -29,6 +29,13 @@ namespace Vin {
 		int height{ 900 };
 	};
 
+	struct WindowMouseState {
+		enum State {
+			Normal,
+			Lock
+		} state;
+	};
+
 	struct GlfwWindowHolder {
 		GLFWwindow* window;
 	};
@@ -38,6 +45,7 @@ namespace Vin {
 		void Init() final;
 		void EarlyUpdate() final;
 		void LateRender() final;
+		void OnEvent(EventHandler handler);
 	private:
 		Asset<WindowInfo> m_Info;
 		GLFWwindow* m_Window;
@@ -46,6 +54,8 @@ namespace Vin {
 		friend void WindowResizeCallback(GLFWwindow* window, int width, int height);
 		friend void WindowCloseCallback(GLFWwindow* window);
 		friend void WindowDropCallback(GLFWwindow* window, int count, const char** paths);
+		friend void WindowKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		friend void WindowCursordPosCallback(GLFWwindow* window, double xpos, double ypos);
 	};
 
 }

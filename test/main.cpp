@@ -19,6 +19,8 @@
 #include "utils/pakmaker.hpp"
 
 #include "utils/shaderutils.hpp"
+#include "resources/default.hpp"
+#include "inputsystem/input.hpp"
 
 float vertices[] = {
 	// positions          // colors           // texture coords
@@ -59,11 +61,16 @@ class TestModule : public Vin::Module {
 	int updateC = 0;
 	int processC = 0;
 
-	static float r;
+	float r;
 
-	static void MoveRandomSystem(Vin::Query<Vin::ArchetypeMemoryLayout::Contiguous, Vin::Transform<float>, SpeedRotation> query) {
-		for (auto& [transform, sr] : query) {
-			transform->rotation = Vin::Quaternion<float>::Euler(Vin::Vector3<float>{ 0, (float)(r * Vin::deg2rad * sr->speed), 0 });
+	Vin::Vector2<int> mouseLastPos{ 0 };
+
+	static void MoveRandomSystem(Vin::Query<Vin::ArchetypeMemoryLayout::Contiguous, Vin::Transform<float>> query, float r) {
+		for (auto& [transform] : query) {
+			transform->position = Vin::Vector3<float>{ 0, 0, -25 };
+			transform->rotation = Vin::Quaternion<float>::Euler(Vin::Vector3<float>{ 0, 0, 0 });
+			//transform->position = Vin::Vector3<float>{ 0, 0, -25 };
+			//Vin::Logger::Log("Scale : {}", transform->scale);
 		}
 	}
 
@@ -72,6 +79,8 @@ class TestModule : public Vin::Module {
 		Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./bin"));
 
 		program = Vin::LoadProgram("data/vs.glsl", "data/fs.glsl");
+
+		Vin::SetDefaultProgram(program);
 
 		mat = Vin::Material{ program };
 
@@ -119,12 +128,22 @@ class TestModule : public Vin::Module {
 
 		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{10, 10}.data);
 
-		camera->SetFOV(95);
-		camera->SetNearPlane(10);
-		camera->SetFarPlane(3500);
+		camera->SetFOV(45);
+		camera->SetNearPlane(0.1);
+		camera->SetFarPlane(1000);
 
 		sponzascene = Vin::LoadGLTF("data/sponzagltf/Sponza.gltf");
+
+		Vin::Transform<float> transform{ Vin::Vector3<float>{0.0f, 0.0f, -10.0f} };
+
+		transform.scale *= 0.5;
+
+		//(*sponzascene)->CreateEntity(
+			//transform, Vin::MeshRenderer{ mesh.Get() });
 	}
+
+	float pitch = 0;
+	float yaw = 0;
 
 	void Process() {
 		processT += GetApp()->GetDeltaTime().GetMillisecond();
@@ -135,6 +154,59 @@ class TestModule : public Vin::Module {
 			processT = 0;
 			processC = 0;
 		}
+
+		float deltaTime = GetApp()->GetDeltaTime().GetMillisecond();
+
+
+		Vin::Vector2<int> mouseDelta = Vin::Input::GetMousePosition() - mouseLastPos;
+		mouseLastPos = Vin::Input::GetMousePosition();
+
+		pitch += (float)mouseDelta.y * deltaTime * 0.002f;
+		yaw += (float)mouseDelta.x * deltaTime * 0.002f;
+
+		pitch = Vin::Clamp<float>(pitch, -90 * Vin::deg2rad, 90 * Vin::deg2rad);
+
+		Vin::Quaternion<float> qPitch = Vin::Quaternion<float>::Euler({ pitch, 0, 0 });
+		Vin::Quaternion<float> qYaw = Vin::Quaternion<float>::Euler({ 0, yaw, 0 });
+
+		camera->rotation = (qPitch * qYaw).Normalize();
+
+		Vin::Vector3<float> translation{ 0.0f };
+
+		if (Vin::Input::IsKeyDown(Vin::Key::Key_W)) {
+			translation += Vin::Vector3<float>{ 0, 0, -1 };
+		}
+		if (Vin::Input::IsKeyDown(Vin::Key::Key_S)) {
+			translation += Vin::Vector3<float>{ 0, 0, 1 };
+		}
+		if (Vin::Input::IsKeyDown(Vin::Key::Key_A)) {
+			translation += Vin::Vector3<float>{ -1 , 0, 0};
+		}
+		if (Vin::Input::IsKeyDown(Vin::Key::Key_D)) {
+			translation += Vin::Vector3<float>{ 1 , 0, 0 };
+		}
+		if (Vin::Input::IsKeyDown(Vin::Key::Space)) {
+			translation += Vin::Vector3<float>{ 0, 1, 0};
+		}
+		if (Vin::Input::IsKeyDown(Vin::Key::LeftControl)) {
+			translation += Vin::Vector3<float>{ 0, -1, 0};
+		}
+
+		translation = translation.Normalize();
+
+		translation *= deltaTime * 0.01f;
+
+		translation = (camera->rotation.Conjugate().GetRotationMatrix() * Vin::Vector4<float>{ translation.xyz, 1.0f }).xyz;
+
+		camera->position += translation;
+
+		Vin::WindowMouseState event{};
+		event.state = Vin::WindowMouseState::Lock;
+
+		Vin::EventHandler handler{};
+		handler.Bind(event);
+
+		DispatchEvent(handler);
 	}
 
 	void Update() {
@@ -152,8 +224,9 @@ class TestModule : public Vin::Module {
 	}
 
 	void Render() {
-		scene->Process(MoveRandomSystem);
-		scene.Render(camera);
+		//scene->Process(MoveRandomSystem);
+		//scene.Render(camera);
+		sponzascene->Render(camera);
 	}
 
 	void LateRender() {
@@ -168,8 +241,6 @@ class TestModule : public Vin::Module {
 	}
 };
 
-float TestModule::r{ 0 };
-
 class TestApp : public Vin::App {
 public:
 	void Build() {
@@ -183,7 +254,7 @@ public:
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();
-		//AddModule<Vin::EditorModule>();
+		AddModule<Vin::EditorModule>();
 		AddModule<TestModule>();
 	}
 };

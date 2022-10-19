@@ -30,7 +30,7 @@ void Vin::EditorModule::Stop()
 	ImGui::DestroyContext(m_Ctx);
 }
 
-void Vin::EditorModule::Render()
+void Vin::EditorModule::LateRender()
 {
 	Begin();
 

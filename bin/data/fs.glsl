@@ -17,5 +17,5 @@ void main()
     float diff = max(dot(norm, lightDir), 0.2);
     vec3 diffcolor = diff * vec3(0.85, 0.85, 1.0f);
     
-    fragcolor = vec4(diffcolor * texture(_MainTex, texcoord0 * _MainTexTiling).xyz, 1.0f);
+    fragcolor = vec4(diffcolor * texture(_MainTex, texcoord0).xyz, 1.0f);
 }

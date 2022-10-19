@@ -1,6 +1,8 @@
 #pragma once
 
 #include "core/application.hpp"
+#include "assets/assetdatabase.hpp"
+#include "rendercontext.hpp"
 
 namespace Vin {
 
@@ -9,6 +11,9 @@ namespace Vin {
 		virtual void Init();
 		virtual void Render();
 		virtual void OnEvent(EventHandler handler);
+
+	private:
+		Asset<RenderContext> ctx{};
 	};
 
 }

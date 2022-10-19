@@ -48,27 +48,27 @@ namespace Vin {
 					--it.second;
 		}
 
-		template<typename RetType, typename... Args>
-		void Process(RetType(system)(Query<memlayout, Args...>)) {
+		template<typename RetType, typename... Components, typename... Args>
+		void Process(RetType(system)(Query<memlayout, Components...>, Args...), Args... args) {
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Args...>(true)) {
-					system(Query<memlayout, Args...>{ 
-						it->archetype.GetComponentIterator<Args>()..., 
-						it->archetype.GetSize() });
+				if (it->archetype.MatchLayout<Components...>(true)) {
+					system(Query<memlayout, Components...>{
+						it->archetype.GetComponentIterator<Components>()...,
+						it->archetype.GetSize() }, args...);
 				}
 			}
 		}
 
-		template<typename RetType, typename... Args>
-		void Process(RetType(system)(Query<memlayout, EntityId, Args...>)) {
+		template<typename RetType, typename... Components, typename... Args>
+		void Process(RetType(system)(Query<memlayout, EntityId, Components...>, Args...), Args... args) {
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Args...>(true)) {
-					system(Query<memlayout, EntityId, Args...>{
+				if (it->archetype.MatchLayout<Components...>(true)) {
+					system(Query<memlayout, EntityId, Components...>{
 						(EntityId*)it->entityIds.data(),
-						it->archetype.GetComponentIterator<Args>()...,
-						it->archetype.GetSize() });
+						it->archetype.GetComponentIterator<Components>()...,
+						it->archetype.GetSize() }, args...);
 				}
 			}
 		}

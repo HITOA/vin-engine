@@ -2,20 +2,16 @@
 
 #include "renderer/renderer.hpp"
 #include "module/windowing/windowmodule.hpp"
-#include "assets/assetdatabase.hpp"
-#include "rendercontext.hpp"
 
 void Vin::RenderingModule::Init()
 {
 	Renderer::Init();
 
-	AssetDatabase::AddAsset(RenderContext{}, VIN_RENDERCONTEXT_BASEPATH);
+	ctx = AssetDatabase::AddAsset(RenderContext{}, VIN_RENDERCONTEXT_BASEPATH);
 }
 
 void Vin::RenderingModule::Render()
 {
-	Asset<RenderContext> ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_BASEPATH);
-
 	RenderQueue& queue = ctx->queue;
 	queue.Sort();
 

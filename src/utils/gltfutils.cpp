@@ -7,47 +7,8 @@
 #include <tiny_gltf.h>
 
 #include "logger/logger.hpp"
-
-/*
-std::shared_ptr<Vin::StaticMesh> Vin::LoadGLB(const char* path)
-{
-	/*std::shared_ptr<RawFile> src = Resources::Load<RawFile>(path);
-
-	if (!src) {
-		Vin::Logger::Err("File {} does not exists.", path);
-		return nullptr;
-	}
-
-	tinygltf::Model model{};
-	tinygltf::TinyGLTF loader{};
-	std::string err{};
-	std::string warn{};
-
-	bool ret = loader.LoadBinaryFromMemory(&model, &err, &warn, (const unsigned char*)src->GetData(), src->GetSize());
-
-	if (!err.empty())
-		Vin::Logger::Err("GLB Loader error : {}", err.c_str());
-
-	if (!warn.empty())
-		Vin::Logger::Warn("GLB Loader warning : {}", warn.c_str());
-
-	if (!ret) {
-		Vin::Logger::Err("Failed to load glb file : {}", path);
-		return nullptr;
-	}
-
-	tinygltf::Mesh& mesh = model.meshes[0];
-
-	for (auto& pair : mesh.primitives[0].attributes) {
-		tinygltf::Accessor& accessor = model.accessors[pair.second];
-		tinygltf::BufferView& view = model.bufferViews[accessor.bufferView];
-		Logger::Log("{}, {}", pair.first, pair.second);
-	}
-	Logger::Log("INDICES, {}", mesh.primitives[0].indices);
-	*/
-	//return nullptr;
-	//std::shared_ptr<StaticMesh> staticmesh = std::make_shared<StaticMesh>(;
-//}
+#include "scene/meshrenderer.hpp"
+#include "resources/default.hpp"
 
 static bool isInit{ false };
 
@@ -93,8 +54,222 @@ bool WriteWholeFile(std::string* err, const std::string& filepath,
 	return false;
 }
 
-void BuildScene(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> scene) {
+Vin::VertexAttribute ParseGLTFAttributeName(const std::string& name) {
+	if (name == "POSITION")
+		return Vin::VertexAttribute::Position;
+	if (name == "NORMAL")
+		return Vin::VertexAttribute::Normal;
+	if (name == "TANGENT")
+		return Vin::VertexAttribute::Tangent;
+	if (name == "COLOR_0")
+		return Vin::VertexAttribute::Color;
 
+	if (name == "TEXCOORD_0")
+		return Vin::VertexAttribute::TextureCoord0;
+	if (name == "TEXCOORD_1")
+		return Vin::VertexAttribute::TextureCoord1;
+	if (name == "TEXCOORD_2")
+		return Vin::VertexAttribute::TextureCoord2;
+	if (name == "TEXCOORD_3")
+		return Vin::VertexAttribute::TextureCoord3;
+	if (name == "TEXCOORD_4")
+		return Vin::VertexAttribute::TextureCoord4;
+	if (name == "TEXCOORD_5")
+		return Vin::VertexAttribute::TextureCoord5;
+	if (name == "TEXCOORD_6")
+		return Vin::VertexAttribute::TextureCoord6;
+	if (name == "TEXCOORD_7")
+		return Vin::VertexAttribute::TextureCoord7;
+	
+	return Vin::VertexAttribute::Position;
+}
+
+Vin::VertexAttributeType ParseGLTFAttributeType(int componentType, int type) {
+	switch (componentType) {
+	case TINYGLTF_COMPONENT_TYPE_FLOAT: {
+		switch (type) {
+		case TINYGLTF_TYPE_SCALAR: return Vin::VertexAttributeType::Float;
+		case TINYGLTF_TYPE_VEC2: return Vin::VertexAttributeType::Float2;
+		case TINYGLTF_TYPE_VEC3: return Vin::VertexAttributeType::Float3;
+		case TINYGLTF_TYPE_VEC4: return Vin::VertexAttributeType::Float4;
+		default: return Vin::VertexAttributeType::None;
+		}
+	}
+	case TINYGLTF_COMPONENT_TYPE_INT: {
+		switch (type) {
+		case TINYGLTF_TYPE_SCALAR: return Vin::VertexAttributeType::Int;
+		case TINYGLTF_TYPE_VEC2: return Vin::VertexAttributeType::Int2;
+		case TINYGLTF_TYPE_VEC3: return Vin::VertexAttributeType::Int3;
+		case TINYGLTF_TYPE_VEC4: return Vin::VertexAttributeType::Int4;
+		default: return Vin::VertexAttributeType::None;
+		}
+	}
+	default:
+		return Vin::VertexAttributeType::Float3;
+	}
+}
+
+Vin::TextureFormat ParseGLTFTextureFormat(int component, int depth) {
+	if (component == 4 && depth == 8)
+		return Vin::TextureFormat::RGBA32;
+	if (component == 3 && depth == 8)
+		return Vin::TextureFormat::RGB24;
+	if (component == 2 && depth == 8)
+		return Vin::TextureFormat::RG16;
+	if (component == 1 && depth == 8)
+		return Vin::TextureFormat::R8;
+	if (component == 1 && depth == 16)
+		return Vin::TextureFormat::R16;
+	return Vin::TextureFormat::BGRA32;
+}
+
+void AddTexture(tinygltf::Model& model, Vin::Asset<Vin::Material> material, tinygltf::TextureInfo& textureInfo, 
+	const std::string& assetBaseName, std::string_view textureFieldName) {
+
+	std::string texturePath = assetBaseName + "texture_" + std::to_string(textureInfo.index);
+
+	Vin::Asset<Vin::Texture> texture = Vin::AssetDatabase::GetAsset<Vin::Texture>(texturePath);
+
+	if (texture.Get() != nullptr) {
+		material->SetTexture(textureFieldName.data(), texture);
+		return;
+	}
+
+	tinygltf::Texture& gltfTexture = model.textures[textureInfo.index];
+	tinygltf::Image& gltfImage = model.images[gltfTexture.source];
+
+	std::shared_ptr<Vin::Texture> image = Vin::Texture::Create(
+		gltfImage.width, gltfImage.height, ParseGLTFTextureFormat(gltfImage.component, gltfImage.bits));
+
+	image->SetData(gltfImage.image.data());
+
+	material->SetTexture(textureFieldName.data(), image);
+
+	texture = Vin::AssetDatabase::AddAsset<Vin::Texture>(image, texturePath);
+}
+
+void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> scene, 
+	int nodeIdx, Vin::EntityId parent, std::string_view path) {
+
+	Vin::Transform<float> transform{};
+
+	transform.parent = parent;
+
+	if (model.nodes[nodeIdx].translation.size() == 3)
+		transform.position = Vin::Vector3<float>{ 
+		(float)model.nodes[nodeIdx].translation[0], 
+		(float)model.nodes[nodeIdx].translation[1], 
+		(float)model.nodes[nodeIdx].translation[2] };
+
+	if (model.nodes[nodeIdx].rotation.size() == 4)
+		transform.rotation = Vin::Quaternion<float>{
+		(float)model.nodes[nodeIdx].rotation[3],
+		(float)model.nodes[nodeIdx].rotation[0],
+		(float)model.nodes[nodeIdx].rotation[1],
+		(float)model.nodes[nodeIdx].rotation[2] };
+
+	if (model.nodes[nodeIdx].scale.size() == 3)
+		transform.scale = Vin::Vector3<float>{
+		(float)model.nodes[nodeIdx].scale[0],
+		(float)model.nodes[nodeIdx].scale[1],
+		(float)model.nodes[nodeIdx].scale[2] };
+
+	Vin::EntityId nodeId = (*scene)->CreateEntity(transform); //Transform at least
+
+	if (model.nodes[nodeIdx].mesh >= 0) {
+		std::string assetBaseName{ path };
+		assetBaseName += "//";
+
+		Vin::Asset<Vin::StaticMesh> mesh = Vin::AssetDatabase::AddAsset<Vin::StaticMesh>(Vin::StaticMesh{}, assetBaseName + "mesh_" + std::to_string(nodeIdx));
+		mesh.SetFlags(Vin::AssetFlag::Persistent);
+
+		for (tinygltf::Primitive& gltfprimitive : model.meshes[model.nodes[nodeIdx].mesh].primitives) {
+			Vin::Primitive primitive{};
+
+			primitive.vao = Vin::VertexArray::Create();
+
+			for (auto& attribute : gltfprimitive.attributes) {
+				tinygltf::Accessor& accessor = model.accessors[attribute.second];
+
+				if (accessor.bufferView < 0)
+					continue;
+
+				Vin::VertexAttribute attribname = ParseGLTFAttributeName(attribute.first);
+				Vin::VertexAttributeType attribtype = ParseGLTFAttributeType(accessor.componentType, accessor.type);
+				bool normalized = accessor.normalized;
+
+				tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+				tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+
+				if (attribname == Vin::VertexAttribute::Position)
+					primitive.vertexCount = accessor.count;
+				
+				std::shared_ptr<Vin::VertexBuffer> vbo = Vin::VertexBuffer::Create(accessor.count * Vin::GetVertexAttributeTypeSize(attribtype));
+
+				vbo->SetData(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset, accessor.count * Vin::GetVertexAttributeTypeSize(attribtype), 0);
+				vbo->SetBufferLayout(Vin::VertexBufferLayout{ {attribname, attribtype, normalized} });
+
+				primitive.vbos.push_back(vbo);
+				primitive.vao->AddVertexBuffer(vbo);
+			}
+
+			if (gltfprimitive.indices >= 0) {
+				tinygltf::Accessor& accessor = model.accessors[gltfprimitive.indices];
+
+				Vin::BufferIndexType type = accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT ?
+					Vin::BufferIndexType::UnsignedInt32 : Vin::BufferIndexType::UnsignedInt16;
+
+				primitive.ibo = Vin::IndexBuffer::Create(type);
+
+				tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+				tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+
+				primitive.ibo->SetData(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset, accessor.count);
+
+				primitive.vao->SetIndexBuffer(primitive.ibo);
+
+				primitive.indexed = true;
+			}
+			else {
+				primitive.indexed = false;
+			}
+
+			Vin::Asset<Vin::Material> material =
+				Vin::AssetDatabase::GetAsset<Vin::Material>(
+					assetBaseName + "material_" + std::to_string(gltfprimitive.material));
+
+			if (material.Get() == nullptr) {
+				//Build Material
+
+				material = Vin::AssetDatabase::AddAsset<Vin::Material>(Vin::Material{ Vin::GetDefaultProgram() },
+						assetBaseName + "material_" + std::to_string(gltfprimitive.material));
+				tinygltf::Material& gltfmaterial = model.materials[gltfprimitive.material];
+				
+				AddTexture(model, material, gltfmaterial.pbrMetallicRoughness.baseColorTexture, assetBaseName, "_MainTex");
+
+				if (gltfmaterial.alphaMode == "BLEND") {
+					material->SetTransparency(true);
+				}
+			}
+
+			primitive.material = material;
+
+			mesh->AddPrimitive(primitive);
+		}
+
+		Vin::MeshRenderer renderer{ mesh.Get() };
+		(*scene)->AddComponent(nodeId, renderer);
+	}
+
+	for (int childrenIdx : model.nodes[nodeIdx].children) {
+		BuildNode(model, scene, childrenIdx, nodeId, path);
+	}
+}
+
+void BuildScene(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> scene, std::string_view path) {
+	for (int nodeIdx : model.scenes[model.defaultScene].nodes) {
+		BuildNode(model, scene, nodeIdx, 0, path);
+	}
 }
 
 std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> Vin::LoadGLTF(std::string_view path)
@@ -132,7 +307,7 @@ std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> Vin::LoadGLT
 	std::shared_ptr<Scene<ArchetypeMemoryLayout::Contiguous>> scene =
 		std::make_shared< Scene<ArchetypeMemoryLayout::Contiguous>>();
 
-	BuildScene(model, scene);
+	BuildScene(model, scene, path);
 
 	return scene;
 }

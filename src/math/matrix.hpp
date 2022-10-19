@@ -29,7 +29,7 @@ namespace Vin {
 
 		for (size_t y = 0; y < m1; y++)
 			for (size_t i = 0; i < n1; i++)
-				result.data[y] += rhs.data[i + y * n1] * lhs.data[i];
+				result.data[y] += lhs.data[i + y * n1] * rhs.data[i];
 
 		return result;
 	}
