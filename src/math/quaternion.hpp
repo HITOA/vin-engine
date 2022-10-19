@@ -62,7 +62,7 @@ namespace Vin {
 			T cy = Cos<T>(rot.z * (T)0.5);
 			T sy = Sin<T>(rot.z * (T)0.5);
 
-			Quaternion<T> q{ 0, 0, 0, 0 };
+			Quaternion<T> q{};
 			q.w = cr * cp * cy + sr * sp * sy;
 			q.x = sr * cp * cy - cr * sp * sy;
 			q.y = cr * sp * cy + sr * cp * sy;
@@ -96,6 +96,7 @@ namespace Vin {
 			y = w * rhs.y - x * rhs.z + y * rhs.w + z * rhs.x;
 			//  w1     z2 + x1     y2 - y1     x2 + z1      w2
 			z = w * rhs.z + x * rhs.y - y * rhs.x + z * rhs.w;
+
 			return *this;
 		}
 

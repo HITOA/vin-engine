@@ -128,7 +128,7 @@ class TestModule : public Vin::Module {
 
 		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{10, 10}.data);
 
-		camera->SetFOV(45);
+		camera->SetFOV(90);
 		camera->SetNearPlane(0.1);
 		camera->SetFarPlane(1000);
 
@@ -166,10 +166,11 @@ class TestModule : public Vin::Module {
 
 		pitch = Vin::Clamp<float>(pitch, -90 * Vin::deg2rad, 90 * Vin::deg2rad);
 
-		Vin::Quaternion<float> qPitch = Vin::Quaternion<float>::Euler({ pitch, 0, 0 });
-		Vin::Quaternion<float> qYaw = Vin::Quaternion<float>::Euler({ 0, yaw, 0 });
+		Vin::Quaternion<float> qPitch = Vin::Quaternion<float>::Euler({ (float)mouseDelta.y * deltaTime * 0.002f, 0, 0 });
+		Vin::Quaternion<float> qYaw = Vin::Quaternion<float>::Euler({ 0, (float)mouseDelta.x * deltaTime * 0.002f, 0 });
 
-		camera->rotation = (qPitch * qYaw).Normalize();
+		camera->rotation = (qPitch * camera->rotation).Normalize();
+		//camera->rotation = (camera->rotation * qYaw).Normalize();
 
 		Vin::Vector3<float> translation{ 0.0f };
 
