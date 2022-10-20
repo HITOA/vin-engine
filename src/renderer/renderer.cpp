@@ -72,6 +72,12 @@ void Vin::Renderer::Blit(const std::shared_ptr<RenderTarget>& src, const std::sh
 	s_RenderingApi->Blit(src, dst);
 }
 
+void Vin::Renderer::SetCullMode(CullMode mode)
+{
+	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
+	s_RenderingApi->SetCullMode(mode);
+}
+
 void Vin::Renderer::BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst, Material mat)
 {
 	static float vertices[] = {

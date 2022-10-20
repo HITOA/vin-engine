@@ -126,7 +126,7 @@ class TestModule : public Vin::Module {
 			Vin::MeshRenderer{ mesh.Get() },
 			SpeedRotation{ (float)(rand() % 100) / 25 });
 
-		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{10, 10}.data);
+		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{10, 10});
 
 		camera->SetFOV(52.5);
 		camera->SetNearPlane(0.1);
@@ -140,6 +140,15 @@ class TestModule : public Vin::Module {
 
 		//(*sponzascene)->CreateEntity(
 			//transform, Vin::MeshRenderer{ mesh.Get() });
+
+		Vin::Light mainLight{};
+
+		mainLight.shadow.type = Vin::ShadowType::Soft;
+		mainLight.color = Vin::Vector4<float>{ 0.95f, 0.95f, 1.00f, 1.0f };
+
+		mainLight.direction = Vin::Vector3<float>{ 0.3, 1, 0.2 }.Normalize();
+
+		(*sponzascene)->CreateEntity(mainLight);
 	}
 
 	float pitch = 0;

@@ -41,8 +41,9 @@ namespace Vin {
 
 	private:
 		RenderTargetSpecification m_Specification{};
-		unsigned int m_FrameBufferId;
-		unsigned int m_BufferIds[16]; //Texture or Renderbuffer ids
+		unsigned int m_FrameBufferId{};
+		unsigned int m_BufferIds[16]{}; //Texture or Renderbuffer ids
+		bool m_NoColorAttachment{ true };
 	};
 
 }

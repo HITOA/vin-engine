@@ -13,6 +13,12 @@ namespace Vin {
 		Point
 	};
 
+	enum class CullMode {
+		None,
+		Front,
+		Back
+	};
+
 	class Renderer {
 	public:
 		enum Api {
@@ -34,6 +40,8 @@ namespace Vin {
 
 		static void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst);
 
+		static void SetCullMode(CullMode mode);
+
 		static void BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst, Material mat);
 		static void BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst);
 	private:
@@ -50,6 +58,7 @@ namespace Vin {
 			virtual void DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount) = 0;
 			virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount) = 0;
 			virtual void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst) = 0;
+			virtual void SetCullMode(CullMode mode) = 0;
 		} *s_RenderingApi;
 	};
 
@@ -60,5 +69,6 @@ namespace Vin {
 		virtual void DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount) {};
 		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount) {};
 		virtual void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst) {};
+		virtual void SetCullMode(CullMode mode) {};
 	};
 }

@@ -8,15 +8,15 @@ template<size_t M, size_t N>
 struct fmt::formatter<Vin::Matrix<float, M, N>> {
 	char presentation = 'f';
 
-	constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) {
-		auto it = ctx.begin(), end = ctx.end();
+	constexpr auto parse(format_parse_context& m_Ctx) -> decltype(m_Ctx.begin()) {
+		auto it = m_Ctx.begin(), end = m_Ctx.end();
 		if (it != end && (*it == 'f' || *it == 'e')) presentation = *it++;
 		if (it != end && *it != '}') throw format_error("invalid format");
 		return it;
 	}
 
 	template <typename FormatContext>
-	auto format(const Vin::Matrix<float, M, N>& mat, FormatContext& ctx) const -> decltype(ctx.out()) {
+	auto format(const Vin::Matrix<float, M, N>& mat, FormatContext& m_Ctx) const -> decltype(m_Ctx.out()) {
 		std::string r{"\n"};
 
 		for (size_t y = 0; y < M; y++) {
@@ -31,6 +31,6 @@ struct fmt::formatter<Vin::Matrix<float, M, N>> {
 			r += "]\n";
 		}
 
-		return fmt::format_to(ctx.out(), r);
+		return fmt::format_to(m_Ctx.out(), r);
 	}
 };

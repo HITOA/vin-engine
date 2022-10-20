@@ -9,6 +9,7 @@ VIN_TEXCOORD0 vec2 _texcoord0;
 out vec3 normal;
 out vec2 texcoord0;
 out vec3 position;
+out vec4 positionLightspace;
 
 void main()
 {
@@ -16,4 +17,5 @@ void main()
     normal = (vin_matrix_model * vec4(_normal, 0.0)).xyz;
     texcoord0 = _texcoord0;
     position = _position;
+    positionLightspace = vin_matrix_lightspace * vec4(_position, 1.0);
 }

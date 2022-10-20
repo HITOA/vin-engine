@@ -40,6 +40,7 @@ void Vin::OpenGLRenderingApi::Init()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_CULL_FACE);
 }
 
 void Vin::OpenGLRenderingApi::SetViewport(int x, int y, int width, int height)
@@ -82,4 +83,24 @@ void Vin::OpenGLRenderingApi::Blit(const std::shared_ptr<RenderTarget>& src, con
 	
 	glBlitNamedFramebuffer(srcid, dstid, 0, 0, srcwidth, srcheight, 0, 0, dstwidth, dstheight,
 		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+}
+
+void Vin::OpenGLRenderingApi::SetCullMode(CullMode mode)
+{
+	switch (mode) {
+	case CullMode::None: {
+		glDisable(GL_CULL_FACE);
+		break;
+	}
+	case CullMode::Front: {
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		break;
+	}
+	case CullMode::Back: {
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		break;
+	}
+	}
 }

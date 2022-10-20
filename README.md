@@ -34,4 +34,5 @@ An Entity component system with data locality : https://indiegamedev.net/2020/05
 Building an ECS : https://ajmmertens.medium.com/building-an-ecs-1-where-are-my-entities-and-components-63d07c7da742  
 ES wiki : http://entity-systems.wikidot.com/  
 Quake PAK format specification : https://quakewiki.org/wiki/.pak  
-Order your graphics draw calls around : http://realtimecollisiondetection.net/blog/?p=86
+Order your graphics draw calls around : http://realtimecollisiondetection.net/blog/?p=86  
+Optimizing 4x4 matrix multiplication : https://nfrechette.github.io/2017/04/13/modern_simd_matrix_multiplication/

@@ -17,6 +17,8 @@ namespace Vin{
 			s_CurrentCamera = camera;
 
 			m_Registry.Process(MeshRendererSystem);
+
+			m_Registry.Process(LightRendererSystem);
 		}
 
 		Registry<layout>* operator->() {
@@ -25,15 +27,28 @@ namespace Vin{
 		
 	private:
 		static void MeshRendererSystem(Query<layout, Transform<float>, MeshRenderer> query) {
-			Asset<RenderContext> ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_BASEPATH);
+			Asset<RenderContext> m_Ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_BASEPATH);
 
 			for (auto& [transform, meshrenderer] : query) {
 				if (!meshrenderer->isDynamicMesh) {
 					StaticMesh* mesh = meshrenderer->staticmesh;
 					for (auto& primitive : *mesh) {
-						ctx->queue.PushRenderTask(s_CurrentCamera, primitive, transform->GetModelMatrix());
+						m_Ctx->queue.PushRenderTask(s_CurrentCamera, primitive, transform->GetModelMatrix());
 					}
 				}
+			}
+		}
+
+		static void LightRendererSystem(Query<layout, Light> query) {
+			Asset<RenderContext> m_Ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_BASEPATH);
+
+			for (auto& [light] : query) {
+				if (light->type == LightType::Directional) {
+					m_Ctx->mainLight = *light;
+					continue;
+				}
+
+				//Additional Light
 			}
 		}
 

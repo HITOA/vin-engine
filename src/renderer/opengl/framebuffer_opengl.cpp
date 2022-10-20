@@ -3,7 +3,8 @@
 #include "glad/gl.h"
 #include "logger/logger.hpp"
 
-Vin::OpenGLRenderTarget::OpenGLRenderTarget(const RenderTargetSpecification& spec) : m_Specification{ spec }, m_FrameBufferId{}, m_BufferIds{}
+Vin::OpenGLRenderTarget::OpenGLRenderTarget(const RenderTargetSpecification& spec) : 
+	m_Specification{ spec }, m_FrameBufferId{}, m_BufferIds{}, m_NoColorAttachment{ true }
 {
 	Generate();
 	if (!IsValid())
@@ -67,21 +68,67 @@ void Vin::OpenGLRenderTarget::Generate()
 
 	for (size_t i = 0; i < m_Specification.attachements.size(); ++i) {
 		RenderBufferSpecification& spec = m_Specification.attachements[i];
-		if (spec.isTexture) {
-			glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, 1, &m_BufferIds[i]);
-			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_BufferIds[i]);
-			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-				m_Specification.sample, ParseRenderBufferFormat(spec.format),
-				m_Specification.width, m_Specification.height, GL_TRUE);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, ParseTextureAttachment(spec.format), GL_TEXTURE_2D_MULTISAMPLE, m_BufferIds[i], 0);
+		if (m_Specification.sample > 1) {
+			if (spec.isTexture) {
+				GLuint attachment = ParseTextureAttachment(spec.format);
+
+				if (attachment == GL_COLOR_ATTACHMENT0)
+					m_NoColorAttachment = false;
+
+				glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, 1, &m_BufferIds[i]);
+				glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_BufferIds[i]);
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
+					m_Specification.sample, ParseRenderBufferFormat(spec.format),
+					m_Specification.width, m_Specification.height, GL_TRUE);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D_MULTISAMPLE, m_BufferIds[i], 0);
+			}
+			else {
+				GLuint attachment = ParseRenderBufferAttachment(spec.format);
+
+				if (attachment == GL_COLOR_ATTACHMENT0)
+					m_NoColorAttachment = false;
+
+				glCreateRenderbuffers(1, &m_BufferIds[i]);
+				glNamedRenderbufferStorageMultisample(m_BufferIds[i],
+					m_Specification.sample, ParseRenderBufferFormat(spec.format),
+					m_Specification.width, m_Specification.height);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, m_BufferIds[i]);
+			}
 		}
 		else {
-			glCreateRenderbuffers(1, &m_BufferIds[i]);
-			glNamedRenderbufferStorageMultisample(m_BufferIds[i],
-				m_Specification.sample, ParseRenderBufferFormat(spec.format),
-				m_Specification.width, m_Specification.height);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, ParseRenderBufferAttachment(spec.format), GL_RENDERBUFFER, m_BufferIds[i]);
+			if (spec.isTexture) {
+				GLuint attachment = ParseTextureAttachment(spec.format);
+
+				if (attachment == GL_COLOR_ATTACHMENT0)
+					m_NoColorAttachment = false;
+
+				glCreateTextures(GL_TEXTURE_2D, 1, &m_BufferIds[i]);
+				glBindTexture(GL_TEXTURE_2D, m_BufferIds[i]);
+				glTexStorage2D(GL_TEXTURE_2D, 1,
+					ParseRenderBufferFormat(spec.format),
+					m_Specification.width, m_Specification.height);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, m_BufferIds[i], 0);
+			}
+			else {
+				GLuint attachment = ParseRenderBufferAttachment(spec.format);
+
+				if (attachment == GL_COLOR_ATTACHMENT0)
+					m_NoColorAttachment = false;
+
+				glCreateRenderbuffers(1, &m_BufferIds[i]);
+				glNamedRenderbufferStorage(m_BufferIds[i],
+					ParseRenderBufferFormat(spec.format),
+					m_Specification.width, m_Specification.height);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, m_BufferIds[i]);
+			}
 		}
+	}
+
+	if (m_NoColorAttachment) { //Doesn't seem to work ?
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
 	}
 }
 

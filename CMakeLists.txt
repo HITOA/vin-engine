@@ -9,9 +9,10 @@ function(make_includable input_file output_file var_name)
     file(WRITE ${output_file} "${content}")
 endfunction(make_includable)
 
-make_includable(src/resources/msblitfs.glsl generated/msblitfs.hpp msblitfs)
-make_includable(src/resources/msblitvs.glsl generated/msblitvs.hpp msblitvs)
+make_includable(src/resources/vinshadowfs.glsl generated/vinshadowfs.hpp vinshadowfs)
+make_includable(src/resources/vinshadowvs.glsl generated/vinshadowvs.hpp vinshadowvs)
 make_includable(src/resources/vin.glsl generated/vinshader.hpp vinshader)
+make_includable(src/resources/vinpbr.glsl generated/vinpbrshader.hpp vinpbrshader)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)

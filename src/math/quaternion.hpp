@@ -76,6 +76,36 @@ namespace Vin {
 			return q;
 		}
 
+		static Quaternion<T> LookAt(Vector3<T> position, Vector3<T> target) {
+			Vector3<T> forwardVector = (target - position).Normalize();
+
+			float dot = Vector3<T>::Dot(Vector3<T>{ (T)0, (T)0, (T)1 }, forwardVector);
+
+			if (abs(dot - (-1.0f)) < 0.000001f)
+			{
+				return Quaternion<T>((T)3.1415926535897932, (T)0, (T)1, (T)0);
+			}
+			if (abs(dot - (1.0f)) < 0.000001f)
+			{
+				return Quaternion<T>{};
+			}
+
+			float rotAngle = (float)acos(dot);
+			Vector3<T> rotAxis = Vector3<T>::Cross(Vector3<T>{ (T)0, (T)0, (T)1 }, forwardVector).Normalize();
+			return AxisAngle(rotAxis, rotAngle);
+		}
+
+		static Quaternion<T> AxisAngle(Vector3<T> axis, float angle) {
+			float halfAngle = angle * .5f;
+			float s = (float)Sin(halfAngle);
+			Quaternion q;
+			q.w = (float)Cos(halfAngle);
+			q.x = axis.x * s;
+			q.y = axis.y * s;
+			q.z = axis.z * s;
+			return q;
+		}
+
 		Quaternion<T>& operator+=(const Quaternion<T>& rhs) {
 			w += rhs.w;
 			x += rhs.x;

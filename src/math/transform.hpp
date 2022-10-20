@@ -108,4 +108,66 @@ namespace Vin {
 
 		return result;
 	}
+
+	template<typename T>
+	Matrix4x4<T> DirectionToRotationMatrix(const Vector3<T>& direction, const Vector3<T>& up = Vector3<T>{ (T)0, (T)1, (T)0 }) {
+		Vector3<T> xaxis = Vector3<T>::Cross(up, direction).Normalize();
+		Vector3<T> yaxis = Vector3<T>::Cross(direction, xaxis).Normalize();
+
+		Matrix4x4<T> result{ Matrix4x4<T>::identity };
+
+		result(0, 0) = xaxis.x;
+		result(0, 1) = yaxis.x;
+		result(0, 2) = direction.x ;
+
+		result(1, 0) = xaxis.y;
+		result(1, 1) = yaxis.y;
+		result(1, 2) = direction.y;
+
+		result(2, 0) = xaxis.z;
+		result(2, 1) = yaxis.z;
+		result(2, 2) = direction.z;
+
+		return result;
+	}
+
+	template<typename T>
+	Matrix4x4<T> LookAt(const Vector3<T>& position, const Vector3<T>& target, const Vector3<T>& up = Vector3<T>{ (T)0, (T)1, (T)0 }) {
+		Vector3<T> f = (target - position).Normalize();
+		Vector3<T> s = Vector3<T>::Cross(up, f).Normalize();
+		Vector3<T> u = Vector3<T>::Cross(f, s);
+
+		Matrix4x4<T> result{ Matrix4x4<T>::identity };
+
+		result(0, 0) = s.x;
+		result(0, 1) = s.y;
+		result(0, 2) = s.z;
+
+		result(1, 0) = u.x;
+		result(1, 1) = u.y;
+		result(1, 2) = u.z;
+
+		result(2, 0) = f.x;
+		result(2, 1) = f.y;
+		result(2, 2) = f.z;
+
+		result(0, 3) = -Vector3<T>::Dot(s, position);
+		result(1, 3) = -Vector3<T>::Dot(u, position);
+		result(2, 3) = -Vector3<T>::Dot(f, position);
+
+		/*
+		result(0, 0) = s.x;
+		result(1, 0) = s.y;
+		result(2, 0) = s.z;
+
+		result(0, 1) = u.x;
+		result(1, 1) = u.y;
+		result(2, 1) = u.z;
+
+		result(0, 2) = f.x;
+		result(1, 2) = f.y;
+		result(2, 2) = f.z;*/
+
+		return result;
+	}
 }

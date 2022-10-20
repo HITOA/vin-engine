@@ -37,19 +37,19 @@ void Vin::Material::SetFloat(int location, float value)
     m_Program->SetFloat(location, value);
 }
 
-void Vin::Material::SetFloat2(int location, float* values)
+void Vin::Material::SetFloat2(int location, Vector2<float>& values)
 {
-    m_Program->SetFloat2(location, values);
+    m_Program->SetFloat2(location, values.data);
 }
 
-void Vin::Material::SetFloat3(int location, float* values)
+void Vin::Material::SetFloat3(int location, Vector3<float>& values)
 {
-    m_Program->SetFloat3(location, values);
+    m_Program->SetFloat3(location, values.data);
 }
 
-void Vin::Material::SetFloat4(int location, float* values)
+void Vin::Material::SetFloat4(int location, Vector4<float>& values)
 {
-    m_Program->SetFloat4(location, values);
+    m_Program->SetFloat4(location, values.data);
 }
 
 void Vin::Material::SetFloats(int location, float* values, size_t count)
@@ -62,19 +62,19 @@ void Vin::Material::SetInt(int location, int value)
     m_Program->SetInt(location, value);
 }
 
-void Vin::Material::SetInt2(int location, int* values)
+void Vin::Material::SetInt2(int location, Vector2<int>& values)
 {
-    m_Program->SetInt2(location, values);
+    m_Program->SetInt2(location, values.data);
 }
 
-void Vin::Material::SetInt3(int location, int* values)
+void Vin::Material::SetInt3(int location, Vector3<int>& values)
 {
-    m_Program->SetInt3(location, values);
+    m_Program->SetInt3(location, values.data);
 }
 
-void Vin::Material::SetInt4(int location, int* values)
+void Vin::Material::SetInt4(int location, Vector4<int>& values)
 {
-    m_Program->SetInt4(location, values);
+    m_Program->SetInt4(location, values.data);
 }
 
 void Vin::Material::SetInts(int location, int* values, size_t count)
@@ -82,14 +82,14 @@ void Vin::Material::SetInts(int location, int* values, size_t count)
     m_Program->SetInts(location, values, count);
 }
 
-void Vin::Material::SetMat3(int location, float* values)
+void Vin::Material::SetMat3(int location, Matrix3x3<float>& values)
 {
-    m_Program->SetMat3(location, values);
+    m_Program->SetMat3(location, values.data);
 }
 
-void Vin::Material::SetMat4(int location, float* values)
+void Vin::Material::SetMat4(int location, Matrix4x4<float>& values)
 {
-    m_Program->SetMat4(location, values);
+    m_Program->SetMat4(location, values.data);
 }
 
 void Vin::Material::SetTexture(int location, std::shared_ptr<Texture> texture)
@@ -129,6 +129,16 @@ void Vin::Material::SetTransparency(bool v) {
 
 bool Vin::Material::GetTransparency() {
     return m_Transparency;
+}
+
+void Vin::Material::SetDoubleSided(bool v)
+{
+    m_DoubleSided = v;
+}
+
+bool Vin::Material::GetDoubleSided()
+{
+    return m_DoubleSided;
 }
 
 unsigned int Vin::Material::GetId() {

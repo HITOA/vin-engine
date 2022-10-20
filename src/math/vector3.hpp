@@ -145,7 +145,19 @@ namespace Vin {
 		Vector3(const T& x, const T& y, const T& z) : Vector{ x, y, z } {};
 		Vector3(const Vector2<T>& xy, T z) : Vector{ xy.x, xy.y, z } {};
 
-		Vector3<T> Cross(Vector3<T>& v1, Vector3<T>& v2) {
+		T Length() const {
+			T length = Sqrt<T>(x * x + y * y + z * z);
+			return length;
+		}
+
+		Vector3<T> Normalize() const {
+			if (x == 0 && y == 0 && z == 0)
+				return *this;
+			T length = Length();
+			return Vector3<T>{ x / length, y / length, z / length};
+		}
+
+		static Vector3<T> Cross(const Vector3<T>& v1, const Vector3<T>& v2) {
 			Vector3<T> r{};
 			r.x = v1.y * v2.z - v1.z * v2.y;
 			r.y = v1.z * v2.x - v1.x * v2.z;
@@ -153,16 +165,8 @@ namespace Vin {
 			return r;
 		}
 
-		T Length() const {
-			T length = Sqrt<T>(x * x + y * y + z * z);
-			return length;
-		}
-
-		Vector3<T> Normalize() const {
-			if (x == y == z == 0)
-				return *this;
-			T length = Length();
-			return Vector3<T>{ x / length, y / length, z / length};
+		static T Dot(const Vector3<T>& v1, const Vector3<T>& v2) {
+			return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 		}
 
 		//Assignment

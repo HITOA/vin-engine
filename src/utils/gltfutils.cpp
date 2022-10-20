@@ -250,6 +250,8 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 				if (gltfmaterial.alphaMode == "BLEND") {
 					material->SetTransparency(true);
 				}
+
+				material->SetDoubleSided(gltfmaterial.doubleSided);
 			}
 
 			primitive.material = material;
