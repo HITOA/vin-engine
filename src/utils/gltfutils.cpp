@@ -123,10 +123,10 @@ Vin::TextureFormat ParseGLTFTextureFormat(int component, int depth) {
 	return Vin::TextureFormat::BGRA32;
 }
 
-void AddTexture(tinygltf::Model& model, Vin::Asset<Vin::Material> material, tinygltf::TextureInfo& textureInfo, 
+void AddTexture(tinygltf::Model& model, Vin::Asset<Vin::Material> material, int index, 
 	const std::string& assetBaseName, std::string_view textureFieldName) {
 
-	std::string texturePath = assetBaseName + "texture_" + std::to_string(textureInfo.index);
+	std::string texturePath = assetBaseName + "texture_" + std::to_string(index);
 
 	Vin::Asset<Vin::Texture> texture = Vin::AssetDatabase::GetAsset<Vin::Texture>(texturePath);
 
@@ -135,7 +135,7 @@ void AddTexture(tinygltf::Model& model, Vin::Asset<Vin::Material> material, tiny
 		return;
 	}
 
-	tinygltf::Texture& gltfTexture = model.textures[textureInfo.index];
+	tinygltf::Texture& gltfTexture = model.textures[index];
 	tinygltf::Image& gltfImage = model.images[gltfTexture.source];
 
 	std::shared_ptr<Vin::Texture> image = Vin::Texture::Create(
@@ -216,7 +216,7 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 			if (gltfprimitive.indices >= 0) {
 				tinygltf::Accessor& accessor = model.accessors[gltfprimitive.indices];
 
-				Vin::BufferIndexType type = accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT ?
+				Vin::BufferIndexType type = accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT ?
 					Vin::BufferIndexType::UnsignedInt32 : Vin::BufferIndexType::UnsignedInt16;
 
 				primitive.ibo = Vin::IndexBuffer::Create(type);
@@ -234,27 +234,46 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 				primitive.indexed = false;
 			}
 
-			Vin::Asset<Vin::Material> material =
-				Vin::AssetDatabase::GetAsset<Vin::Material>(
-					assetBaseName + "material_" + std::to_string(gltfprimitive.material));
-
-			if (material.Get() == nullptr) {
-				//Build Material
-
-				material = Vin::AssetDatabase::AddAsset<Vin::Material>(Vin::Material{ Vin::GetDefaultProgram() },
+			if (gltfprimitive.material != -1) {
+				Vin::Asset<Vin::Material> material =
+					Vin::AssetDatabase::GetAsset<Vin::Material>(
 						assetBaseName + "material_" + std::to_string(gltfprimitive.material));
-				tinygltf::Material& gltfmaterial = model.materials[gltfprimitive.material];
-				
-				AddTexture(model, material, gltfmaterial.pbrMetallicRoughness.baseColorTexture, assetBaseName, "_MainTex");
 
-				if (gltfmaterial.alphaMode == "BLEND") {
-					material->SetTransparency(true);
+				if (material.Get() == nullptr) {
+					//Build Material
+
+					material = Vin::AssetDatabase::AddAsset<Vin::Material>(Vin::Material{ Vin::GetDefaultProgram() },
+						assetBaseName + "material_" + std::to_string(gltfprimitive.material));
+					tinygltf::Material& gltfmaterial = model.materials[gltfprimitive.material];
+
+					if (gltfmaterial.pbrMetallicRoughness.baseColorTexture.index != -1)
+						AddTexture(model, material, gltfmaterial.pbrMetallicRoughness.baseColorTexture.index, assetBaseName, "_MainTex");
+					if (gltfmaterial.normalTexture.index != -1)
+						AddTexture(model, material, gltfmaterial.normalTexture.index, assetBaseName, "_NormalTex");
+					if (gltfmaterial.pbrMetallicRoughness.metallicRoughnessTexture.index != -1)
+						AddTexture(model, material, gltfmaterial.pbrMetallicRoughness.metallicRoughnessTexture.index, assetBaseName, "_MetallicRoughnessTex");
+
+
+					if (gltfmaterial.alphaMode == "BLEND") {
+						material->SetTransparency(true);
+					}
+
+					material->SetFloat3("_Albedo", Vin::Vector3<float>{
+						(float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[0],
+							(float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[1],
+							(float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[2]});
+
+					material->SetFloat("_Metallic", gltfmaterial.pbrMetallicRoughness.metallicFactor);
+					material->SetFloat("_Roughness", gltfmaterial.pbrMetallicRoughness.roughnessFactor);
+					material->SetFloat("_AlphaCutoff", gltfmaterial.alphaCutoff);
+
+					Vin::Logger::Log("Cutoff : {}", gltfmaterial.alphaCutoff);
+
+					material->SetDoubleSided(gltfmaterial.doubleSided);
 				}
 
-				material->SetDoubleSided(gltfmaterial.doubleSided);
+				primitive.material = material;
 			}
-
-			primitive.material = material;
 
 			mesh->AddPrimitive(primitive);
 		}

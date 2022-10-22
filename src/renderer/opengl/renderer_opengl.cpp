@@ -35,21 +35,24 @@ void Vin::OpenGLRenderingApi::Init()
 	glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 #endif
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_MULTISAMPLE);
 }
 
 void Vin::OpenGLRenderingApi::SetViewport(int x, int y, int width, int height)
 {
+	OPTICK_GPU_EVENT("Set Viewport");
 	glViewport(x, y, width, height);
 }
 
 void Vin::OpenGLRenderingApi::Clear(float r, float g, float b, float a)
 {
+	OPTICK_GPU_EVENT("Clear");
 	glClearColor(r, g, b, a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -57,18 +60,24 @@ void Vin::OpenGLRenderingApi::Clear(float r, float g, float b, float a)
 void Vin::OpenGLRenderingApi::DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount)
 {
 	vertexArray->Bind();
+	OPTICK_GPU_EVENT("Draw Array");
+	OPTICK_TAG("Verticies Count", verticiesCount);
 	glDrawArrays(GL_TRIANGLES, 0, verticiesCount);
 }
 
 void Vin::OpenGLRenderingApi::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount)
 {
 	vertexArray->Bind();
+	OPTICK_GPU_EVENT("Draw Indexed");
+	OPTICK_TAG("Verticies Count", indexCount / 3);
 	glDrawElements(GL_TRIANGLES, indexCount,
 		vertexArray->GetIndexBuffer()->GetIndexType() == BufferIndexType::UnsignedInt16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr);
 }
 
 void Vin::OpenGLRenderingApi::Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst)
 {
+	OPTICK_GPU_EVENT("Blit");
+
 	std::shared_ptr<OpenGLRenderTarget> glsrc = std::static_pointer_cast<OpenGLRenderTarget>(src);
 	std::shared_ptr<OpenGLRenderTarget> gldst = std::static_pointer_cast<OpenGLRenderTarget>(dst);
 
@@ -87,6 +96,7 @@ void Vin::OpenGLRenderingApi::Blit(const std::shared_ptr<RenderTarget>& src, con
 
 void Vin::OpenGLRenderingApi::SetCullMode(CullMode mode)
 {
+	OPTICK_GPU_EVENT("Set Cull Mode");
 	switch (mode) {
 	case CullMode::None: {
 		glDisable(GL_CULL_FACE);
@@ -102,5 +112,20 @@ void Vin::OpenGLRenderingApi::SetCullMode(CullMode mode)
 		glCullFace(GL_BACK);
 		break;
 	}
+	}
+}
+
+void Vin::OpenGLRenderingApi::SetBlendMode(BlendMode mode)
+{
+	OPTICK_GPU_EVENT("Set Blend Mode");
+	switch (mode)
+	{
+	case Vin::BlendMode::None:
+		glDisable(GL_BLEND);
+		break;
+	case Vin::BlendMode::Blend:
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		break;
 	}
 }

@@ -1,6 +1,6 @@
 # vin-engine
 A custom game engine made with passion. currently working on it.  
-First made for Visual Novel, but i hope i'll be able to continue afterward for a more complete engine.  
+First made for visual novel in mind. now it's just a 3D engine.
   
 Currently work in progress.  
   
@@ -11,11 +11,30 @@ Install both if not already installed.
 Clone the repository : ```git clone --recursive https://github.com/HITOA/vin-engine.git```   
    
 Install jinja2 package : ```pip install jinja2```   
-Generate with cmake : ```cmake -B"./build" .```   
-
+Generate with cmake : ```cmake -B"./build" .```    
+  
+## Profiling  
+Optick is used to profile the engine : https://github.com/bombomby/optick  
+There is an exe version in /tool.  
+  
+## Screenshoot
+The sponza scene rendered in the engine : (10/22/2022)  
+![Sponza scene](https://i.imgur.com/FLY2bc9.jpeg)  
+  
 ## TODO  
-- Loading GLTF/GLB (2.0) model.  
+- Loading GLTF/GLB (2.0) model. (Almost complete)
 - PostProcessing Chain system (Simple way to do postprocessing on a rendetarget, you pass the render target to a post process chain, then it end up with all the effect. you would add post process effect like chain.Add(postprocessmat))  
+
+- Transparency (AlphaCliping Blend Etc) // DONE
+- Transform parent // DONE
+- Bitangent calculation // DONE
+- Profiler // DONE
+- Proper lighting (Main light with shadow map, Additional light with Eventual shadow map)
+- Cubemap
+- GPU Instancing
+- Clear color controlled by camera
+- Cascade shadow map (Entire fustrum)
+- Frustum culling (Compute shader)
 
 ## Source
 A lot of useful source for developing game engine related stuff :
@@ -35,4 +54,5 @@ Building an ECS : https://ajmmertens.medium.com/building-an-ecs-1-where-are-my-e
 ES wiki : http://entity-systems.wikidot.com/  
 Quake PAK format specification : https://quakewiki.org/wiki/.pak  
 Order your graphics draw calls around : http://realtimecollisiondetection.net/blog/?p=86  
-Optimizing 4x4 matrix multiplication : https://nfrechette.github.io/2017/04/13/modern_simd_matrix_multiplication/
+Optimizing 4x4 matrix multiplication : https://nfrechette.github.io/2017/04/13/modern_simd_matrix_multiplication/  
+PCSS shadow : https://developer.download.nvidia.com/whitepapers/2008/PCSS_Integration.pdf  

@@ -17,7 +17,7 @@ void main()
     vec3 norm = normalize(normal);
     vec3 ambient = 0.2 * _MainLight.color.xyz;
     float diff = dot(norm, _MainLight.direction);
-    float shadow = SampleShadowMap(positionLightspace);
+    float shadow = SampleShadowMap(positionLightspace, position);
     vec4 color = texture(_MainTex, texcoord0);
 
     fragcolor = vec4((ambient + max(shadow * diff, 0.0)) * color.xyz, 1.0f);

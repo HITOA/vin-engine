@@ -22,3 +22,4 @@
 
 #include <bitset>
 #include <memory>
+#include <optick.h>

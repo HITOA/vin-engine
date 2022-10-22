@@ -6,6 +6,8 @@
 #include "vinshadowvs.hpp"
 #include "vinshadowfs.hpp"
 
+#include <optick.h>
+
 void Vin::RenderingModule::Init()
 {
 	Renderer::Init();
@@ -22,6 +24,8 @@ void Vin::RenderingModule::Init()
 
 void Vin::RenderingModule::Render()
 {
+	OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Rendering);
+
 	RenderQueue& queue = m_Ctx->queue;
 	queue.Sort();
 
@@ -39,6 +43,8 @@ void Vin::RenderingModule::OnEvent(EventHandler handler)
 
 void Vin::RenderingModule::RenderScene(RenderQueue& queue)
 {
+	OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::GPU_Scene);
+
 	std::shared_ptr<Camera> currCamera{};
 	Matrix4x4<float> projection{};
 	Matrix4x4<float> view{};
@@ -63,7 +69,7 @@ void Vin::RenderingModule::RenderScene(RenderQueue& queue)
 			lightview = Quaternion<float>::LookAt(-m_Ctx->mainLight.direction, Vector3<float>{0, 0, 0}).GetRotationMatrix()*
 				Translate<float>(-m_Ctx->mainLight.direction * 25);
 
-			Renderer::Clear(0.85, 0.85, 1.0f, 1.0f);
+			Renderer::Clear(currCamera->clearColor.x, currCamera->clearColor.y, currCamera->clearColor.z, currCamera->clearColor.w);
 		}
 
 		Primitive& primitive = task.GetPrimitive();
@@ -77,6 +83,11 @@ void Vin::RenderingModule::RenderScene(RenderQueue& queue)
 				Renderer::SetCullMode(CullMode::None);
 			else
 				Renderer::SetCullMode(CullMode::Back);
+
+			if (primitive.material->GetTransparency())
+				Renderer::SetBlendMode(BlendMode::Blend);
+			else
+				Renderer::SetBlendMode(BlendMode::None);
 
 			primitive.material->SetMat4("vin_matrix_view", view);
 			primitive.material->SetMat4("vin_matrix_projection", projection);
@@ -97,7 +108,6 @@ void Vin::RenderingModule::RenderScene(RenderQueue& queue)
 
 		primitive.material->SetTexture("_ShadowMap", shadowMap);
 		primitive.material->SetFloat("_ShadowBias", m_Ctx->mainLight.shadow.bias);
-		primitive.material->SetInt("_SoftShadow", m_Ctx->mainLight.shadow.type == ShadowType::Soft ? 1 : 0);
 
 		/* RENDERING */
 
@@ -116,7 +126,11 @@ void Vin::RenderingModule::RenderScene(RenderQueue& queue)
 
 void Vin::RenderingModule::GenerateShadowMap(RenderQueue& queue)
 {
-	RenderTargetSpecification shadowmapspec{ (size_t)m_Ctx->mainLight.shadow.resolution.x, (size_t)m_Ctx->mainLight.shadow.resolution.y, 1 };
+	OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::GPU_Shadows);
+
+	RenderTargetSpecification shadowmapspec{ 
+		(size_t)((int)m_Ctx->mainLight.shadow.resolution.x * (m_Ctx->mainLight.shadow.distance / 5)) , 
+		(size_t)((int)m_Ctx->mainLight.shadow.resolution.y * (m_Ctx->mainLight.shadow.distance / 5)), 1 };
 	shadowmapspec.AddRenderBuffer({ RenderBufferFormat::DEPTH_COMPONENT24, true });
 
 	if (m_ShadowmapRenderTarget.get() == nullptr)
@@ -126,12 +140,12 @@ void Vin::RenderingModule::GenerateShadowMap(RenderQueue& queue)
 		m_ShadowmapRenderTarget->GetSpecification().height != shadowmapspec.height)
 		m_ShadowmapRenderTarget->Resize(shadowmapspec.width, shadowmapspec.height);
 
-	Renderer::SetViewport(0, 0, m_Ctx->mainLight.shadow.resolution.x, m_Ctx->mainLight.shadow.resolution.y);
+	Renderer::SetViewport(0, 0, shadowmapspec.width, shadowmapspec.height);
 
 	m_ShadowmapRenderTarget->Bind();
 
 	Renderer::Clear(0.0f, 0.0f, 0.0f, 1.0f);
-	Renderer::SetCullMode(CullMode::Front);
+	Renderer::SetCullMode(m_Ctx->mainLight.shadow.cullMode);
 
 	std::shared_ptr<Camera> currCamera{};
 	Matrix4x4<float> projection = Orthographic<float>(

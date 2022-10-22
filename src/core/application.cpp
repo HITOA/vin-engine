@@ -1,4 +1,5 @@
 #include "application.hpp"
+#include <optick.h>
 
 void Vin::App::ClearModule()
 {
@@ -25,6 +26,8 @@ void Vin::App::Run()
 		mod->Start();
 
 	while (m_Running) {
+		OPTICK_FRAME("MainThread");
+
 		TimeStep current = m_Timer.GetTimeStep();
 		TimeStep elapsed = current - last;
 		last = current;

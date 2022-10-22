@@ -8,10 +8,24 @@
 #include "renderer/bindable.hpp"
 #include "math/math.hpp"
 
+#define VIN_MATERIAL_MAX_PROPERTIES 64
+
 namespace Vin {
 	struct MaterialTextureData {
 		bool used{ false };
 		std::shared_ptr<Bindable<unsigned short>> texture{ nullptr };
+	};
+
+	enum class MaterialPropertyType {
+		None = 0,
+		Float, Float2, Float3, Float4, Floats,
+		Int, Int2, Int3, Int4, Ints,
+		Mat3, Mat4
+	};
+
+	struct MaterialProperty {
+		MaterialPropertyType type{ MaterialPropertyType::None };
+		char data[64]{};
 	};
 
 	class Material {
@@ -79,6 +93,7 @@ namespace Vin {
 	private:
 		std::shared_ptr<Program> m_Program{ nullptr };
 		MaterialTextureData m_Textures[16]{};
+		MaterialProperty m_Properties[VIN_MATERIAL_MAX_PROPERTIES]{};
 		bool m_Transparency{ false };
 		bool m_DoubleSided{ false };
 		unsigned int m_Id{};

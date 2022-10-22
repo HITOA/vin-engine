@@ -8,6 +8,8 @@
 #include "msblitvs.hpp"
 #include "msblitfs.hpp"
 
+#include <optick.h>
+
 Vin::Renderer::Api Vin::Renderer::s_api = Vin::Renderer::None;
 Vin::Renderer::RenderingApi* Vin::Renderer::s_RenderingApi = new NoneRenderingApi{};
 
@@ -76,6 +78,12 @@ void Vin::Renderer::SetCullMode(CullMode mode)
 {
 	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
 	s_RenderingApi->SetCullMode(mode);
+}
+
+void Vin::Renderer::SetBlendMode(BlendMode mode)
+{
+	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
+	s_RenderingApi->SetBlendMode(mode);
 }
 
 void Vin::Renderer::BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst, Material mat)

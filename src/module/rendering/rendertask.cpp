@@ -4,7 +4,7 @@ Vin::RenderTask::RenderTask(std::shared_ptr<Camera> camera, Primitive& primitive
     : m_Id{ 0 }, m_Camera{ camera }, m_Primitive{ &primitive }, m_Model{ model }, m_Valid{ true }
 {
     unsigned char viewportId = camera->GetId();
-    unsigned char transluencyType = primitive.material->GetTransparency();
+    unsigned char transluencyType = primitive.material->GetTransparency() ? 0 : 1;
     unsigned int depth = 0; //Calculate depth
     unsigned int materialId = primitive.material->GetId();
 

@@ -12,5 +12,6 @@ namespace Vin {
 		void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount) final;
 		void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst) final;
 		void SetCullMode(CullMode mode) final;
+		void SetBlendMode(BlendMode mode) final;
 	};
 }

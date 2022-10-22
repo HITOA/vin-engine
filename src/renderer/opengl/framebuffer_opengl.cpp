@@ -19,16 +19,19 @@ Vin::OpenGLRenderTarget::~OpenGLRenderTarget()
 
 void Vin::OpenGLRenderTarget::Bind() const
 {
+	OPTICK_GPU_EVENT("Bind FrameBuffer");
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferId);
 }
 
 void Vin::OpenGLRenderTarget::Unbind() const
 {
+	OPTICK_GPU_EVENT("Unbind FrameBuffer");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Vin::OpenGLRenderTarget::Resize(int width, int height)
 {
+	OPTICK_EVENT();
 	Destroy();
 	m_Specification.width = width;
 	m_Specification.height = height;
@@ -63,6 +66,8 @@ unsigned int Vin::OpenGLRenderTarget::GetFrameBufferId()
 
 void Vin::OpenGLRenderTarget::Generate()
 {
+	OPTICK_GPU_EVENT("Generate Framebuffer");
+
 	glCreateFramebuffers(1, &m_FrameBufferId);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferId);
 
@@ -159,6 +164,7 @@ unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferFormat(RenderBufferFormat
 	case RenderBufferFormat::RG16: return GL_RG16;
 	case RenderBufferFormat::R8: return GL_R8;
 	case RenderBufferFormat::R16: return GL_R16;
+	case RenderBufferFormat::R32: return GL_R32F;
 	case RenderBufferFormat::BGRA32: return GL_BGRA;
 	case RenderBufferFormat::DEPTH_COMPONENT16: return GL_DEPTH_COMPONENT16;
 	case RenderBufferFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT24;
@@ -180,6 +186,7 @@ unsigned int Vin::OpenGLRenderTarget::ParseTextureAttachment(RenderBufferFormat 
 	case RenderBufferFormat::RG16: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::R8: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::R16: return GL_COLOR_ATTACHMENT0;
+	case RenderBufferFormat::R32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::BGRA32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::DEPTH_COMPONENT16: return GL_DEPTH_ATTACHMENT;
 	case RenderBufferFormat::DEPTH_COMPONENT24: return GL_DEPTH_ATTACHMENT;
@@ -201,6 +208,7 @@ unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferAttachment(RenderBufferFo
 	case RenderBufferFormat::RG16: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::R8: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::R16: return GL_COLOR_ATTACHMENT0;
+	case RenderBufferFormat::R32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::BGRA32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::DEPTH_COMPONENT16: return GL_DEPTH_ATTACHMENT;
 	case RenderBufferFormat::DEPTH_COMPONENT24: return GL_DEPTH_ATTACHMENT;

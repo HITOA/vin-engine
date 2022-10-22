@@ -12,7 +12,7 @@ endfunction(make_includable)
 make_includable(src/resources/vinshadowfs.glsl generated/vinshadowfs.hpp vinshadowfs)
 make_includable(src/resources/vinshadowvs.glsl generated/vinshadowvs.hpp vinshadowvs)
 make_includable(src/resources/vin.glsl generated/vinshader.hpp vinshader)
-make_includable(src/resources/vinpbr.glsl generated/vinpbrshader.hpp vinpbrshader)
+make_includable(src/resources/vinbase.glsl generated/vinbaseshader.hpp vinbaseshader)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -38,6 +38,7 @@ add_subdirectory(${EXTERNAL_PATH}/glfw)
 add_subdirectory(${EXTERNAL_PATH}/imgui)
 add_subdirectory(${EXTERNAL_PATH}/lz4/build/cmake)
 add_subdirectory(${EXTERNAL_PATH}/mimalloc)
+add_subdirectory(${EXTERNAL_PATH}/optick-compiler)
 add_subdirectory(${EXTERNAL_PATH}/tinygltf)
 
 glad_add_library(glad_library STATIC API gl:core=4.6)
@@ -58,6 +59,7 @@ target_link_libraries(
 	mimalloc-static
 	fmt
 	tinygltf
+	OptickCore
 )
 
 target_precompile_headers(vin_engine PUBLIC src/vinpch.hpp)

@@ -42,6 +42,7 @@ namespace Vin {
 	public:
 		Vector3<float> position{};
 		Quaternion<float> rotation{};
+		Vector4<float> clearColor{ 0.85f, 0.85f, 1.0f, 1.0f };
 	};
 
 }

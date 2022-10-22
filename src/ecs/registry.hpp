@@ -6,6 +6,8 @@
 #include "entity.hpp"
 #include "archetype.hpp"
 
+#include <optick.h>
+
 /*template<size_t N>
 struct std::hash<std::bitset<N>> {
 	size_t operator()(std::bitset<N> v) const {
@@ -49,7 +51,8 @@ namespace Vin {
 		}
 
 		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Query<memlayout, Components...>, Args...), Args... args) {
+		void Process(RetType(system)(Query<memlayout, Components...>, Args...), Args&... args) {
+			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
 				if (it->archetype.MatchLayout<Components...>(true)) {
@@ -61,7 +64,8 @@ namespace Vin {
 		}
 
 		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Query<memlayout, EntityId, Components...>, Args...), Args... args) {
+		void Process(RetType(system)(Query<memlayout, EntityId, Components...>, Args...), Args&... args) {
+			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
 				if (it->archetype.MatchLayout<Components...>(true)) {
@@ -69,6 +73,33 @@ namespace Vin {
 						(EntityId*)it->entityIds.data(),
 						it->archetype.GetComponentIterator<Components>()...,
 						it->archetype.GetSize() }, args...);
+				}
+			}
+		}
+
+		template<typename RetType, typename... Components, typename... Args>
+		void Process(RetType(system)(Registry<memlayout>& registry, Query<memlayout, Components...>, Args...), Args&... args) {
+			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
+			auto itend = m_Archetypes.end();
+			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
+				if (it->archetype.MatchLayout<Components...>(true)) {
+					system(*this, Query<memlayout, Components...>{
+						it->archetype.GetComponentIterator<Components>()...,
+							it->archetype.GetSize() }, args...);
+				}
+			}
+		}
+
+		template<typename RetType, typename... Components, typename... Args>
+		void Process(RetType(system)(Registry<memlayout>& registry, Query<memlayout, EntityId, Components...>, Args...), Args&... args) {
+			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
+			auto itend = m_Archetypes.end();
+			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
+				if (it->archetype.MatchLayout<Components...>(true)) {
+					system(*this, Query<memlayout, EntityId, Components...>{
+						(EntityId*)it->entityIds.data(),
+							it->archetype.GetComponentIterator<Components>()...,
+							it->archetype.GetSize() }, args...);
 				}
 			}
 		}

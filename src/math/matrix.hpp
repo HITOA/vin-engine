@@ -12,12 +12,16 @@
 
 #include "vector.hpp"
 
+#include <optick.h>
+
 //#include <immintrin.h>
 
 namespace Vin {
 
 	template<typename T, size_t m1, size_t n1, size_t n2>
 	auto operator*(const Vin::Matrix<T, m1, n1>& lhs, const Vin::Matrix<T, n1, n2>& rhs) {
+		OPTICK_EVENT();
+
 		Vin::Matrix<T, m1, n2>::MatrixType::type result{};
 
 		for (size_t y = 0; y < m1; y++)

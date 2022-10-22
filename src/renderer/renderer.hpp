@@ -19,6 +19,11 @@ namespace Vin {
 		Back
 	};
 
+	enum class BlendMode {
+		None,
+		Blend
+	};
+
 	class Renderer {
 	public:
 		enum Api {
@@ -41,6 +46,7 @@ namespace Vin {
 		static void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst);
 
 		static void SetCullMode(CullMode mode);
+		static void SetBlendMode(BlendMode mode);
 
 		static void BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst, Material mat);
 		static void BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst);
@@ -59,6 +65,7 @@ namespace Vin {
 			virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount) = 0;
 			virtual void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst) = 0;
 			virtual void SetCullMode(CullMode mode) = 0;
+			virtual void SetBlendMode(BlendMode mode) = 0;
 		} *s_RenderingApi;
 	};
 
@@ -70,5 +77,6 @@ namespace Vin {
 		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount) {};
 		virtual void Blit(const std::shared_ptr<RenderTarget>& src, const std::shared_ptr<RenderTarget>& dst) {};
 		virtual void SetCullMode(CullMode mode) {};
+		virtual void SetBlendMode(BlendMode mode) {};
 	};
 }

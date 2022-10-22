@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/math.hpp"
+#include "renderer/renderer.hpp"
 
 namespace Vin {
 
@@ -13,18 +14,12 @@ namespace Vin {
 		AreaDisc
 	};
 
-	enum class ShadowType {
-		None,
-		Hard,
-		Soft
-	};
-
 	struct ShadowSettings {
-		ShadowType type{ ShadowType::Soft };
 		float strength{};
-		Vector2<float> resolution{ 2048, 2048 };
-		float bias{ 0.0f };
-		float distance{ 25.0f };
+		float distance{ 20.0f };
+		Vector2<int> resolution{ 1024, 1024 };
+		float bias{ 0.001f };
+		CullMode cullMode{ CullMode::Front };
 	};
 
 	struct Light {
@@ -38,7 +33,7 @@ namespace Vin {
 
 		float range{ 1.0f }; //Point and Spot only
 		//float spotangle{};
-		float intensity{ 1.0f }; //Itensity of the light
+		float intensity{ 10.0f }; //Itensity of the light
 
 		ShadowSettings shadow{};
 	};

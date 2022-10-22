@@ -14,6 +14,7 @@ namespace Vin {
 		RG16,
 		R8,
 		R16,
+		R32,
 		BGRA32,
 		DEPTH_COMPONENT16,
 		DEPTH_COMPONENT24,

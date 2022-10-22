@@ -74,11 +74,22 @@ class TestModule : public Vin::Module {
 		}
 	}
 
+	static void SetRot(Vin::Query<Vin::ArchetypeMemoryLayout::Contiguous, Vin::Transform<float>> query) {
+		int i = 0; 
+		for (auto& [transform] : query) {
+			++i;
+			transform->rotation = Vin::Quaternion<float>::Euler(Vin::Vector3<float>{ 180, 0, 0 });
+			//transform->position = Vin::Vector3<float>{ 0, 0, -25 };
+			//Vin::Logger::Log("Scale : {}", transform->scale);
+		}
+		Vin::Logger::Log("Entity : {}", i);
+	}
+
 	void Start() {
 		Vin::Logger::Log("Module started.");
 		Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./bin"));
 
-		program = Vin::LoadProgram("data/vs.glsl", "data/fs.glsl");
+		program = Vin::LoadProgram("data/pbr/pbrvs.glsl", "data/pbr/pbrfs.glsl");
 
 		Vin::SetDefaultProgram(program);
 
@@ -99,7 +110,7 @@ class TestModule : public Vin::Module {
 
 		size_t k = 0;
 
-		/*for (int j = -3000; j <= 3000; j += 75) {
+		for (int j = -3000; j <= 3000; j += 75) {
 			for (int i = -3000; i <= 3000; i += 75) {
 				++k;
 				scene->CreateEntity(
@@ -107,7 +118,7 @@ class TestModule : public Vin::Module {
 					Vin::MeshRenderer{ mesh.Get() },
 					SpeedRotation{(float)(rand() % 100) / 25});
 			}
-		}*/
+		}
 
 		Vin::Logger::Log("Number of entity : {}", k);
 
@@ -130,9 +141,13 @@ class TestModule : public Vin::Module {
 
 		camera->SetFOV(52.5);
 		camera->SetNearPlane(0.1);
-		camera->SetFarPlane(1000);
+		camera->SetFarPlane(4000);
 
 		sponzascene = Vin::LoadGLTF("data/sponzagltf/Sponza.gltf");
+		//sponzascene = Vin::LoadGLTF("data/AlphaBlendModeTest/glTF/AlphaBlendModeTest.gltf");
+		//sponzascene = Vin::LoadGLTF("data/chateau/FullOWMap_Chateau_Guillard_Eevee_packed_MeltRib_V2.gltf");
+		//sponzascene = Vin::LoadGLTF("data/BoxInterleaved/glTF/BoxInterleaved.gltf");
+		//(*sponzascene)->Process(SetRot);
 
 		Vin::Transform<float> transform{ Vin::Vector3<float>{0.0f, 0.0f, -10.0f} };
 
@@ -143,8 +158,8 @@ class TestModule : public Vin::Module {
 
 		Vin::Light mainLight{};
 
-		mainLight.shadow.type = Vin::ShadowType::Soft;
-		mainLight.color = Vin::Vector4<float>{ 0.95f, 0.95f, 1.00f, 1.0f };
+		mainLight.color = Vin::Vector4<float>{ 1.0f, 1.0f, 1.0f, 1.0f };
+		mainLight.shadow.distance = 20;
 
 		mainLight.direction = Vin::Vector3<float>{ 0.3, 1, 0.2 }.Normalize();
 
@@ -166,6 +181,7 @@ class TestModule : public Vin::Module {
 
 		float deltaTime = GetApp()->GetDeltaTime().GetMillisecond();
 
+		const float speed = 1;
 
 		Vin::Vector2<int> mouseDelta = Vin::Input::GetMousePosition() - mouseLastPos;
 		mouseLastPos = Vin::Input::GetMousePosition();
@@ -196,15 +212,15 @@ class TestModule : public Vin::Module {
 			translation += Vin::Vector3<float>{ 1 , 0, 0 };
 		}
 		if (Vin::Input::IsKeyDown(Vin::Key::Space)) {
-			camera->position += Vin::Vector3<float>{ 0, 1 * deltaTime * 0.01f, 0};
+			camera->position += Vin::Vector3<float>{ 0, speed * deltaTime * 0.01f, 0};
 		}
 		if (Vin::Input::IsKeyDown(Vin::Key::LeftControl)) {
-			camera->position += Vin::Vector3<float>{ 0, -1 * deltaTime * 0.01f, 0};
+			camera->position += Vin::Vector3<float>{ 0, -speed * deltaTime * 0.01f, 0};
 		}
 
 		translation = translation.Normalize();
 
-		translation *= deltaTime * 0.01f;
+		translation *= deltaTime * 0.01f * speed;
 
 		translation = (camera->rotation.GetRotationMatrix() * Vin::Vector4<float>{ translation.xyz, 1.0f }).xyz;
 
