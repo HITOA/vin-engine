@@ -1,5 +1,4 @@
 #include "application.hpp"
-#include <optick.h>
 
 void Vin::App::ClearModule()
 {

@@ -63,7 +63,7 @@ void Vin::OpenGLIndexBuffer::Unbind() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-size_t Vin::OpenGLIndexBuffer::GetCount() const
+uint32_t Vin::OpenGLIndexBuffer::GetCount() const
 {
 	return m_Count;
 }
@@ -73,7 +73,7 @@ Vin::BufferIndexType Vin::OpenGLIndexBuffer::GetIndexType() const
 	return m_Type;
 }
 
-void Vin::OpenGLIndexBuffer::SetData(void* data, size_t count)
+void Vin::OpenGLIndexBuffer::SetData(void* data, uint32_t count)
 {
 	glNamedBufferData(m_BufferId, count * GetBufferIndexTypeSize(m_Type), data, GL_STATIC_DRAW);
 	m_Count = count;

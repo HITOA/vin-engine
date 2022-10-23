@@ -10,7 +10,7 @@ namespace Vin {
 	class Camera : public Identifiable<Camera, unsigned char> {
 	public:
 		Camera() = delete;
-		Camera(Vector2<int> size, int samples = 8, bool HDR = true);
+		Camera(Vector2<uint32_t> size, uint32_t samples = 8, bool HDR = true);
 
 		void SetNearPlane(float near);
 		float GetNearPlane();
@@ -21,8 +21,8 @@ namespace Vin {
 		void SetFOV(float fov);
 		float GetFOV();
 
-		void Resize(Vector2<int> size);
-		Vector2<int> GetSize();
+		void Resize(Vector2<uint32_t> size);
+		Vector2<uint32_t> GetSize();
 
 		void Bind();
 		void Unbind();
@@ -34,7 +34,7 @@ namespace Vin {
 		std::shared_ptr<RenderTexture> GetRenderTexture();
 	private:
 		std::shared_ptr<RenderTarget> m_RenderTarget{}; //viewport
-		Vector2<int> m_Size{}; //Width, height
+		Vector2<uint32_t> m_Size{}; //Width, height
 		float m_Near{};
 		float m_Far{};
 		float m_FOV{};

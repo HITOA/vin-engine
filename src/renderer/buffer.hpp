@@ -33,7 +33,7 @@ namespace Vin {
 		BlendIndices
 	};
 
-	static size_t GetVertexAttributeTypeSize(VertexAttributeType type) {
+	static inline uint32_t GetVertexAttributeTypeSize(VertexAttributeType type) {
 		switch (type) {
 		case VertexAttributeType::Float: return sizeof(float);
 		case VertexAttributeType::Float2: return sizeof(float) * 2;
@@ -49,7 +49,7 @@ namespace Vin {
 		return 0;
 	}
 
-	static size_t GetBufferIndexTypeSize(BufferIndexType type) {
+	static inline uint32_t GetBufferIndexTypeSize(BufferIndexType type) {
 		switch (type) {
 		case BufferIndexType::UnsignedInt16: return sizeof(short);
 		case BufferIndexType::UnsignedInt32: return sizeof(int);
@@ -92,7 +92,7 @@ namespace Vin {
 			m_Stride += GetVertexAttributeTypeSize(element.type);
 		}
 
-		size_t GetStride() const { return m_Stride; }
+		uint32_t GetStride() const { return m_Stride; }
 
 		std::vector<VertexBufferElement>::iterator begin() { return m_Layout.begin(); }
 		std::vector<VertexBufferElement>::iterator end() { return m_Layout.end(); }
@@ -118,7 +118,7 @@ namespace Vin {
 
 	private:
 		std::vector<VertexBufferElement> m_Layout;
-		size_t m_Stride = 0;
+		uint32_t m_Stride = 0;
 	};
 	
 	class Buffer {
@@ -145,10 +145,10 @@ namespace Vin {
 	public:
 		virtual ~IndexBuffer() {};
 
-		virtual size_t GetCount() const = 0;
+		virtual uint32_t GetCount() const = 0;
 		virtual BufferIndexType GetIndexType() const = 0;
 
-		virtual void SetData(void* data, size_t count) = 0;
+		virtual void SetData(void* data, uint32_t count) = 0;
 
 		static std::shared_ptr<IndexBuffer> Create(BufferIndexType type);
 	};

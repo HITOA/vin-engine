@@ -29,7 +29,7 @@ void Vin::OpenGLRenderTarget::Unbind() const
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Vin::OpenGLRenderTarget::Resize(int width, int height)
+void Vin::OpenGLRenderTarget::Resize(uint32_t width, uint32_t height)
 {
 	OPTICK_EVENT();
 	Destroy();
@@ -220,14 +220,14 @@ unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferAttachment(RenderBufferFo
 	return 0;
 }
 
-Vin::OpenGLRenderTexture::OpenGLRenderTexture(unsigned int* textureId, size_t samplecount) : m_TextureId{ textureId }, m_SampleCount{ samplecount } {}
+Vin::OpenGLRenderTexture::OpenGLRenderTexture(unsigned int* textureId, uint32_t samplecount) : m_TextureId{ textureId }, m_SampleCount{ samplecount } {}
 
 void Vin::OpenGLRenderTexture::Bind(unsigned short location)
 {
 	glBindTextureUnit(location, *m_TextureId);
 }
 
-size_t Vin::OpenGLRenderTexture::GetSampleCount() const
+uint32_t Vin::OpenGLRenderTexture::GetSampleCount() const
 {
 	return m_SampleCount;
 }

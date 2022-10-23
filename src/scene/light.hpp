@@ -18,7 +18,7 @@ namespace Vin {
 		float strength{};
 		float distance{ 20.0f };
 		Vector2<int> resolution{ 1024, 1024 };
-		float bias{ 0.001f };
+		float bias{ 0.0001f };
 		CullMode cullMode{ CullMode::Front };
 	};
 

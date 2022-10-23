@@ -9,7 +9,7 @@
 extern Vin::App* Vin::CreateApp();
 extern void Vin::DestroyApp(Vin::App* app);
 
-int main(int argc, char* argv[]) {
+int main(int, char*[]) {
 	Vin::Renderer::SetApi(Vin::Renderer::Count);
 
 	Vin::AssetDatabase::AddAsset<std::string>(vinshader, "vin.glsl");

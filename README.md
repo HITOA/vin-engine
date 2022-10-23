@@ -24,17 +24,19 @@ The sponza scene rendered in the engine : (10/22/2022)
 ## TODO  
 - Loading GLTF/GLB (2.0) model. (Almost complete)
 - PostProcessing Chain system (Simple way to do postprocessing on a rendetarget, you pass the render target to a post process chain, then it end up with all the effect. you would add post process effect like chain.Add(postprocessmat))  
-
-- Transparency (AlphaCliping Blend Etc) // DONE
-- Transform parent // DONE
-- Bitangent calculation // DONE
-- Profiler // DONE
+- Implementing MIMALLOC for std & new/delete operator overload
+  
 - Proper lighting (Main light with shadow map, Additional light with Eventual shadow map)
 - Cubemap
 - GPU Instancing
-- Clear color controlled by camera
-- Cascade shadow map (Entire fustrum)
-- Frustum culling (Compute shader)
+- Clear color controlled by camera  
+- Cascade shadow map (Entire fustrum)  
+- Frustum culling (Compute shader)  
+  
+## Things to considere  
+- Better soft shadow algorithm (Better PCF)
+- Vulkan implementation
+- Optimizing more !! (always good)
 
 ## Source
 A lot of useful source for developing game engine related stuff :

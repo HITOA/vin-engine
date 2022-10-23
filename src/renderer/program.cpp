@@ -13,4 +13,6 @@ std::shared_ptr<Vin::Program> Vin::Program::Create()
     switch (Renderer::GetApi()) {
     case Renderer::OpenGL: return std::make_shared<Vin::OpenGLProgram>();
     }
+
+    return nullptr;
 }

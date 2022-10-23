@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/base.hpp">
+#include "core/base.hpp"
 #include "vinpch.hpp"
 #include "renderer/buffer.hpp"
 #include "renderer/vertexarray.hpp"
@@ -17,7 +17,7 @@ namespace Vin {
 		std::shared_ptr<VertexArray> vao{};
 		std::shared_ptr<Material> material{};
 		bool indexed{ true }; //If the primitive is rendered using indices or not.
-		size_t vertexCount{ 0 };
+		uint32_t vertexCount{ 0 };
 	};
 
 	class StaticMesh {

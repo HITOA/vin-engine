@@ -47,8 +47,8 @@ bool ReadWholeFile(std::vector<unsigned char>* out, std::string* err,
 	return true;
 }
 
-bool WriteWholeFile(std::string* err, const std::string& filepath, 
-	const std::vector<unsigned char>& contents, void*) {
+bool WriteWholeFile(std::string* err, const std::string&, 
+	const std::vector<unsigned char>&, void*) {
 	if (err)
 		(*err) += "Writing not allowed.";
 	return false;
@@ -202,7 +202,7 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 				tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
 
 				if (attribname == Vin::VertexAttribute::Position)
-					primitive.vertexCount = accessor.count;
+					primitive.vertexCount = (uint32_t)accessor.count;
 				
 				std::shared_ptr<Vin::VertexBuffer> vbo = Vin::VertexBuffer::Create(accessor.count * Vin::GetVertexAttributeTypeSize(attribtype));
 
@@ -224,7 +224,7 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 				tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
 				tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
 
-				primitive.ibo->SetData(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset, accessor.count);
+				primitive.ibo->SetData(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset, (uint32_t)accessor.count);
 
 				primitive.vao->SetIndexBuffer(primitive.ibo);
 
@@ -263,11 +263,9 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 							(float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[1],
 							(float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[2]});
 
-					material->SetFloat("_Metallic", gltfmaterial.pbrMetallicRoughness.metallicFactor);
-					material->SetFloat("_Roughness", gltfmaterial.pbrMetallicRoughness.roughnessFactor);
-					material->SetFloat("_AlphaCutoff", gltfmaterial.alphaCutoff);
-
-					Vin::Logger::Log("Cutoff : {}", gltfmaterial.alphaCutoff);
+					material->SetFloat("_Metallic", (float)gltfmaterial.pbrMetallicRoughness.metallicFactor);
+					material->SetFloat("_Roughness", (float)gltfmaterial.pbrMetallicRoughness.roughnessFactor);
+					material->SetFloat("_AlphaCutoff", (float)gltfmaterial.alphaCutoff);
 
 					material->SetDoubleSided(gltfmaterial.doubleSided);
 				}

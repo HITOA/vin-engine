@@ -13,6 +13,7 @@ std::shared_ptr<Vin::VertexBuffer> Vin::VertexBuffer::Create(size_t size)
     switch (Renderer::GetApi()) {
     case Renderer::OpenGL: return std::make_shared<Vin::OpenGLVertexBuffer>(size);
     }
+    return nullptr;
 }
 
 std::shared_ptr<Vin::IndexBuffer> Vin::IndexBuffer::Create(BufferIndexType type)
@@ -22,4 +23,5 @@ std::shared_ptr<Vin::IndexBuffer> Vin::IndexBuffer::Create(BufferIndexType type)
     switch (Renderer::GetApi()) {
     case Renderer::OpenGL: return std::make_shared<Vin::OpenGLIndexBuffer>(type);
     }
+    return nullptr;
 }

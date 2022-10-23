@@ -1,6 +1,6 @@
 #include "renderer_opengl.hpp"
 
-#include "core/base.hpp">
+#include "core/base.hpp"
 #include "core/assert.hpp"
 #include "logger/logger.hpp"
 
@@ -9,13 +9,13 @@
 #include <glad/gl.h>
 
 void OpenGLMessageCallback(
-	unsigned source,
-	unsigned type,
-	unsigned id,
+	unsigned,
+	unsigned,
+	unsigned,
 	unsigned severity,
-	int length,
+	int,
 	const char* message,
-	const void* userParam)
+	const void*)
 {
 	switch (severity)
 	{
@@ -57,7 +57,7 @@ void Vin::OpenGLRenderingApi::Clear(float r, float g, float b, float a)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Vin::OpenGLRenderingApi::DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount)
+void Vin::OpenGLRenderingApi::DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, uint32_t verticiesCount)
 {
 	vertexArray->Bind();
 	OPTICK_GPU_EVENT("Draw Array");
@@ -65,7 +65,7 @@ void Vin::OpenGLRenderingApi::DrawArrays(const std::shared_ptr<VertexArray>& ver
 	glDrawArrays(GL_TRIANGLES, 0, verticiesCount);
 }
 
-void Vin::OpenGLRenderingApi::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount)
+void Vin::OpenGLRenderingApi::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount)
 {
 	vertexArray->Bind();
 	OPTICK_GPU_EVENT("Draw Indexed");

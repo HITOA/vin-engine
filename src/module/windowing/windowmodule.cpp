@@ -19,7 +19,7 @@ void Vin::WindowResizeCallback(GLFWwindow* window, int width, int height)
 	winmod->m_Info->width = width;
 	winmod->m_Info->height = height;
 	EventHandler handler{};
-	handler.Bind(WindowResizeEvent{ width, height });
+	handler.Bind(WindowResizeEvent{ (uint32_t)width, (uint32_t)height });
 	winmod->DispatchEvent(handler);
 }
 
@@ -124,7 +124,7 @@ void Vin::WindowModule::Init()
 		glfwSetErrorCallback(GlfwErrorCallback);
 	}
 
-	m_Window = glfwCreateWindow(m_Info->width, m_Info->height, m_Info->title, nullptr, nullptr);
+	m_Window = glfwCreateWindow((int)m_Info->width, (int)m_Info->height, m_Info->title, nullptr, nullptr);
 
 	glfwSetWindowUserPointer(m_Window, this);
 

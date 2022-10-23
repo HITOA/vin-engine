@@ -20,13 +20,13 @@ void Vin::Material::Bind()
     OPTICK_EVENT();
 
     m_Program->Bind();
-    for (usize i = 0; i < 16; ++i)
+    for (short i = 0; i < 16; ++i)
         if (m_Textures[i].used) {
             m_Program->SetInt(i, i);
             m_Textures[i].texture->Bind(i);
         }
 
-    for (size_t i = 0; i < VIN_MATERIAL_MAX_PROPERTIES; ++i) {
+    for (int i = 0; i < VIN_MATERIAL_MAX_PROPERTIES; ++i) {
         if (m_Properties[i].type == MaterialPropertyType::None)
             continue;
 
@@ -78,7 +78,7 @@ void Vin::Material::SetFloat(int location, float value)
     memcpy(m_Properties[location].data, &value, sizeof(float));
 }
 
-void Vin::Material::SetFloat2(int location, Vector2<float>& values)
+void Vin::Material::SetFloat2(int location, Vector2<float> values)
 {
     if (location < 0)
         return;
@@ -89,7 +89,7 @@ void Vin::Material::SetFloat2(int location, Vector2<float>& values)
 
 }
 
-void Vin::Material::SetFloat3(int location, Vector3<float>& values)
+void Vin::Material::SetFloat3(int location, Vector3<float> values)
 {
     if (location < 0)
         return;
@@ -100,7 +100,7 @@ void Vin::Material::SetFloat3(int location, Vector3<float>& values)
 
 }
 
-void Vin::Material::SetFloat4(int location, Vector4<float>& values)
+void Vin::Material::SetFloat4(int location, Vector4<float> values)
 {
     if (location < 0)
         return;
@@ -129,7 +129,7 @@ void Vin::Material::SetInt(int location, int value)
     memcpy(m_Properties[location].data, &value, sizeof(int));
 }
 
-void Vin::Material::SetInt2(int location, Vector2<int>& values)
+void Vin::Material::SetInt2(int location, Vector2<int> values)
 {
     if (location < 0)
         return;
@@ -139,7 +139,7 @@ void Vin::Material::SetInt2(int location, Vector2<int>& values)
     memcpy(m_Properties[location].data, values.data, sizeof(Vector2<int>));
 }
 
-void Vin::Material::SetInt3(int location, Vector3<int>& values)
+void Vin::Material::SetInt3(int location, Vector3<int> values)
 {
     if (location < 0)
         return;
@@ -149,7 +149,7 @@ void Vin::Material::SetInt3(int location, Vector3<int>& values)
     memcpy(m_Properties[location].data, values.data, sizeof(Vector3<int>));
 }
 
-void Vin::Material::SetInt4(int location, Vector4<int>& values)
+void Vin::Material::SetInt4(int location, Vector4<int> values)
 {
     if (location < 0)
         return;
@@ -167,7 +167,7 @@ void Vin::Material::SetInts(int location, int* values, size_t count)
     m_Program->SetInts(location, values, count);
 }
 
-void Vin::Material::SetMat3(int location, Matrix3x3<float>& values)
+void Vin::Material::SetMat3(int location, Matrix3x3<float> values)
 {
     if (location < 0)
         return;
@@ -177,7 +177,7 @@ void Vin::Material::SetMat3(int location, Matrix3x3<float>& values)
     memcpy(m_Properties[location].data, values.data, sizeof(Matrix3x3<float>));
 }
 
-void Vin::Material::SetMat4(int location, Matrix4x4<float>& values)
+void Vin::Material::SetMat4(int location, Matrix4x4<float> values)
 {
     if (location < 0)
         return;

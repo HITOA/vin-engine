@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma warning(push, 0)
+
 #include <iostream>
 #include <ctime>
 
@@ -23,3 +25,5 @@
 #include <bitset>
 #include <memory>
 #include <optick.h>
+
+#pragma warning(pop)

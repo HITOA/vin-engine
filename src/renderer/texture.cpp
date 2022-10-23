@@ -11,4 +11,6 @@ std::shared_ptr<Vin::Texture> Vin::Texture::Create(size_t width, size_t height, 
     switch (Renderer::GetApi()) {
     case Renderer::OpenGL: return std::make_shared<Vin::OpenGLTexture>(width, height, format, mipmap);
     }
+
+    return nullptr;
 }

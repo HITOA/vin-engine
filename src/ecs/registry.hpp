@@ -45,9 +45,9 @@ namespace Vin {
 			m_Archetypes[archetypeIdx].archetype.DeleteComponents(entityIdx);
 			m_Archetypes[archetypeIdx].entityIds.erase(m_Archetypes[archetypeIdx].entityIds.begin() + entityIdx);
 
-			for (auto& it : m_Archetypes[archetypeIdx].entityidx)
-				if (it.second > entityIdx)
-					--it.second;
+			for (auto& it2 : m_Archetypes[archetypeIdx].entityidx)
+				if (it2.second > entityIdx)
+					--it2.second;
 		}
 
 		template<typename RetType, typename... Components, typename... Args>
@@ -222,9 +222,9 @@ namespace Vin {
 			m_Archetypes.emplace_back(layout);
 			m_Archetypes[m_Archetypes.size() - 1].archetype.AddComponents(args...);
 
-			m_ArchetypeMap[archetypeId] = m_Archetypes.size() - 1;
+			m_ArchetypeMap[archetypeId] = (ArchetypeIdx)(m_Archetypes.size() - 1);
 
-			return m_Archetypes.size() - 1;
+			return (ArchetypeIdx)(m_Archetypes.size() - 1);
 		}
 
 		inline ArchetypeIdx AddEntityComponents(ComponentTrait* traits, byte* datas, usize count) {
@@ -246,9 +246,9 @@ namespace Vin {
 			m_Archetypes.emplace_back(layout);
 			m_Archetypes[m_Archetypes.size() - 1].archetype.AddComponents(traits, datas, count);
 
-			m_ArchetypeMap[archetypeId] = m_Archetypes.size() - 1;
+			m_ArchetypeMap[archetypeId] = (ArchetypeIdx)(m_Archetypes.size() - 1);
 
-			return m_Archetypes.size() - 1;
+			return (ArchetypeIdx)(m_Archetypes.size() - 1);
 		}
 	private:
 		EntityManager m_EntityManager{};
