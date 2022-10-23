@@ -144,6 +144,7 @@ class TestModule : public Vin::Module {
 		camera->SetFarPlane(4000);
 
 		sponzascene = Vin::LoadGLTF("data/sponzagltf/Sponza.gltf");
+		//sponzascene = Vin::LoadGLTF("data/Main.1_Sponza/NewSponza_Main_glTF_002.gltf");
 		//sponzascene = Vin::LoadGLTF("data/AlphaBlendModeTest/glTF/AlphaBlendModeTest.gltf");
 		//sponzascene = Vin::LoadGLTF("data/chateau/FullOWMap_Chateau_Guillard_Eevee_packed_MeltRib_V2.gltf");
 		//sponzascene = Vin::LoadGLTF("data/BoxInterleaved/glTF/BoxInterleaved.gltf");
@@ -161,7 +162,8 @@ class TestModule : public Vin::Module {
 		mainLight.color = Vin::Vector4<float>{ 1.0f, 1.0f, 1.0f, 1.0f };
 		mainLight.shadow.distance = 20;
 
-		mainLight.direction = Vin::Vector3<float>{ 0.3, 1, 0.2 }.Normalize();
+		mainLight.direction = Vin::Vector3<float>{ 0.25, 1, 0.15 }.Normalize();
+		mainLight.intensity = 50.0f;
 
 		(*sponzascene)->CreateEntity(mainLight);
 	}

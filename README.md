@@ -20,6 +20,7 @@ There is an exe version in /tool.
 ## Screenshot
 The sponza scene rendered in the engine : (10/22/2022)  
 ![Sponza scene](https://i.imgur.com/FLY2bc9.jpeg)  
+![Modern sponza scene](https://i.imgur.com/9y9cDtY.jpeg)  
   
 ## TODO  
 - Loading GLTF/GLB (2.0) model. (Almost complete)
