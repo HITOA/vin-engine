@@ -17,20 +17,21 @@ Generate with cmake : ```cmake -B"./build" .```
 Optick is used to profile the engine : https://github.com/bombomby/optick  
 There is an exe version in /tool.  
   
-## Screenshoot
+## Screenshot
 The sponza scene rendered in the engine : (10/22/2022)  
 ![Sponza scene](https://i.imgur.com/FLY2bc9.jpeg)  
   
 ## TODO  
 - Loading GLTF/GLB (2.0) model. (Almost complete)
 - PostProcessing Chain system (Simple way to do postprocessing on a rendetarget, you pass the render target to a post process chain, then it end up with all the effect. you would add post process effect like chain.Add(postprocessmat))  
-- Implementing MIMALLOC for std & new/delete operator overload
+- Implementing MIMALLOC for std & new/delete operator overload  
   
-- Proper lighting (Main light with shadow map, Additional light with Eventual shadow map)
-- Cubemap
-- GPU Instancing
-- Clear color controlled by camera  
-- Cascade shadow map (Entire fustrum)  
+- Transform hierarchy, Need a lot of optimization  
+    
+- Proper lighting (Main light with shadow map, Additional light with Eventual shadow map)  
+- Cubemap  
+- GPU Instancing  
+- Cascade shadow map (Entire frustum)  
 - Frustum culling (Compute shader)  
   
 ## Things to considere  
@@ -58,3 +59,4 @@ Quake PAK format specification : https://quakewiki.org/wiki/.pak
 Order your graphics draw calls around : http://realtimecollisiondetection.net/blog/?p=86  
 Optimizing 4x4 matrix multiplication : https://nfrechette.github.io/2017/04/13/modern_simd_matrix_multiplication/  
 PCSS shadow : https://developer.download.nvidia.com/whitepapers/2008/PCSS_Integration.pdf  
+Optimized Transform Hierarchy : https://alexsabourindev.wordpress.com/2019/04/14/creating-an-optimized-transform-hierarchy/  

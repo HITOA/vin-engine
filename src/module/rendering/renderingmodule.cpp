@@ -77,6 +77,8 @@ void Vin::RenderingModule::RenderScene(RenderQueue& queue)
 		/* MATRIX INFORMATION */
 
 		if (lastMatId != primitive.material->GetId()) {
+			lastMatId = primitive.material->GetId();
+
 			primitive.material->Bind();
 
 			if (primitive.material->GetDoubleSided())
@@ -91,23 +93,23 @@ void Vin::RenderingModule::RenderScene(RenderQueue& queue)
 
 			primitive.material->SetMat4("vin_matrix_view", view);
 			primitive.material->SetMat4("vin_matrix_projection", projection);
+
+			/* MAINLIGHT INFORMATION */
+
+			primitive.material->SetFloat3("_MainLight.direction", m_Ctx->mainLight.direction);
+			primitive.material->SetFloat4("_MainLight.color", m_Ctx->mainLight.color);
+			primitive.material->SetFloat("_MainLight.intensity", m_Ctx->mainLight.intensity);
+
+			/* SHADOW INFORMATION */
+
+			primitive.material->SetTexture("_ShadowMap", shadowMap);
+			primitive.material->SetFloat("_ShadowBias", m_Ctx->mainLight.shadow.bias);
 		}
 
 		primitive.material->SetMat4("vin_matrix_model", task.GetModel());
 		primitive.material->SetMat4("vin_matrix_mvp", (projection * view * task.GetModel()));
 		//primitive.material->SetMat4("vin_matrix_mvp", (lightprojection * lightview * task.GetModel()));
 		primitive.material->SetMat4("vin_matrix_lightspace", (lightprojection * lightview * task.GetModel()));
-
-		/* MAINLIGHT INFORMATION */
-
-		primitive.material->SetFloat3("_MainLight.direction", m_Ctx->mainLight.direction);
-		primitive.material->SetFloat4("_MainLight.color", m_Ctx->mainLight.color);
-		primitive.material->SetFloat("_MainLight.intensity", m_Ctx->mainLight.intensity);
-
-		/* SHADOW INFORMATION */
-
-		primitive.material->SetTexture("_ShadowMap", shadowMap);
-		primitive.material->SetFloat("_ShadowBias", m_Ctx->mainLight.shadow.bias);
 
 		/* RENDERING */
 

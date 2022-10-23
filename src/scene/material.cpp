@@ -250,7 +250,8 @@ void Vin::Material::RecalculateId()
             bottom += m_Textures[i].texture->GetId();
 
     unsigned int id{ 0 };
+    id += top;
+    id = id << (sizeof(Program::IdType) * 8);
     id += bottom;
-    id += (top << sizeof(Program::IdType));
     m_Id = id;
 }

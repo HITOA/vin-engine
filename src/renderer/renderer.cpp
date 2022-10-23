@@ -5,9 +5,6 @@
 #include "opengl/renderer_opengl.hpp"
 #include "scene/material.hpp"
 
-#include "msblitvs.hpp"
-#include "msblitfs.hpp"
-
 #include <optick.h>
 
 Vin::Renderer::Api Vin::Renderer::s_api = Vin::Renderer::None;
@@ -134,17 +131,6 @@ void Vin::Renderer::BlitMultiSample(const std::shared_ptr<RenderTexture>& src, c
 void Vin::Renderer::BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst) {
 	static std::shared_ptr<Program> program{};
 	static Material mat{};
-
-	if (!program) {
-		program = Program::Create();
-
-		program->AddShader(Vin::ShaderType::VertexShader, msblitvs);
-		program->AddShader(Vin::ShaderType::FragmentShader, msblitfs);
-
-		program->CompileProgram();
-
-		mat = Material{ program };
-	}
 
 	BlitMultiSample(src, dst, mat);
 }

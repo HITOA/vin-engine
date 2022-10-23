@@ -24,11 +24,14 @@ namespace Vin {
 			model = model * rotation.GetRotationMatrix();
 			Vin::Translate(model, position);
 
-			if (parent > 0) {
-				Transform<T>* transform = registry.GetComponent<Transform<T>>(parent);
-				if (transform != nullptr)
-					model = transform->GetModelMatrix(registry) * model;
-			}
+
+			//NEED to optimize this, it is currently way too slow
+			 
+			//if (parent > 0) {
+			//	Transform<T>* transform = registry.GetComponent<Transform<T>>(parent);
+			//	if (transform != nullptr)
+			//		model = transform->GetModelMatrix(registry) * model;
+			//}
 
 			return model;
 		}
