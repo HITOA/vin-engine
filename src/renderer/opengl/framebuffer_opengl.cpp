@@ -3,7 +3,8 @@
 #include "glad/gl.h"
 #include "logger/logger.hpp"
 
-Vin::OpenGLRenderTarget::OpenGLRenderTarget(const RenderTargetSpecification& spec) : m_Specification{ spec }, m_FrameBufferId{}, m_BufferIds{}
+Vin::OpenGLRenderTarget::OpenGLRenderTarget(const RenderTargetSpecification& spec) : 
+	m_Specification{ spec }, m_FrameBufferId{}, m_BufferIds{}, m_NoColorAttachment{ true }
 {
 	Generate();
 	if (!IsValid())
@@ -18,16 +19,19 @@ Vin::OpenGLRenderTarget::~OpenGLRenderTarget()
 
 void Vin::OpenGLRenderTarget::Bind() const
 {
+	OPTICK_GPU_EVENT("Bind FrameBuffer");
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferId);
 }
 
 void Vin::OpenGLRenderTarget::Unbind() const
 {
+	OPTICK_GPU_EVENT("Unbind FrameBuffer");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Vin::OpenGLRenderTarget::Resize(int width, int height)
+void Vin::OpenGLRenderTarget::Resize(uint32_t width, uint32_t height)
 {
+	OPTICK_EVENT();
 	Destroy();
 	m_Specification.width = width;
 	m_Specification.height = height;
@@ -62,26 +66,74 @@ unsigned int Vin::OpenGLRenderTarget::GetFrameBufferId()
 
 void Vin::OpenGLRenderTarget::Generate()
 {
+	OPTICK_GPU_EVENT("Generate Framebuffer");
+
 	glCreateFramebuffers(1, &m_FrameBufferId);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferId);
 
 	for (size_t i = 0; i < m_Specification.attachements.size(); ++i) {
 		RenderBufferSpecification& spec = m_Specification.attachements[i];
-		if (spec.isTexture) {
-			glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, 1, &m_BufferIds[i]);
-			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_BufferIds[i]);
-			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-				m_Specification.sample, ParseRenderBufferFormat(spec.format),
-				m_Specification.width, m_Specification.height, GL_TRUE);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, ParseTextureAttachment(spec.format), GL_TEXTURE_2D_MULTISAMPLE, m_BufferIds[i], 0);
+		if (m_Specification.sample > 1) {
+			if (spec.isTexture) {
+				GLuint attachment = ParseTextureAttachment(spec.format);
+
+				if (attachment == GL_COLOR_ATTACHMENT0)
+					m_NoColorAttachment = false;
+
+				glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, 1, &m_BufferIds[i]);
+				glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_BufferIds[i]);
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
+					m_Specification.sample, ParseRenderBufferFormat(spec.format),
+					m_Specification.width, m_Specification.height, GL_TRUE);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D_MULTISAMPLE, m_BufferIds[i], 0);
+			}
+			else {
+				GLuint attachment = ParseRenderBufferAttachment(spec.format);
+
+				if (attachment == GL_COLOR_ATTACHMENT0)
+					m_NoColorAttachment = false;
+
+				glCreateRenderbuffers(1, &m_BufferIds[i]);
+				glNamedRenderbufferStorageMultisample(m_BufferIds[i],
+					m_Specification.sample, ParseRenderBufferFormat(spec.format),
+					m_Specification.width, m_Specification.height);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, m_BufferIds[i]);
+			}
 		}
 		else {
-			glCreateRenderbuffers(1, &m_BufferIds[i]);
-			glNamedRenderbufferStorageMultisample(m_BufferIds[i],
-				m_Specification.sample, ParseRenderBufferFormat(spec.format),
-				m_Specification.width, m_Specification.height);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, ParseRenderBufferAttachment(spec.format), GL_RENDERBUFFER, m_BufferIds[i]);
+			if (spec.isTexture) {
+				GLuint attachment = ParseTextureAttachment(spec.format);
+
+				if (attachment == GL_COLOR_ATTACHMENT0)
+					m_NoColorAttachment = false;
+
+				glCreateTextures(GL_TEXTURE_2D, 1, &m_BufferIds[i]);
+				glBindTexture(GL_TEXTURE_2D, m_BufferIds[i]);
+				glTexStorage2D(GL_TEXTURE_2D, 1,
+					ParseRenderBufferFormat(spec.format),
+					m_Specification.width, m_Specification.height);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, m_BufferIds[i], 0);
+			}
+			else {
+				GLuint attachment = ParseRenderBufferAttachment(spec.format);
+
+				if (attachment == GL_COLOR_ATTACHMENT0)
+					m_NoColorAttachment = false;
+
+				glCreateRenderbuffers(1, &m_BufferIds[i]);
+				glNamedRenderbufferStorage(m_BufferIds[i],
+					ParseRenderBufferFormat(spec.format),
+					m_Specification.width, m_Specification.height);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, m_BufferIds[i]);
+			}
 		}
+	}
+
+	if (m_NoColorAttachment) { //Doesn't seem to work ?
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
 	}
 }
 
@@ -112,6 +164,7 @@ unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferFormat(RenderBufferFormat
 	case RenderBufferFormat::RG16: return GL_RG16;
 	case RenderBufferFormat::R8: return GL_R8;
 	case RenderBufferFormat::R16: return GL_R16;
+	case RenderBufferFormat::R32: return GL_R32F;
 	case RenderBufferFormat::BGRA32: return GL_BGRA;
 	case RenderBufferFormat::DEPTH_COMPONENT16: return GL_DEPTH_COMPONENT16;
 	case RenderBufferFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT24;
@@ -133,6 +186,7 @@ unsigned int Vin::OpenGLRenderTarget::ParseTextureAttachment(RenderBufferFormat 
 	case RenderBufferFormat::RG16: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::R8: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::R16: return GL_COLOR_ATTACHMENT0;
+	case RenderBufferFormat::R32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::BGRA32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::DEPTH_COMPONENT16: return GL_DEPTH_ATTACHMENT;
 	case RenderBufferFormat::DEPTH_COMPONENT24: return GL_DEPTH_ATTACHMENT;
@@ -154,6 +208,7 @@ unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferAttachment(RenderBufferFo
 	case RenderBufferFormat::RG16: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::R8: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::R16: return GL_COLOR_ATTACHMENT0;
+	case RenderBufferFormat::R32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::BGRA32: return GL_COLOR_ATTACHMENT0;
 	case RenderBufferFormat::DEPTH_COMPONENT16: return GL_DEPTH_ATTACHMENT;
 	case RenderBufferFormat::DEPTH_COMPONENT24: return GL_DEPTH_ATTACHMENT;
@@ -165,14 +220,14 @@ unsigned int Vin::OpenGLRenderTarget::ParseRenderBufferAttachment(RenderBufferFo
 	return 0;
 }
 
-Vin::OpenGLRenderTexture::OpenGLRenderTexture(unsigned int* textureId, size_t samplecount) : m_TextureId{ textureId }, m_SampleCount{ samplecount } {}
+Vin::OpenGLRenderTexture::OpenGLRenderTexture(unsigned int* textureId, uint32_t samplecount) : m_TextureId{ textureId }, m_SampleCount{ samplecount } {}
 
 void Vin::OpenGLRenderTexture::Bind(unsigned short location)
 {
 	glBindTextureUnit(location, *m_TextureId);
 }
 
-size_t Vin::OpenGLRenderTexture::GetSampleCount() const
+uint32_t Vin::OpenGLRenderTexture::GetSampleCount() const
 {
 	return m_SampleCount;
 }

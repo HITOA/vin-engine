@@ -9,9 +9,10 @@ function(make_includable input_file output_file var_name)
     file(WRITE ${output_file} "${content}")
 endfunction(make_includable)
 
-make_includable(src/resources/msblitfs.glsl generated/msblitfs.hpp msblitfs)
-make_includable(src/resources/msblitvs.glsl generated/msblitvs.hpp msblitvs)
+make_includable(src/resources/vinshadowfs.glsl generated/vinshadowfs.hpp vinshadowfs)
+make_includable(src/resources/vinshadowvs.glsl generated/vinshadowvs.hpp vinshadowvs)
 make_includable(src/resources/vin.glsl generated/vinshader.hpp vinshader)
+make_includable(src/resources/vinbase.glsl generated/vinbaseshader.hpp vinbaseshader)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -20,7 +21,7 @@ endif()
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/bin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "-W4")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DVIN_DEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DVIN_DEBUG")
 
@@ -37,6 +38,7 @@ add_subdirectory(${EXTERNAL_PATH}/glfw)
 add_subdirectory(${EXTERNAL_PATH}/imgui)
 add_subdirectory(${EXTERNAL_PATH}/lz4/build/cmake)
 add_subdirectory(${EXTERNAL_PATH}/mimalloc)
+add_subdirectory(${EXTERNAL_PATH}/optick-compiler)
 add_subdirectory(${EXTERNAL_PATH}/tinygltf)
 
 glad_add_library(glad_library STATIC API gl:core=4.6)
@@ -57,6 +59,7 @@ target_link_libraries(
 	mimalloc-static
 	fmt
 	tinygltf
+	OptickCore
 )
 
 target_precompile_headers(vin_engine PUBLIC src/vinpch.hpp)

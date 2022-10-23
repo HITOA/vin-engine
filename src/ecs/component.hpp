@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/base.hpp">
+#include "core/base.hpp"
 
 #define VINECS_MAX_COMPONENT_COUNT 512
 

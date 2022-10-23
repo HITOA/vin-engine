@@ -6,14 +6,14 @@ namespace Vin {
 
 	class OpenGLRenderTexture : public RenderTexture {
 	public:
-		OpenGLRenderTexture(unsigned int* textureId, size_t samplecount);
+		OpenGLRenderTexture(unsigned int* textureId, uint32_t samplecount);
 
 		void Bind(unsigned short location);
 
-		size_t GetSampleCount() const;
+		uint32_t GetSampleCount() const;
 	private:
 		unsigned int* m_TextureId;
-		size_t m_SampleCount;
+		uint32_t m_SampleCount;
 	};
 
 	class OpenGLRenderTarget : public RenderTarget {
@@ -24,7 +24,7 @@ namespace Vin {
 		void Bind() const;
 		void Unbind() const;
 
-		void Resize(int width, int height);
+		void Resize(uint32_t width, uint32_t height);
 
 		bool IsValid() const;
 
@@ -41,8 +41,9 @@ namespace Vin {
 
 	private:
 		RenderTargetSpecification m_Specification{};
-		unsigned int m_FrameBufferId;
-		unsigned int m_BufferIds[16]; //Texture or Renderbuffer ids
+		unsigned int m_FrameBufferId{};
+		unsigned int m_BufferIds[16]{}; //Texture or Renderbuffer ids
+		bool m_NoColorAttachment{ true };
 	};
 
 }

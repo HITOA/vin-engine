@@ -2,7 +2,7 @@
 
 #include "vinpch.hpp"
 
-#include "core/base.hpp">
+#include "core/base.hpp"
 #include "core/allocator.hpp"
 
 #include "core/event.hpp"
@@ -68,17 +68,18 @@ namespace Vin {
 
 	private:
 		AppInfo m_AppInfo{};
-		std::vector<Module*> m_Modules{};
-
-		bool m_Running;
-		VinTimer m_Timer;
-
-		TimeStep m_CurrentDeltaTime{ 0 };
 
 		double m_ProcessRate{ 120 };
 		double m_UpdateRate{ 60 };
 		double m_lastProcessDelay;
 		double m_lastUpdateDelay;
+
+		TimeStep m_CurrentDeltaTime{ 0 };
+		VinTimer m_Timer;
+
+		std::vector<Module*> m_Modules{};
+
+		bool m_Running; //7 byte padding
 	};
 
 	class Module {
@@ -97,7 +98,7 @@ namespace Vin {
 		virtual void Render() {};
 		virtual void LateRender() {};
 
-		virtual void OnEvent(EventHandler handler) {};
+		virtual void OnEvent(EventHandler) {};
 
 	public:
 		void DispatchEvent(EventHandler handler);

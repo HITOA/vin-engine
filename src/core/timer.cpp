@@ -2,6 +2,8 @@
 
 #include "core/assert.hpp"
 
+#include <optick.h>
+
 Vin::VinTimer::VinTimer()
 {
 	int s = timespec_get(&m_StartTime, TIME_UTC);
@@ -39,6 +41,8 @@ Vin::TimeStep Vin::VinTimer::GetTimeStep()
 
 void Vin::VinTimer::Wait(double ms)
 {
+	OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Wait);
+
 	double start = GetElapsedMillisecond();
 	while ((GetElapsedMillisecond() - start) < ms) {
 #ifdef _MSC_VER

@@ -67,7 +67,7 @@ namespace Vin {
 	private:
 		ComponentIdx indices[VINECS_MAX_COMPONENT_COUNT]{ 0 };
 		ComponentTrait layout[VINECS_MAX_COMPONENT_BY_ENTITY]{ 0 };
-		usize count{ 0 };
+		short count{ 0 };
 		usize stride{ 0 };
 	};
 

@@ -13,4 +13,6 @@ std::shared_ptr<Vin::VertexArray> Vin::VertexArray::Create()
     switch (Renderer::GetApi()) {
     case Renderer::OpenGL: return std::make_shared<Vin::OpenGLVertexArray>();
     }
+    
+    return nullptr;
 }

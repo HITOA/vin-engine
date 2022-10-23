@@ -96,6 +96,7 @@ void Vin::OpenGLTexture::SetData(void* data)
 
 void Vin::OpenGLTexture::Bind(unsigned short location)
 {
+	OPTICK_GPU_EVENT("Bind Texture");
 	glBindTextureUnit(location, m_TextureId);
 }
 

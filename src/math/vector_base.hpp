@@ -1,5 +1,4 @@
 #pragma once
-#pragma unroll
 
 #include "mathhelper.hpp"
 

@@ -47,8 +47,8 @@ bool ReadWholeFile(std::vector<unsigned char>* out, std::string* err,
 	return true;
 }
 
-bool WriteWholeFile(std::string* err, const std::string& filepath, 
-	const std::vector<unsigned char>& contents, void*) {
+bool WriteWholeFile(std::string* err, const std::string&, 
+	const std::vector<unsigned char>&, void*) {
 	if (err)
 		(*err) += "Writing not allowed.";
 	return false;
@@ -123,10 +123,10 @@ Vin::TextureFormat ParseGLTFTextureFormat(int component, int depth) {
 	return Vin::TextureFormat::BGRA32;
 }
 
-void AddTexture(tinygltf::Model& model, Vin::Asset<Vin::Material> material, tinygltf::TextureInfo& textureInfo, 
+void AddTexture(tinygltf::Model& model, Vin::Asset<Vin::Material> material, int index, 
 	const std::string& assetBaseName, std::string_view textureFieldName) {
 
-	std::string texturePath = assetBaseName + "texture_" + std::to_string(textureInfo.index);
+	std::string texturePath = assetBaseName + "texture_" + std::to_string(index);
 
 	Vin::Asset<Vin::Texture> texture = Vin::AssetDatabase::GetAsset<Vin::Texture>(texturePath);
 
@@ -135,7 +135,7 @@ void AddTexture(tinygltf::Model& model, Vin::Asset<Vin::Material> material, tiny
 		return;
 	}
 
-	tinygltf::Texture& gltfTexture = model.textures[textureInfo.index];
+	tinygltf::Texture& gltfTexture = model.textures[index];
 	tinygltf::Image& gltfImage = model.images[gltfTexture.source];
 
 	std::shared_ptr<Vin::Texture> image = Vin::Texture::Create(
@@ -183,6 +183,7 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 		Vin::Asset<Vin::StaticMesh> mesh = Vin::AssetDatabase::AddAsset<Vin::StaticMesh>(Vin::StaticMesh{}, assetBaseName + "mesh_" + std::to_string(nodeIdx));
 		mesh.SetFlags(Vin::AssetFlag::Persistent);
 
+        Vin::Vector3<float> albedo;
 		for (tinygltf::Primitive& gltfprimitive : model.meshes[model.nodes[nodeIdx].mesh].primitives) {
 			Vin::Primitive primitive{};
 
@@ -202,7 +203,7 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 				tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
 
 				if (attribname == Vin::VertexAttribute::Position)
-					primitive.vertexCount = accessor.count;
+					primitive.vertexCount = (uint32_t)accessor.count;
 				
 				std::shared_ptr<Vin::VertexBuffer> vbo = Vin::VertexBuffer::Create(accessor.count * Vin::GetVertexAttributeTypeSize(attribtype));
 
@@ -216,7 +217,7 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 			if (gltfprimitive.indices >= 0) {
 				tinygltf::Accessor& accessor = model.accessors[gltfprimitive.indices];
 
-				Vin::BufferIndexType type = accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT ?
+				Vin::BufferIndexType type = accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT ?
 					Vin::BufferIndexType::UnsignedInt32 : Vin::BufferIndexType::UnsignedInt16;
 
 				primitive.ibo = Vin::IndexBuffer::Create(type);
@@ -224,7 +225,7 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 				tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
 				tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
 
-				primitive.ibo->SetData(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset, accessor.count);
+				primitive.ibo->SetData(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset, (uint32_t)accessor.count);
 
 				primitive.vao->SetIndexBuffer(primitive.ibo);
 
@@ -234,25 +235,45 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 				primitive.indexed = false;
 			}
 
-			Vin::Asset<Vin::Material> material =
-				Vin::AssetDatabase::GetAsset<Vin::Material>(
-					assetBaseName + "material_" + std::to_string(gltfprimitive.material));
-
-			if (material.Get() == nullptr) {
-				//Build Material
-
-				material = Vin::AssetDatabase::AddAsset<Vin::Material>(Vin::Material{ Vin::GetDefaultProgram() },
+			if (gltfprimitive.material != -1) {
+				Vin::Asset<Vin::Material> material =
+					Vin::AssetDatabase::GetAsset<Vin::Material>(
 						assetBaseName + "material_" + std::to_string(gltfprimitive.material));
-				tinygltf::Material& gltfmaterial = model.materials[gltfprimitive.material];
-				
-				AddTexture(model, material, gltfmaterial.pbrMetallicRoughness.baseColorTexture, assetBaseName, "_MainTex");
 
-				if (gltfmaterial.alphaMode == "BLEND") {
-					material->SetTransparency(true);
+				if (material.Get() == nullptr) {
+					//Build Material
+
+					material = Vin::AssetDatabase::AddAsset<Vin::Material>(Vin::Material{ Vin::GetDefaultProgram() },
+						assetBaseName + "material_" + std::to_string(gltfprimitive.material));
+					tinygltf::Material& gltfmaterial = model.materials[gltfprimitive.material];
+
+					if (gltfmaterial.pbrMetallicRoughness.baseColorTexture.index != -1)
+						AddTexture(model, material, gltfmaterial.pbrMetallicRoughness.baseColorTexture.index, assetBaseName, "_MainTex");
+					if (gltfmaterial.normalTexture.index != -1)
+						AddTexture(model, material, gltfmaterial.normalTexture.index, assetBaseName, "_NormalTex");
+					if (gltfmaterial.pbrMetallicRoughness.metallicRoughnessTexture.index != -1)
+						AddTexture(model, material, gltfmaterial.pbrMetallicRoughness.metallicRoughnessTexture.index, assetBaseName, "_MetallicRoughnessTex");
+
+
+					if (gltfmaterial.alphaMode == "BLEND") {
+						material->SetTransparency(true);
+					}
+
+                    albedo = Vin::Vector3<float>{
+                            (float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[0],
+                            (float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[1],
+                            (float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[2]};
+					material->SetFloat3("_Albedo", albedo);
+
+					material->SetFloat("_Metallic", (float)gltfmaterial.pbrMetallicRoughness.metallicFactor);
+					material->SetFloat("_Roughness", (float)gltfmaterial.pbrMetallicRoughness.roughnessFactor);
+					material->SetFloat("_AlphaCutoff", (float)gltfmaterial.alphaCutoff);
+
+					material->SetDoubleSided(gltfmaterial.doubleSided);
 				}
-			}
 
-			primitive.material = material;
+				primitive.material = material;
+			}
 
 			mesh->AddPrimitive(primitive);
 		}

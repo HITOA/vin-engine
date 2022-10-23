@@ -10,12 +10,6 @@
 #define VIN_DEFAULT_MEMORY_ALIGNEMENT 16
 #endif
 
-void* __cdecl operator new[](size_t size, const char* pName,
-	int flags, unsigned debugFlags, const char* file, int line);
-void* __cdecl operator new[](size_t size, size_t alignment,
-	size_t alignmentOffset, const char* pName, int flags,
-	unsigned debugFlags, const char* file, int line);
-
 namespace Vin {
 	class VinDefaultAllocator {
 	public:
@@ -87,6 +81,6 @@ namespace Vin {
 
 	template<typename T>
 	void Deconstruct(T* ptr) {
-		T->~T();
+		ptr->~T();
 	}
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/base.hpp">
+#include "core/base.hpp"
 #include "renderer/graphicscontext.hpp"
 
 #define GLFW_INCLUDE_NONE

@@ -13,4 +13,6 @@ std::unique_ptr<Vin::GraphicsContext> Vin::GraphicsContext::Create(void* window)
     switch (Renderer::GetApi()) {
     case Renderer::OpenGL: return std::make_unique<Vin::OpenGLContext>((GLFWwindow*)window);
     }
+
+    return nullptr;
 }

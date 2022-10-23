@@ -5,7 +5,7 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "module/windowing/windowmodule.hpp"
-#include "assets/assetdatabase.hpp"
+#include "assets/asset.hpp"
 #include "editordebugconsole.hpp"
 
 #include <GLFW/glfw3.h>
@@ -166,8 +166,8 @@ void Vin::EditorModule::Begin()
 	Asset<WindowInfo> windowInfo = AssetDatabase::GetAsset<WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
 
 	ImGuiIO& io = ImGui::GetIO();
-	io.DisplaySize = ImVec2(windowInfo->width, windowInfo->height);
-	io.DeltaTime = GetApp()->GetDeltaTime().GetSecond();
+	io.DisplaySize = ImVec2((float)windowInfo->width, (float)windowInfo->height);
+	io.DeltaTime = (float)GetApp()->GetDeltaTime().GetSecond();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	ImGui_ImplOpenGL3_NewFrame();
@@ -183,7 +183,6 @@ void Vin::EditorModule::End()
 
 void Vin::EditorModule::DrawMainDockSpace()
 {
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->WorkPos);
 	ImGui::SetNextWindowSize(viewport->WorkSize);

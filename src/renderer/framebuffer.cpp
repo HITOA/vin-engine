@@ -13,6 +13,8 @@ std::shared_ptr<Vin::RenderTarget> Vin::RenderTarget::Create(const RenderTargetS
     switch (Renderer::GetApi()) {
     case Renderer::OpenGL: return std::make_shared<Vin::OpenGLRenderTarget>(spec);
     }
+
+    return nullptr;
 }
 
 Vin::RenderBufferSpecification::RenderBufferSpecification(RenderBufferFormat format, bool isTexture)
@@ -21,10 +23,10 @@ Vin::RenderBufferSpecification::RenderBufferSpecification(RenderBufferFormat for
 Vin::RenderTargetSpecification::RenderTargetSpecification()
     : width{ 1 }, height{ 1 }, sample{ 1 }, attachements{} {}
 
-Vin::RenderTargetSpecification::RenderTargetSpecification(size_t width, size_t height)
+Vin::RenderTargetSpecification::RenderTargetSpecification(uint32_t width, uint32_t height)
     : width{ width }, height{ height }, sample{ 1 }, attachements{} {}
 
-Vin::RenderTargetSpecification::RenderTargetSpecification(size_t width, size_t height, size_t sample)
+Vin::RenderTargetSpecification::RenderTargetSpecification(uint32_t width, uint32_t height, uint32_t sample)
     : width{ width }, height{ height }, sample{ sample }, attachements{} {}
 
 void Vin::RenderTargetSpecification::AddRenderBuffer(RenderBufferSpecification spec)

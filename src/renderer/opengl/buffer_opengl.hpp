@@ -29,14 +29,14 @@ namespace Vin {
 		void Bind() const;
 		void Unbind() const;
 
-		size_t GetCount() const;
+		uint32_t GetCount() const;
 		BufferIndexType GetIndexType() const;
 
-		void SetData(void* data, size_t count);
+		void SetData(void* data, uint32_t count);
 
 	private:
 		unsigned int m_BufferId;
-		size_t m_Count;
+		uint32_t m_Count;
 		BufferIndexType m_Type;
 	};
 }

@@ -11,7 +11,7 @@ struct GLFWwindow;
 
 namespace Vin {
 	struct WindowResizeEvent {
-		int width, height;
+		uint32_t width, height;
 	};
 
 	struct WindowCloseEvent {
@@ -25,8 +25,8 @@ namespace Vin {
 
 	struct WindowInfo {
 		const char* title{ "Application" };
-		int width{ 1600 };
-		int height{ 900 };
+		uint32_t width{ 1600 };
+		uint32_t height{ 900 };
 	};
 
 	struct WindowMouseState {

@@ -14,6 +14,7 @@ namespace Vin {
 		RG16,
 		R8,
 		R16,
+		R32,
 		BGRA32,
 		DEPTH_COMPONENT16,
 		DEPTH_COMPONENT24,
@@ -31,20 +32,20 @@ namespace Vin {
 	};
 
 	struct RenderTargetSpecification {
-		size_t width, height;
-		size_t sample{};
+		uint32_t width, height;
+		uint32_t sample{};
 		std::vector<RenderBufferSpecification> attachements{};
 
 		RenderTargetSpecification();
-		RenderTargetSpecification(size_t width, size_t height);
-		RenderTargetSpecification(size_t width, size_t height, size_t sample);
+		RenderTargetSpecification(uint32_t width, uint32_t height);
+		RenderTargetSpecification(uint32_t width, uint32_t height, uint32_t sample);
 
 		void AddRenderBuffer(RenderBufferSpecification spec);
 	};
 
 	class RenderTexture : public Bindable<unsigned short> {
 	public:
-		virtual size_t GetSampleCount() const = 0;
+		virtual uint32_t GetSampleCount() const = 0;
 	};
 
 	class RenderTarget {
@@ -54,7 +55,7 @@ namespace Vin {
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		virtual void Resize(int width, int height) = 0;
+		virtual void Resize(uint32_t width, uint32_t height) = 0;
 
 		virtual bool IsValid() const = 0;
 

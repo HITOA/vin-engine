@@ -5,8 +5,7 @@
 #include "opengl/renderer_opengl.hpp"
 #include "scene/material.hpp"
 
-#include "msblitvs.hpp"
-#include "msblitfs.hpp"
+#include <optick.h>
 
 Vin::Renderer::Api Vin::Renderer::s_api = Vin::Renderer::None;
 Vin::Renderer::RenderingApi* Vin::Renderer::s_RenderingApi = new NoneRenderingApi{};
@@ -53,13 +52,13 @@ void Vin::Renderer::Clear(float r, float g, float b, float a)
 	s_RenderingApi->Clear(r, g, b, a);
 }
 
-void Vin::Renderer::DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, size_t verticiesCount)
+void Vin::Renderer::DrawArrays(const std::shared_ptr<VertexArray>& vertexArray, uint32_t verticiesCount)
 {
 	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
 	s_RenderingApi->DrawArrays(vertexArray, verticiesCount);
 }
 
-void Vin::Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, size_t indexCount)
+void Vin::Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount)
 {
 	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
 	indexCount = indexCount == 0 ? vertexArray->GetIndexBuffer()->GetCount() : indexCount;
@@ -70,6 +69,18 @@ void Vin::Renderer::Blit(const std::shared_ptr<RenderTarget>& src, const std::sh
 {
 	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
 	s_RenderingApi->Blit(src, dst);
+}
+
+void Vin::Renderer::SetCullMode(CullMode mode)
+{
+	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
+	s_RenderingApi->SetCullMode(mode);
+}
+
+void Vin::Renderer::SetBlendMode(BlendMode mode)
+{
+	VIN_ASSERT(s_RenderingApi != nullptr, "Rendering api is not initialized.");
+	s_RenderingApi->SetBlendMode(mode);
 }
 
 void Vin::Renderer::BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst, Material mat)
@@ -120,17 +131,6 @@ void Vin::Renderer::BlitMultiSample(const std::shared_ptr<RenderTexture>& src, c
 void Vin::Renderer::BlitMultiSample(const std::shared_ptr<RenderTexture>& src, const std::shared_ptr<RenderTarget>& dst) {
 	static std::shared_ptr<Program> program{};
 	static Material mat{};
-
-	if (!program) {
-		program = Program::Create();
-
-		program->AddShader(Vin::ShaderType::VertexShader, msblitvs);
-		program->AddShader(Vin::ShaderType::FragmentShader, msblitfs);
-
-		program->CompileProgram();
-
-		mat = Material{ program };
-	}
 
 	BlitMultiSample(src, dst, mat);
 }

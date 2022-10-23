@@ -1,6 +1,6 @@
 #include "shaderutils.hpp"
 
-#include "assets/assetdatabase.hpp"
+#include "assets/asset.hpp"
 
 std::string SolveInclude(Vin::Asset<std::string> shader) {
 	std::string solved{ *shader.Get() };

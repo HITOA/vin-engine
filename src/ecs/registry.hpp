@@ -6,6 +6,8 @@
 #include "entity.hpp"
 #include "archetype.hpp"
 
+#include <optick.h>
+
 /*template<size_t N>
 struct std::hash<std::bitset<N>> {
 	size_t operator()(std::bitset<N> v) const {
@@ -43,32 +45,61 @@ namespace Vin {
 			m_Archetypes[archetypeIdx].archetype.DeleteComponents(entityIdx);
 			m_Archetypes[archetypeIdx].entityIds.erase(m_Archetypes[archetypeIdx].entityIds.begin() + entityIdx);
 
-			for (auto& it : m_Archetypes[archetypeIdx].entityidx)
-				if (it.second > entityIdx)
-					--it.second;
+			for (auto& it2 : m_Archetypes[archetypeIdx].entityidx)
+				if (it2.second > entityIdx)
+					--it2.second;
 		}
 
 		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Query<memlayout, Components...>, Args...), Args... args) {
+		void Process(RetType(system)(Query<memlayout, Components...>, Args...), Args&... args) {
+			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Components...>(true)) {
+				if (it->archetype.template MatchLayout<Components...>(true)) {
 					system(Query<memlayout, Components...>{
-						it->archetype.GetComponentIterator<Components>()...,
+						it->archetype.template GetComponentIterator<Components>()...,
 						it->archetype.GetSize() }, args...);
 				}
 			}
 		}
 
 		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Query<memlayout, EntityId, Components...>, Args...), Args... args) {
+		void Process(RetType(system)(Query<memlayout, EntityId, Components...>, Args...), Args&... args) {
+			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Components...>(true)) {
+				if (it->archetype.template MatchLayout<Components...>(true)) {
 					system(Query<memlayout, EntityId, Components...>{
 						(EntityId*)it->entityIds.data(),
-						it->archetype.GetComponentIterator<Components>()...,
+						it->archetype.template GetComponentIterator<Components>()...,
 						it->archetype.GetSize() }, args...);
+				}
+			}
+		}
+
+		template<typename RetType, typename... Components, typename... Args>
+		void Process(RetType(system)(Registry<memlayout>& registry, Query<memlayout, Components...>, Args...), Args&... args) {
+			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
+			auto itend = m_Archetypes.end();
+			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
+				if (it->archetype.template MatchLayout<Components...>(true)) {
+					system(*this, Query<memlayout, Components...>{
+						it->archetype.template GetComponentIterator<Components>()...,
+							it->archetype.GetSize() }, args...);
+				}
+			}
+		}
+
+		template<typename RetType, typename... Components, typename... Args>
+		void Process(RetType(system)(Registry<memlayout>& registry, Query<memlayout, EntityId, Components...>, Args...), Args&... args) {
+			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
+			auto itend = m_Archetypes.end();
+			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
+				if (it->archetype.template MatchLayout<Components...>(true)) {
+					system(*this, Query<memlayout, EntityId, Components...>{
+						(EntityId*)it->entityIds.data(),
+							it->archetype.template GetComponentIterator<Components>()...,
+							it->archetype.GetSize() }, args...);
 				}
 			}
 		}
@@ -78,10 +109,10 @@ namespace Vin {
 			if (m_EntityArchetypeMap.count(entityId) == 0)
 				return nullptr;
 			ArchetypeIdx archetypeIdx = m_EntityArchetypeMap[entityId];
-			usize componentIdx = m_Archetypes[archetypeIdx].archetype.GetComponentIdx<T>();
+			usize componentIdx = m_Archetypes[archetypeIdx].archetype.template GetComponentIdx<T>();
 			if (componentIdx == -1)
 				return nullptr;
-			return m_Archetypes[archetypeIdx].archetype.GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
+			return m_Archetypes[archetypeIdx].archetype.template GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
 		}
 
 		template<typename T>
@@ -89,9 +120,9 @@ namespace Vin {
 			if (m_EntityArchetypeMap.count(entityId) == 0)
 				return nullptr;
 			ArchetypeIdx archetypeIdx = m_EntityArchetypeMap[entityId];
-			usize componentIdx = m_Archetypes[archetypeIdx].archetype.GetComponentIdx<T>();
+			usize componentIdx = m_Archetypes[archetypeIdx].archetype.template GetComponentIdx<T>();
 			if (componentIdx != -1) {
-				T* ptr = m_Archetypes[archetypeIdx].archetype.GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
+				T* ptr = m_Archetypes[archetypeIdx].archetype.template GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
 				memcpy(ptr, &component, sizeof(T));
 				return ptr;
 			}
@@ -122,7 +153,7 @@ namespace Vin {
 			Free<ComponentTrait>(traits);
 			Free<byte>(datas);
 
-			return m_Archetypes[archetypeIdx].archetype.GetComponentByIdx<T>(m_Archetypes[archetypeIdx].archetype.GetSize() - 1);
+			return m_Archetypes[archetypeIdx].archetype.template GetComponentByIdx<T>(m_Archetypes[archetypeIdx].archetype.GetSize() - 1);
 		}
 
 		template<typename T>
@@ -191,9 +222,9 @@ namespace Vin {
 			m_Archetypes.emplace_back(layout);
 			m_Archetypes[m_Archetypes.size() - 1].archetype.AddComponents(args...);
 
-			m_ArchetypeMap[archetypeId] = m_Archetypes.size() - 1;
+			m_ArchetypeMap[archetypeId] = (ArchetypeIdx)(m_Archetypes.size() - 1);
 
-			return m_Archetypes.size() - 1;
+			return (ArchetypeIdx)(m_Archetypes.size() - 1);
 		}
 
 		inline ArchetypeIdx AddEntityComponents(ComponentTrait* traits, byte* datas, usize count) {
@@ -215,9 +246,9 @@ namespace Vin {
 			m_Archetypes.emplace_back(layout);
 			m_Archetypes[m_Archetypes.size() - 1].archetype.AddComponents(traits, datas, count);
 
-			m_ArchetypeMap[archetypeId] = m_Archetypes.size() - 1;
+			m_ArchetypeMap[archetypeId] = (ArchetypeIdx)(m_Archetypes.size() - 1);
 
-			return m_Archetypes.size() - 1;
+			return (ArchetypeIdx)(m_Archetypes.size() - 1);
 		}
 	private:
 		EntityManager m_EntityManager{};
