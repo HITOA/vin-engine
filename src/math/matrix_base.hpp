@@ -27,7 +27,7 @@ namespace Vin {
 
 	template<typename T, size_t m, size_t n>
 	struct Matrix {
-		using MatrixType = MatrixType<T, m, n>;
+		using MType = MatrixType<T, m, n>;
 
 		static constexpr size_t rows = m;
 		static constexpr size_t cols = n;

@@ -5,7 +5,7 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "module/windowing/windowmodule.hpp"
-#include "assets/assetdatabase.hpp"
+#include "assets/asset.hpp"
 #include "editordebugconsole.hpp"
 
 #include <GLFW/glfw3.h>

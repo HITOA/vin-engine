@@ -6,7 +6,7 @@
 
 #ifdef unix
 #define VIN_PLATFORM_UNIX
-#error "UNIX NOT SUPPORTED"
+
 #endif // unix
 
 #ifdef __APPLE__

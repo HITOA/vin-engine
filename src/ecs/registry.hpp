@@ -55,9 +55,9 @@ namespace Vin {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Components...>(true)) {
+				if (it->archetype.template MatchLayout<Components...>(true)) {
 					system(Query<memlayout, Components...>{
-						it->archetype.GetComponentIterator<Components>()...,
+						it->archetype.template GetComponentIterator<Components>()...,
 						it->archetype.GetSize() }, args...);
 				}
 			}
@@ -68,10 +68,10 @@ namespace Vin {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Components...>(true)) {
+				if (it->archetype.template MatchLayout<Components...>(true)) {
 					system(Query<memlayout, EntityId, Components...>{
 						(EntityId*)it->entityIds.data(),
-						it->archetype.GetComponentIterator<Components>()...,
+						it->archetype.template GetComponentIterator<Components>()...,
 						it->archetype.GetSize() }, args...);
 				}
 			}
@@ -82,9 +82,9 @@ namespace Vin {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Components...>(true)) {
+				if (it->archetype.template MatchLayout<Components...>(true)) {
 					system(*this, Query<memlayout, Components...>{
-						it->archetype.GetComponentIterator<Components>()...,
+						it->archetype.template GetComponentIterator<Components>()...,
 							it->archetype.GetSize() }, args...);
 				}
 			}
@@ -95,10 +95,10 @@ namespace Vin {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
-				if (it->archetype.MatchLayout<Components...>(true)) {
+				if (it->archetype.template MatchLayout<Components...>(true)) {
 					system(*this, Query<memlayout, EntityId, Components...>{
 						(EntityId*)it->entityIds.data(),
-							it->archetype.GetComponentIterator<Components>()...,
+							it->archetype.template GetComponentIterator<Components>()...,
 							it->archetype.GetSize() }, args...);
 				}
 			}
@@ -109,10 +109,10 @@ namespace Vin {
 			if (m_EntityArchetypeMap.count(entityId) == 0)
 				return nullptr;
 			ArchetypeIdx archetypeIdx = m_EntityArchetypeMap[entityId];
-			usize componentIdx = m_Archetypes[archetypeIdx].archetype.GetComponentIdx<T>();
+			usize componentIdx = m_Archetypes[archetypeIdx].archetype.template GetComponentIdx<T>();
 			if (componentIdx == -1)
 				return nullptr;
-			return m_Archetypes[archetypeIdx].archetype.GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
+			return m_Archetypes[archetypeIdx].archetype.template GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
 		}
 
 		template<typename T>
@@ -120,9 +120,9 @@ namespace Vin {
 			if (m_EntityArchetypeMap.count(entityId) == 0)
 				return nullptr;
 			ArchetypeIdx archetypeIdx = m_EntityArchetypeMap[entityId];
-			usize componentIdx = m_Archetypes[archetypeIdx].archetype.GetComponentIdx<T>();
+			usize componentIdx = m_Archetypes[archetypeIdx].archetype.template GetComponentIdx<T>();
 			if (componentIdx != -1) {
-				T* ptr = m_Archetypes[archetypeIdx].archetype.GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
+				T* ptr = m_Archetypes[archetypeIdx].archetype.template GetComponentByIdx<T>(m_Archetypes[archetypeIdx].entityidx[entityId]);
 				memcpy(ptr, &component, sizeof(T));
 				return ptr;
 			}
@@ -153,7 +153,7 @@ namespace Vin {
 			Free<ComponentTrait>(traits);
 			Free<byte>(datas);
 
-			return m_Archetypes[archetypeIdx].archetype.GetComponentByIdx<T>(m_Archetypes[archetypeIdx].archetype.GetSize() - 1);
+			return m_Archetypes[archetypeIdx].archetype.template GetComponentByIdx<T>(m_Archetypes[archetypeIdx].archetype.GetSize() - 1);
 		}
 
 		template<typename T>

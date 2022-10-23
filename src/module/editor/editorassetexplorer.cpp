@@ -4,7 +4,7 @@
 #include "editordebugconsole.hpp"
 #include "editorassetexplorer.hpp"
 
-#include "assets/assetdatabase.hpp"
+#include "assets/asset.hpp"
 
 #include "logger/logger.hpp"
 

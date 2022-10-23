@@ -28,7 +28,7 @@ namespace Vin {
 			//NEED to optimize this, it is currently way too slow
 			 
 			if (parent > 0) {
-				Transform<T>* transform = registry.GetComponent<Transform<T>>(parent);
+				Transform<T>* transform = registry.template GetComponent<Transform<T>>(parent);
 				if (transform != nullptr)
 					model = transform->GetModelMatrix(registry) * model;
 			}

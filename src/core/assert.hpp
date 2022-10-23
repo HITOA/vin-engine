@@ -2,8 +2,17 @@
 
 #include "core/base.hpp"
 
+#if defined(_MSC_VER)
+    #define DEBUGBREAK() __debugbreak()
+#elif defined(__GNUC__)
+    #include "signal.h"
+    #define DEBUGBREAK() raise(SIGTRAP)
+#else
+    #define DEBUGBREAK()
+#endif
+
 #ifdef VIN_ENABLE_ASSERT
-	#define VIN_ASSERT(x, msg) if (!(x)) {printf("Assertion failed: \"%s\": %s, in file %s line %i.\n", msg, #x, __FILE__, __LINE__); __debugbreak();}
+	#define VIN_ASSERT(x, msg) if (!(x)) {printf("Assertion failed: \"%s\": %s, in file %s line %i.\n", msg, #x, __FILE__, __LINE__); DEBUGBREAK();}
 #else
 	#define VIN_ASSERT(x, msg) 
 #endif

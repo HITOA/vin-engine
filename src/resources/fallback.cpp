@@ -3,7 +3,7 @@
 
 std::shared_ptr<Vin::Texture> Vin::Fallback::GetFallbackTexture()
 {
-    static char fallbackTextureData[16]{ 255, 0, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 0, 255, 255 };
+    static char fallbackTextureData[16]{ (char)255, 0, (char)255, (char)255, 0, 0, 0, (char)255, 0, 0, 0, (char)255, (char)255, 0, (char)255, (char)255 };
     static std::shared_ptr<Vin::Texture> fallbackTexture;
     if (!fallbackTexture) {
         fallbackTexture = Texture::Create(2, 2, TextureFormat::BGRA32, true);

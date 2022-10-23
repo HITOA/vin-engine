@@ -183,6 +183,7 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 		Vin::Asset<Vin::StaticMesh> mesh = Vin::AssetDatabase::AddAsset<Vin::StaticMesh>(Vin::StaticMesh{}, assetBaseName + "mesh_" + std::to_string(nodeIdx));
 		mesh.SetFlags(Vin::AssetFlag::Persistent);
 
+        Vin::Vector3<float> albedo;
 		for (tinygltf::Primitive& gltfprimitive : model.meshes[model.nodes[nodeIdx].mesh].primitives) {
 			Vin::Primitive primitive{};
 
@@ -258,10 +259,11 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 						material->SetTransparency(true);
 					}
 
-					material->SetFloat3("_Albedo", Vin::Vector3<float>{
-						(float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[0],
-							(float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[1],
-							(float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[2]});
+                    albedo = Vin::Vector3<float>{
+                            (float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[0],
+                            (float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[1],
+                            (float)gltfmaterial.pbrMetallicRoughness.baseColorFactor[2]};
+					material->SetFloat3("_Albedo", albedo);
 
 					material->SetFloat("_Metallic", (float)gltfmaterial.pbrMetallicRoughness.metallicFactor);
 					material->SetFloat("_Roughness", (float)gltfmaterial.pbrMetallicRoughness.roughnessFactor);
