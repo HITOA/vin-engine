@@ -106,13 +106,10 @@ void Vin::RenderingModule::RenderScene(RenderQueue& queue)
 			primitive.material->SetFloat("_ShadowBias", m_Ctx->mainLight.shadow.bias);
 		}
 
-        Matrix4x4<float> mvp = (projection * view * task.GetModel());
-        Matrix4x4<float> lsp = (lightprojection * lightview * task.GetModel());
-
 		primitive.material->SetMat4("vin_matrix_model", task.GetModel());
-		primitive.material->SetMat4("vin_matrix_mvp", mvp);
+		primitive.material->SetMat4("vin_matrix_mvp", (projection * view * task.GetModel()));
 		//primitive.material->SetMat4("vin_matrix_mvp", (lightprojection * lightview * task.GetModel()));
-		primitive.material->SetMat4("vin_matrix_lightspace", lsp);
+		primitive.material->SetMat4("vin_matrix_lightspace", (lightprojection * lightview * task.GetModel()));
 
 		/* RENDERING */
 
@@ -160,8 +157,6 @@ void Vin::RenderingModule::GenerateShadowMap(RenderQueue& queue)
 
 	m_ShadowmapMaterial.Bind();
 
-    Matrix4x4<float> lsp;
-
 	for (RenderTask& task : queue) {
 		if (task.GetCamera() != currCamera) {
 			currCamera = task.GetCamera();
@@ -174,8 +169,7 @@ void Vin::RenderingModule::GenerateShadowMap(RenderQueue& queue)
 
 		/* MATERIAL */
 
-        lsp = projection * view * task.GetModel();
-		m_ShadowmapMaterial.SetMat4("vin_matrix_lightspace", lsp);
+		m_ShadowmapMaterial.SetMat4("vin_matrix_lightspace", projection * view * task.GetModel());
 
 		/* RENDERING */
 
