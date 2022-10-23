@@ -6,7 +6,7 @@
 #include "light.hpp"
 #include "transform.hpp"
 #include "meshrenderer.hpp"
-#include "assets/assetdatabase.hpp"
+#include "assets/asset.hpp"
 #include "module/rendering/rendercontext.hpp"
 
 #include <optick.h>
@@ -30,7 +30,7 @@ namespace Vin{
 		static void MeshRendererSystem(Registry<layout>& registry, Query<layout, Transform<float>, MeshRenderer> query, std::shared_ptr<Camera> camera) {
 			Asset<RenderContext> m_Ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_BASEPATH);
 
-			for (auto& [transform, meshrenderer] : query) {
+			for (auto [transform, meshrenderer] : query) {
 				if (!meshrenderer->isDynamicMesh) {
 					StaticMesh* mesh = meshrenderer->staticmesh;
 					for (auto& primitive : *mesh) {
@@ -44,7 +44,7 @@ namespace Vin{
 		static void LightRendererSystem(Query<layout, Light> query) {
 			Asset<RenderContext> m_Ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_BASEPATH);
 
-			for (auto& [light] : query) {
+			for (auto [light] : query) {
 				if (light->type == LightType::Directional) {
 					m_Ctx->mainLight = *light;
 					continue;

@@ -2,7 +2,7 @@
 #include "logger/logger.hpp"
 #include "renderer/renderer.hpp"
 
-#include "assets/assetdatabase.hpp"
+#include "assets/asset.hpp"
 #include "vinshader.hpp"
 #include "vinbaseshader.hpp"
 

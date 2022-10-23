@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/application.hpp"
-#include "assets/assetdatabase.hpp"
+#include "assets/asset.hpp"
 #include "rendercontext.hpp"
 #include "renderer/framebuffer.hpp"
 

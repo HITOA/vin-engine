@@ -3,7 +3,7 @@
 #include "core/assert.hpp"
 #include <GLFW/glfw3.h>
 
-#include "assets/assetdatabase.hpp"
+#include "assets/asset.hpp"
 #include "inputsystem/input.hpp"
 
 static bool _isGlfwInit = false;

@@ -20,11 +20,10 @@ namespace Vin {
 
 	template<typename T, size_t m1, size_t n1, size_t n2>
 	auto operator*(const Vin::Matrix<T, m1, n1>& lhs, const Vin::Matrix<T, n1, n2>& rhs) {
-		OPTICK_EVENT();
+        OPTICK_EVENT();
+        typename Vin::Matrix<T, m1, n2>::MType::type result{};
 
-		Vin::Matrix<T, m1, n2>::MatrixType::type result{};
-
-		for (size_t y = 0; y < m1; y++)
+        for (size_t y = 0; y < m1; y++)
 			for (size_t x = 0; x < n2; x++)
 				for (size_t i = 0; i < n1; i++)
 					result.data[x + y * n2] += rhs.data[i + y * n1] * lhs.data[x + i * n2];
@@ -34,7 +33,7 @@ namespace Vin {
 
 	/*template<>
 	inline auto operator*<float, 4, 4, 4>(const Vin::Matrix<float, 4, 4>& lhs, const Vin::Matrix<float, 4, 4>& rhs) {
-		Vin::Matrix<float, 4, 4>::MatrixType::type result{};
+		Vin::Matrix<float, 4, 4>::MType::type result{};
 
 		__m128 lhsr[4]{ { lhs.data[0], lhs.data[4] , lhs.data[8] ,lhs.data[12] },
 						{ lhs.data[1], lhs.data[5] , lhs.data[9] ,lhs.data[13] },
@@ -58,7 +57,7 @@ namespace Vin {
 
 	template<typename T, size_t m1, size_t n1>
 	auto operator*(const Vin::Matrix<T, m1, n1>& lhs, const Vin::Vector<T, n1>& rhs) {
-		Vin::Vector<T, m1>::type result{};
+		typename Vin::Vector<T, m1>::type result{};
 
 		for (size_t y = 0; y < m1; y++)
 			for (size_t i = 0; i < n1; i++)

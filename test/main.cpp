@@ -11,8 +11,6 @@
 
 #include "scene/mesh.hpp"
 
-#include "assets/assetdatabase.hpp"
-
 #include "ecs/registry.hpp"
 #include "vfs/vfs.hpp"
 
@@ -66,7 +64,7 @@ class TestModule : public Vin::Module {
 	Vin::Vector2<int> mouseLastPos{ 0 };
 
 	static void MoveRandomSystem(Vin::Query<Vin::ArchetypeMemoryLayout::Contiguous, Vin::Transform<float>> query, float r) {
-		for (auto& [transform] : query) {
+		for (auto [transform] : query) {
 			transform->position = Vin::Vector3<float>{ 0, 0, -25 };
 			transform->rotation = Vin::Quaternion<float>::Euler(Vin::Vector3<float>{ 0, 0, 0 });
 			//transform->position = Vin::Vector3<float>{ 0, 0, -25 };
@@ -76,7 +74,7 @@ class TestModule : public Vin::Module {
 
 	static void SetRot(Vin::Query<Vin::ArchetypeMemoryLayout::Contiguous, Vin::Transform<float>> query) {
 		int i = 0; 
-		for (auto& [transform] : query) {
+		for (auto [transform] : query) {
 			++i;
 			transform->rotation = Vin::Quaternion<float>::Euler(Vin::Vector3<float>{ 180, 0, 0 });
 			//transform->position = Vin::Vector3<float>{ 0, 0, -25 };
@@ -136,8 +134,6 @@ class TestModule : public Vin::Module {
 			Vin::Transform<float>{Vin::Vector3<float>{75.0f, 0.0f, -100.0f}},
 			Vin::MeshRenderer{ mesh.Get() },
 			SpeedRotation{ (float)(rand() % 100) / 25 });
-
-		mat.SetFloat2("_MainTexTiling", Vin::Vector2<float>{10, 10});
 
 		camera->SetFOV(52.5);
 		camera->SetNearPlane(0.1);

@@ -140,21 +140,21 @@ namespace Vin {
 
 	template<typename T>
 	struct Vector3 : Vector<T, 3>, VectorMath<Vector3<T>, 3> {
-		Vector3() : Vector{} {};
-		Vector3(const T& v) : Vector{ v } {};
-		Vector3(const T& x, const T& y, const T& z) : Vector{ x, y, z } {};
-		Vector3(const Vector2<T>& xy, T z) : Vector{ xy.x, xy.y, z } {};
+		Vector3() : Vector<T, 3>{} {};
+		Vector3(const T& v) : Vector<T, 3>{ v } {};
+		Vector3(const T& x, const T& y, const T& z) : Vector<T, 3>{ x, y, z } {};
+		Vector3(const Vector2<T>& xy, T z) : Vector<T, 3>{ xy.x, xy.y, z } {};
 
 		T Length() const {
-			T length = Sqrt<T>(x * x + y * y + z * z);
+			T length = Sqrt<T>(this->x * this->x + this->y * this->y + this->z * this->z);
 			return length;
 		}
 
 		Vector3<T> Normalize() const {
-			if (x == 0 && y == 0 && z == 0)
+			if (this->x == 0 && this->y == 0 && this->z == 0)
 				return *this;
 			T length = Length();
-			return Vector3<T>{ x / length, y / length, z / length};
+			return Vector3<T>{ this->x / length, this->y / length, this->z / length};
 		}
 
 		static Vector3<T> Cross(const Vector3<T>& v1, const Vector3<T>& v2) {

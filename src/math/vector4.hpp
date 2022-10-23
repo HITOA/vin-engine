@@ -360,14 +360,14 @@ namespace Vin {
 
 	template<typename T>
 	struct Vector4 : Vector<T, 4>, VectorMath<Vector4<T>, 4> {
-		Vector4() : Vector{} {};
-		Vector4(const T& v) : Vector{ v } {};
-		Vector4(const T& x, const T& y, const T& z, const T& w) : Vector{ x, y, z, w } {};
-		Vector4(const Vector2<T>& xy, T z, T w) : Vector{ xy.x, xy.y, z, w } {};
-		Vector4(const Vector3<T>& xyz, T w) : Vector{ xyz.x, xyz.y, xyz.z, w } {};
+		Vector4() : Vector<T, 4>{} {};
+		Vector4(const T& v) : Vector<T, 4>{ v } {};
+		Vector4(const T& x, const T& y, const T& z, const T& w) : Vector<T, 4>{ x, y, z, w } {};
+		Vector4(const Vector2<T>& xy, T z, T w) : Vector<T, 4>{ xy.x, xy.y, z, w } {};
+		Vector4(const Vector3<T>& xyz, T w) : Vector<T, 4>{ xyz.x, xyz.y, xyz.z, w } {};
 
 		T Length() const {
-			T length = Sqrt<T>(x * x + y * y + z * z + w * w);
+			T length = Sqrt<T>(this->x * this->x + this->y * this->y + this->z * this->z + this->w * this->w);
 			return length;
 		}
 

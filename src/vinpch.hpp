@@ -25,5 +25,6 @@
 #include <bitset>
 #include <memory>
 #include <optick.h>
+#include <string.h>
 
 #pragma warning(pop)

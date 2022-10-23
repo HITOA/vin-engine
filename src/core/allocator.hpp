@@ -81,6 +81,6 @@ namespace Vin {
 
 	template<typename T>
 	void Deconstruct(T* ptr) {
-		T->~T();
+		ptr->~T();
 	}
 }

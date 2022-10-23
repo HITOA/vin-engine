@@ -49,14 +49,14 @@ namespace Vin {
 
 	template<typename T>
 	struct Vector2 : Vector<T, 2>, VectorMath<Vector2<T>, 2> {
-		Vector2() : Vector{} {};
-		Vector2(const T& v) : Vector{ v } {};
-		Vector2(const T& x, const T& y) : Vector{ x, y } {};
+		Vector2() : Vector<T, 2>{} {};
+		Vector2(const T& v) : Vector<T, 2>{ v } {};
+		Vector2(const T& x, const T& y) : Vector<T, 2>{ x, y } {};
 
 		//Func
 
 		T Length() const {
-			T length = Sqrt<T>(x * x + y * y);
+			T length = Sqrt<T>(this->x * this->x + this->y * this->y);
 			return length;
 		}
 
