@@ -30,7 +30,14 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#if defined(__clang__) || defined(__GNUC__)
+#if defined(__clang__) && defined(_MSC_VER)
+#	define OPTICK_MSVC (1)
+#	if defined(_DURANGO)
+#		define OPTICK_PC (0)
+#	else
+#		define OPTICK_PC (1)
+#	endif
+#elif defined(__clang__) || defined(__GNUC__)
 #	define OPTICK_GCC (1)
 #	if defined(__APPLE_CC__)
 #		define OPTICK_OSX (1)
@@ -45,7 +52,7 @@
 #		define OPTICK_PC (0)
 #	else
 #		define OPTICK_PC (1)
-#endif
+#	endif
 #else
 #error Compiler not supported
 #endif

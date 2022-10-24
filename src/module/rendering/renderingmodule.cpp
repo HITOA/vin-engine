@@ -131,8 +131,8 @@ void Vin::RenderingModule::GenerateShadowMap(RenderQueue& queue)
 	OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::GPU_Shadows);
 
 	RenderTargetSpecification shadowmapspec{ 
-		(size_t)((int)m_Ctx->mainLight.shadow.resolution.x * (m_Ctx->mainLight.shadow.distance / 5)) , 
-		(size_t)((int)m_Ctx->mainLight.shadow.resolution.y * (m_Ctx->mainLight.shadow.distance / 5)), 1 };
+		(uint32_t)((int)m_Ctx->mainLight.shadow.resolution.x * (m_Ctx->mainLight.shadow.distance / 5)) , 
+		(uint32_t)((int)m_Ctx->mainLight.shadow.resolution.y * (m_Ctx->mainLight.shadow.distance / 5)), 1 };
 	shadowmapspec.AddRenderBuffer({ RenderBufferFormat::DEPTH_COMPONENT24, true });
 
 	if (m_ShadowmapRenderTarget.get() == nullptr)

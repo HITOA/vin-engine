@@ -21,8 +21,14 @@ endif()
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/bin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+if (MSVC)
+    add_compile_options(/W4 /EHsc)
+else()
+    add_compile_options(-W4 -pedantic -fexceptions -fcxx-exceptions)
+endif()
+
 set(CMAKE_CXX_FLAGS "-W4")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DVIN_DEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DVIN_DEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DVIN_DEBUG")
 
 set(CMAKE_CXX_STANDARD 17)
