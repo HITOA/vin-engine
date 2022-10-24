@@ -34,6 +34,7 @@ The sponza scene rendered in the engine : (10/22/2022)
 - GPU Instancing  
 - Cascade shadow map (Entire frustum)  
 - Frustum culling (Compute shader)  
+- Hot reloading (shader)  
   
 ## Things to considere  
 - Better soft shadow algorithm (Better PCF)
