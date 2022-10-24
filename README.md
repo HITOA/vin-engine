@@ -13,6 +13,8 @@ Clone the repository : ```git clone --recursive https://github.com/HITOA/vin-eng
 Install jinja2 package : ```pip install jinja2```   
 Generate with cmake : ```cmake -B"./build" .```    
   
+Last tested with (gcc, msvc, clang) on windows and linux : 10/24/2022  
+  
 ## Profiling  
 Optick is used to profile the engine : https://github.com/bombomby/optick  
 There is an exe version in /tool.  
