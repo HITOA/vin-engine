@@ -162,10 +162,12 @@ class TestModule : public Vin::Module {
 		mainLight.intensity = 50.0f;
 
 		(*sponzascene)->CreateEntity(mainLight);
+
 	}
 
 	float pitch = 0;
 	float yaw = 0;
+	bool lock = true;
 
 	void Process() {
 		processT += GetApp()->GetDeltaTime().GetMillisecond();
@@ -197,22 +199,22 @@ class TestModule : public Vin::Module {
 
 		Vin::Vector3<float> translation{ 0.0f };
 
-		if (Vin::Input::IsKeyDown(Vin::Key::Key_W)) {
+		if (Vin::Input::IsKeyPressed(Vin::Key::Key_W)) {
 			translation += Vin::Vector3<float>{ 0, 0, -1 };
 		}
-		if (Vin::Input::IsKeyDown(Vin::Key::Key_S)) {
+		if (Vin::Input::IsKeyPressed(Vin::Key::Key_S)) {
 			translation += Vin::Vector3<float>{ 0, 0, 1 };
 		}
-		if (Vin::Input::IsKeyDown(Vin::Key::Key_A)) {
+		if (Vin::Input::IsKeyPressed(Vin::Key::Key_A)) {
 			translation += Vin::Vector3<float>{ -1 , 0, 0};
 		}
-		if (Vin::Input::IsKeyDown(Vin::Key::Key_D)) {
+		if (Vin::Input::IsKeyPressed(Vin::Key::Key_D)) {
 			translation += Vin::Vector3<float>{ 1 , 0, 0 };
 		}
-		if (Vin::Input::IsKeyDown(Vin::Key::Space)) {
+		if (Vin::Input::IsKeyPressed(Vin::Key::Space)) {
 			camera->position += Vin::Vector3<float>{ 0, speed * deltaTime * 0.01f, 0};
 		}
-		if (Vin::Input::IsKeyDown(Vin::Key::LeftControl)) {
+		if (Vin::Input::IsKeyPressed(Vin::Key::LeftControl)) {
 			camera->position += Vin::Vector3<float>{ 0, -speed * deltaTime * 0.01f, 0};
 		}
 
@@ -222,18 +224,26 @@ class TestModule : public Vin::Module {
 
 		translation = (camera->rotation.GetRotationMatrix() * Vin::Vector4<float>{ translation.xyz, 1.0f }).xyz;
 
-		if (Vin::Input::IsKeyDown(Vin::Key::LeftShift))
+		if (Vin::Input::IsKeyPressed(Vin::Key::LeftShift))
 			translation *= 3;
 
 		camera->position += translation;
 
-		Vin::WindowMouseState event{};
-		event.state = Vin::WindowMouseState::Lock;
+		if (Vin::Input::IsKeyDown(Vin::Key::Tab)) {
+			Vin::WindowMouseState event{};
 
-		Vin::EventHandler handler{};
-		handler.Bind(event);
+			if (lock)
+				event.state = Vin::WindowMouseState::Lock;
+			else
+				event.state = Vin::WindowMouseState::Normal;
 
-		DispatchEvent(handler);
+			lock = !lock;
+
+			Vin::EventHandler handler{};
+			handler.Bind(event);
+
+			DispatchEvent(handler);
+		}
 	}
 
 	void Update() {
@@ -281,7 +291,7 @@ public:
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::RenderingModule>();
-		//AddModule<Vin::EditorModule>();
+		AddModule<Vin::EditorModule>();
 		AddModule<TestModule>();
 	}
 };

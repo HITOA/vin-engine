@@ -89,6 +89,71 @@ Vin::Key ParseGLFWKeyCode(int key) {
 	case GLFW_KEY_LEFT_SHIFT: return Vin::Key::LeftShift;
 	case GLFW_KEY_RIGHT_CONTROL: return Vin::Key::RightControl;
 	case GLFW_KEY_RIGHT_SHIFT: return Vin::Key::RightShift;
+
+	case GLFW_KEY_ESCAPE: return Vin::Key::Escape;
+	case GLFW_KEY_ENTER: return Vin::Key::Enter;
+	case GLFW_KEY_TAB: return Vin::Key::Tab;
+	case GLFW_KEY_BACKSPACE: return Vin::Key::BackSpace;
+	case GLFW_KEY_INSERT: return Vin::Key::Insert;
+	case GLFW_KEY_DELETE: return Vin::Key::Delete;
+	case GLFW_KEY_RIGHT: return Vin::Key::Right;
+	case GLFW_KEY_LEFT: return Vin::Key::Left;
+	case GLFW_KEY_DOWN: return Vin::Key::Down;
+	case GLFW_KEY_UP: return Vin::Key::Up;
+	case GLFW_KEY_PAGE_UP: return Vin::Key::PageUp;
+	case GLFW_KEY_PAGE_DOWN: return Vin::Key::PageDown;
+	case GLFW_KEY_HOME: return Vin::Key::Home;
+	case GLFW_KEY_END: return Vin::Key::End;
+	case GLFW_KEY_CAPS_LOCK: return Vin::Key::CapsLock;
+	case GLFW_KEY_SCROLL_LOCK: return Vin::Key::ScrollLock;
+	case GLFW_KEY_NUM_LOCK: return Vin::Key::NumLock;
+	case GLFW_KEY_PRINT_SCREEN: return Vin::Key::PrintScreen;
+	case GLFW_KEY_PAUSE: return Vin::Key::Pause;
+
+	case GLFW_KEY_F1: return Vin::Key::Key_F1;
+	case GLFW_KEY_F2: return Vin::Key::Key_F2;
+	case GLFW_KEY_F3: return Vin::Key::Key_F3;
+	case GLFW_KEY_F4: return Vin::Key::Key_F4;
+	case GLFW_KEY_F5: return Vin::Key::Key_F5;
+	case GLFW_KEY_F6: return Vin::Key::Key_F6;
+	case GLFW_KEY_F7: return Vin::Key::Key_F7;
+	case GLFW_KEY_F8: return Vin::Key::Key_F8;
+	case GLFW_KEY_F9: return Vin::Key::Key_F9;
+	case GLFW_KEY_F10: return Vin::Key::Key_F10;
+	case GLFW_KEY_F11: return Vin::Key::Key_F11;
+	case GLFW_KEY_F12: return Vin::Key::Key_F12;
+	case GLFW_KEY_F13: return Vin::Key::Key_F13;
+	case GLFW_KEY_F14: return Vin::Key::Key_F14;
+	case GLFW_KEY_F15: return Vin::Key::Key_F15;
+	case GLFW_KEY_F16: return Vin::Key::Key_F16;
+	case GLFW_KEY_F17: return Vin::Key::Key_F17;
+	case GLFW_KEY_F18: return Vin::Key::Key_F18;
+	case GLFW_KEY_F19: return Vin::Key::Key_F19;
+	case GLFW_KEY_F20: return Vin::Key::Key_F20;
+	case GLFW_KEY_F21: return Vin::Key::Key_F21;
+	case GLFW_KEY_F22: return Vin::Key::Key_F22;
+	case GLFW_KEY_F23: return Vin::Key::Key_F23;
+	case GLFW_KEY_F24: return Vin::Key::Key_F24;
+	case GLFW_KEY_F25: return Vin::Key::Key_F25;
+
+	case GLFW_KEY_KP_0: return Vin::Key::Key_NP0;
+	case GLFW_KEY_KP_1: return Vin::Key::Key_NP1;
+	case GLFW_KEY_KP_2: return Vin::Key::Key_NP2;
+	case GLFW_KEY_KP_3: return Vin::Key::Key_NP3;
+	case GLFW_KEY_KP_4: return Vin::Key::Key_NP4;
+	case GLFW_KEY_KP_5: return Vin::Key::Key_NP5;
+	case GLFW_KEY_KP_6: return Vin::Key::Key_NP6;
+	case GLFW_KEY_KP_7: return Vin::Key::Key_NP7;
+	case GLFW_KEY_KP_8: return Vin::Key::Key_NP8;
+	case GLFW_KEY_KP_9: return Vin::Key::Key_NP9;
+
+	case GLFW_KEY_KP_DECIMAL: return Vin::Key::NPDecimal;
+	case GLFW_KEY_KP_DIVIDE: return Vin::Key::NPDivide;
+	case GLFW_KEY_KP_MULTIPLY: return Vin::Key::NPMultiply;
+	case GLFW_KEY_KP_SUBTRACT: return Vin::Key::NPSubtract;
+	case GLFW_KEY_KP_ADD: return Vin::Key::NPAdd;
+	case GLFW_KEY_KP_ENTER: return Vin::Key::NPEnter;
+	case GLFW_KEY_KP_EQUAL: return Vin::Key::NPEqual;
 	default:
 		return Vin::Key::UNKNOWN;
 	}
@@ -140,6 +205,7 @@ void Vin::WindowModule::Init()
 
 void Vin::WindowModule::EarlyUpdate()
 {
+	Input::Update();
 	glfwPollEvents();
 }
 

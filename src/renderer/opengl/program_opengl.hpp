@@ -12,6 +12,7 @@ namespace Vin {
 
 		void Bind() final;
 		void Unbind() final;
+		void Reset() final;
 
 		bool AddShader(ShaderType type, const char* src) final;
 		bool CompileProgram() final;

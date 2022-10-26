@@ -32,6 +32,17 @@ void Vin::OpenGLProgram::Unbind()
 	glUseProgram(0);
 }
 
+void Vin::OpenGLProgram::Reset()
+{
+	for (int i = 0; i < m_ShaderCount; ++i)
+		glDeleteShader(m_Shaders[i]);
+	glDeleteProgram(m_ProgramId);
+	m_ProgramId = glCreateProgram();
+	m_ShaderCount = 0;
+	m_IsShaderComplete = true;
+	m_IsProgramComplete = false;
+}
+
 bool Vin::OpenGLProgram::AddShader(ShaderType type, const char* src)
 {
 	unsigned int shaderId;

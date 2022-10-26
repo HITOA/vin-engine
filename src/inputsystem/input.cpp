@@ -1,6 +1,6 @@
 #include "input.hpp"
 
-std::array<Vin::KeyState, 48> Vin::Input::m_KeyStates{ Vin::KeyState::KeyUp };
+std::array<Vin::KeyState, 108> Vin::Input::m_KeyStates{ Vin::KeyState::KeyUp };
 
 Vin::Vector2<int> Vin::Input::m_MousePosition{ 0 };
 
@@ -16,7 +16,7 @@ Vin::KeyState Vin::Input::GetKeyState(Key key) {
 }
 
 bool Vin::Input::IsKeyDown(Key key) {
-	return GetKeyState(key) == KeyState::KeyDown || GetKeyState(key) == KeyState::KeyHold;
+	return GetKeyState(key) == KeyState::KeyDown && !(GetKeyState(key) == KeyState::KeyHold);
 }
 
 bool Vin::Input::IsKeyHold(Key key) {
@@ -27,6 +27,11 @@ bool Vin::Input::IsKeyUp(Key key) {
 	return GetKeyState(key) == KeyState::KeyUp;
 }
 
+bool Vin::Input::IsKeyPressed(Key key)
+{
+	return GetKeyState(key) == KeyState::KeyDown || GetKeyState(key) == KeyState::KeyHold;
+}
+
 void Vin::Input::SetMousePosition(Vector2<int> position)
 {
 	m_MousePosition = position;
@@ -35,4 +40,11 @@ void Vin::Input::SetMousePosition(Vector2<int> position)
 Vin::Vector2<int> Vin::Input::GetMousePosition()
 {
 	return m_MousePosition;
+}
+
+void Vin::Input::Update()
+{
+	for (KeyState& state : m_KeyStates)
+		if (state == KeyState::KeyDown)
+			state = KeyState::KeyHold;
 }

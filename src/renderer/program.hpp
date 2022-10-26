@@ -21,6 +21,7 @@ namespace Vin {
 
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
+		virtual void Reset() = 0;
 
 		virtual bool AddShader(ShaderType type, const char* src) = 0;
 		virtual bool CompileProgram() = 0;
