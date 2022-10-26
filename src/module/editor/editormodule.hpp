@@ -10,6 +10,7 @@ namespace Vin {
 	public:
 		void Init();
 		void Stop();
+		void Process();
 		void LateRender();
 
 		void OnEvent(EventHandler handler);
@@ -30,7 +31,6 @@ namespace Vin {
 
 		void DrawPreferencesWindow(bool* drawWindow);
 		void DrawDebugConsoleWindow(bool* drawWindow);
-		void DrawAssetExplorerWindow(bool* drawWindow);
 	private:
 		ImGuiContext* m_Ctx{ nullptr };
 
@@ -38,9 +38,7 @@ namespace Vin {
 
 		bool drawPreferencesWindow{ false };
 		bool drawDebugConsoleWindow{ true };
-		bool drawAssetExplorerWindow{ true };
 
 		EditorDebugConsole m_DebugConsole{};
-		EditorAssetExplorer m_AssetExplorer{};
 	};
 }

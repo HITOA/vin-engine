@@ -10,6 +10,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "inputsystem/input.hpp"
+
 void Vin::EditorModule::Init()
 {
 	m_Ctx = ImGui::CreateContext();
@@ -30,6 +32,13 @@ void Vin::EditorModule::Stop()
 	ImGui::DestroyContext(m_Ctx);
 }
 
+void Vin::EditorModule::Process()
+{
+	if (Vin::Input::IsKeyPressed(Vin::Key::LeftControl) && Vin::Input::IsKeyDown(Vin::Key::Key_H)) {
+		drawEditor = !drawEditor;
+	}
+}
+
 void Vin::EditorModule::LateRender()
 {
 	Begin();
@@ -45,8 +54,6 @@ void Vin::EditorModule::LateRender()
 
 		if (drawDebugConsoleWindow)
 			DrawDebugConsoleWindow(&drawDebugConsoleWindow);
-		if (drawAssetExplorerWindow)
-			DrawAssetExplorerWindow(&drawAssetExplorerWindow);
 	}
 
 	End();
@@ -252,7 +259,7 @@ void Vin::EditorModule::DrawMainMenuBarMenuFile()
 
 void Vin::EditorModule::DrawMainMenuBarMenuEdit()
 {
-	if (ImGui::MenuItem(drawEditor ? "Hide Editor" : "Show Editor", "Ctrl+H (Disable)")) {
+	if (ImGui::MenuItem(drawEditor ? "Hide Editor" : "Show Editor", "Ctrl+H")) {
 		drawEditor = !drawEditor;
 	}
 	ImGui::Separator();
@@ -265,9 +272,6 @@ void Vin::EditorModule::DrawMainMenuBarMenuWindow()
 {
 	if (ImGui::MenuItem("Debug Console")) {
 		drawDebugConsoleWindow = true;
-	}
-	if (ImGui::MenuItem("Asset Explorer")) {
-		drawAssetExplorerWindow = true;
 	}
 }
 
@@ -298,9 +302,4 @@ void Vin::EditorModule::DrawPreferencesWindow(bool* drawWindow)
 void Vin::EditorModule::DrawDebugConsoleWindow(bool* drawWindow)
 {
 	m_DebugConsole.Draw(drawWindow);
-}
-
-void Vin::EditorModule::DrawAssetExplorerWindow(bool* drawWindow)
-{
-	m_AssetExplorer.Draw(drawWindow);
 }
