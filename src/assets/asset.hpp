@@ -226,6 +226,9 @@ namespace Vin {
         static void SetAssetFlags(AssetHandle handle, AssetFlag flags) {
             s_Database[handle].m_Flags = flags;
         }
+
+        static std::unordered_map<AssetHandle, AssetHolder>::iterator begin() { return s_Database.begin(); };
+        static std::unordered_map<AssetHandle, AssetHolder>::iterator end() { return s_Database.end(); };
     private:
         static std::unordered_map<AssetHandle, AssetHolder> s_Database;
         static std::unordered_map<std::string, AssetHandle> s_AssetsPath;

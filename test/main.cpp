@@ -89,6 +89,8 @@ class TestModule : public Vin::Module {
 
 		program = Vin::LoadProgram("data/pbr/pbrvs.glsl", "data/pbr/pbrfs.glsl");
 
+		Vin::AssetDatabase::AddAsset(program, "DefaultProgramThings");
+
 		Vin::SetDefaultProgram(program);
 
 		mat = Vin::Material{ program };

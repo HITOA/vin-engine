@@ -37,6 +37,20 @@ void Vin::EditorModule::Process()
 	if (Vin::Input::IsKeyPressed(Vin::Key::LeftControl) && Vin::Input::IsKeyDown(Vin::Key::Key_H)) {
 		drawEditor = !drawEditor;
 	}
+
+	if (Vin::Input::IsKeyPressed(Vin::Key::LeftControl) && Vin::Input::IsKeyDown(Vin::Key::Key_R)) {
+		//Hot reload
+		size_t i = 0;
+		auto itend = AssetDatabase::end();
+		for (auto it = AssetDatabase::begin(); it != itend; ++it) {
+			Asset<Program> currProgram = it->second.GetAsset<Program>(it->first);
+			if (currProgram.Get() != nullptr) {
+				++i;
+				//Reload program
+			}
+		}
+		Logger::Log("Shader reloaded : {}", i);
+	}
 }
 
 void Vin::EditorModule::LateRender()
