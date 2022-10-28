@@ -24,7 +24,10 @@ The sponza scene rendered in the engine : (10/22/2022)
 ![Sponza scene](https://i.imgur.com/FLY2bc9.jpeg)  
 ![Modern sponza scene](https://i.imgur.com/9y9cDtY.jpeg)  
   
-## TODO  
+## TODO 
+- Seperate generale rendering function (shadow map etc) to a helper class or something like that  
+- Make creating rendering pipeline much easier and high level  
+
 - Loading GLTF/GLB (2.0) model. (Almost complete)
 - PostProcessing Chain system (Simple way to do postprocessing on a rendetarget, you pass the render target to a post process chain, then it end up with all the effect. you would add post process effect like chain.Add(postprocessmat))  
 - Implementing MIMALLOC for std & new/delete operator overload  
