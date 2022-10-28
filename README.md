@@ -46,6 +46,7 @@ The sponza scene rendered in the engine : (10/22/2022)
 - Better soft shadow algorithm (Better PCF)
 - Vulkan implementation
 - Optimizing more !! (always good)
+- VR/XR/AR rendering pipeline ?
 
 ## Source
 A lot of useful source for developing game engine related stuff :
