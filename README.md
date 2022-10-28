@@ -37,7 +37,8 @@ The sponza scene rendered in the engine : (10/22/2022)
 - Cascade shadow map (Entire frustum)  
 - Frustum culling (Compute shader)  
 - Hot reloading (shader)  
-  
+- FreeType (https://github.com/freetype/freetype)   
+   
 ## Things to considere  
 - Better soft shadow algorithm (Better PCF)
 - Vulkan implementation
