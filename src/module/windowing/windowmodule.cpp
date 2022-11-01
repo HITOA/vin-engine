@@ -6,6 +6,8 @@
 #include "assets/asset.hpp"
 #include "inputsystem/input.hpp"
 
+#include "renderer/renderer.hpp"
+
 static bool _isGlfwInit = false;
 
 static void GlfwErrorCallback(int err, const char* desc)
@@ -15,6 +17,8 @@ static void GlfwErrorCallback(int err, const char* desc)
 
 void Vin::WindowResizeCallback(GLFWwindow* window, int width, int height)
 {
+	Vin::Renderer::SetViewport(0, 0, width, height);
+
 	WindowModule* winmod = (WindowModule*)glfwGetWindowUserPointer(window);
 	winmod->m_Info->width = width;
 	winmod->m_Info->height = height;

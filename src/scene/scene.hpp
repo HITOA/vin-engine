@@ -7,27 +7,32 @@
 #include "transform.hpp"
 #include "meshrenderer.hpp"
 #include "assets/asset.hpp"
-#include "module/rendering/rendercontext.hpp"
+#include "scene/camera.hpp"
+#include "renderpipeline/renderpipeline.hpp"
 
 #include <optick.h>
 
 namespace Vin{
-	template<ArchetypeMemoryLayout layout>
+
 	class Scene {
 	public:
 		void Render(std::shared_ptr<Camera> camera) {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 
-			m_Registry.Process(MeshRendererSystem, camera);
-			m_Registry.Process(LightRendererSystem);
+			Asset<RenderContext> ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_ASSETPATH);
+			
+			if (ctx.Get() == nullptr)
+				return;
+
+			ctx->RenderScene(m_Registry, camera);
 		}
 
-		Registry<layout>* operator->() {
+		Registry* operator->() {
 			return &m_Registry;
 		}
 		
 	private:
-		static void MeshRendererSystem(Registry<layout>& registry, Query<layout, Transform<float>, MeshRenderer> query, std::shared_ptr<Camera> camera) {
+		/*static void MeshRendererSystem(Registry<layout>& registry, Query<layout, Transform<float>, MeshRenderer> query, std::shared_ptr<Camera> camera) {
 			Asset<RenderContext> m_Ctx = AssetDatabase::GetAsset<RenderContext>(VIN_RENDERCONTEXT_BASEPATH);
 
 			for (auto [transform, meshrenderer] : query) {
@@ -52,9 +57,9 @@ namespace Vin{
 
 				//Additional Light
 			}
-		}
+		}*/
 
 	private:
-		Registry<layout> m_Registry{};
+		Registry m_Registry{};
 	};
 }

@@ -17,7 +17,6 @@ struct std::hash<std::bitset<N>> {
 
 namespace Vin {
 
-	template<ArchetypeMemoryLayout memlayout>
 	class Registry {
 	public:
 		
@@ -51,12 +50,12 @@ namespace Vin {
 		}
 
 		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Query<memlayout, Components...>, Args...), Args&... args) {
+		void Process(RetType(system)(Query<Components...>, Args...), Args&... args) {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
 				if (it->archetype.template MatchLayout<Components...>(true)) {
-					system(Query<memlayout, Components...>{
+					system(Query<Components...>{
 						it->archetype.template GetComponentIterator<Components>()...,
 						it->archetype.GetSize() }, args...);
 				}
@@ -64,12 +63,12 @@ namespace Vin {
 		}
 
 		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Query<memlayout, EntityId, Components...>, Args...), Args&... args) {
+		void Process(RetType(system)(Query<EntityId, Components...>, Args...), Args&... args) {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
 				if (it->archetype.template MatchLayout<Components...>(true)) {
-					system(Query<memlayout, EntityId, Components...>{
+					system(Query<EntityId, Components...>{
 						(EntityId*)it->entityIds.data(),
 						it->archetype.template GetComponentIterator<Components>()...,
 						it->archetype.GetSize() }, args...);
@@ -78,12 +77,12 @@ namespace Vin {
 		}
 
 		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Registry<memlayout>& registry, Query<memlayout, Components...>, Args...), Args&... args) {
+		void Process(RetType(system)(Registry& registry, Query<Components...>, Args...), Args&... args) {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
 				if (it->archetype.template MatchLayout<Components...>(true)) {
-					system(*this, Query<memlayout, Components...>{
+					system(*this, Query<Components...>{
 						it->archetype.template GetComponentIterator<Components>()...,
 							it->archetype.GetSize() }, args...);
 				}
@@ -91,12 +90,12 @@ namespace Vin {
 		}
 
 		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Registry<memlayout>& registry, Query<memlayout, EntityId, Components...>, Args...), Args&... args) {
+		void Process(RetType(system)(Registry& registry, Query<EntityId, Components...>, Args...), Args&... args) {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
 				if (it->archetype.template MatchLayout<Components...>(true)) {
-					system(*this, Query<memlayout, EntityId, Components...>{
+					system(*this, Query<EntityId, Components...>{
 						(EntityId*)it->entityIds.data(),
 							it->archetype.template GetComponentIterator<Components>()...,
 							it->archetype.GetSize() }, args...);
@@ -253,7 +252,7 @@ namespace Vin {
 	private:
 		EntityManager m_EntityManager{};
 
-		std::vector<Archetype<memlayout>> m_Archetypes{};
+		std::vector<Archetype> m_Archetypes{};
 		std::unordered_map<std::bitset<VINECS_MAX_COMPONENT_COUNT>, ArchetypeIdx> m_ArchetypeMap{};
 		std::unordered_map<EntityId, ArchetypeIdx> m_EntityArchetypeMap{};
 	};

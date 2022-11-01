@@ -20,11 +20,6 @@
 namespace Vin {
 	typedef usize ArchetypeIdx;
 
-	enum class ArchetypeMemoryLayout {
-		Contiguous,
-		Interleaved
-	};
-
 	class ArchetypeComponentLayout {
 	public:
 		typedef short ComponentIdx;//<0 = Not present, Any other value is the index.
@@ -71,15 +66,7 @@ namespace Vin {
 		usize stride{ 0 };
 	};
 
-	template<ArchetypeMemoryLayout memlayout>
 	class ArchetypeComponentContainer {
-	public:
-		template<typename T>
-		struct Iterator {};
-	};
-
-	template<>
-	class ArchetypeComponentContainer<ArchetypeMemoryLayout::Contiguous> {
 	public:
 		template<typename T>
 		struct Iterator {
@@ -109,7 +96,7 @@ namespace Vin {
 			T* ptr;
 		};
 	public:
-		ArchetypeComponentContainer() = delete;
+		ArchetypeComponentContainer() = default;
 		ArchetypeComponentContainer(ArchetypeComponentLayout layout) : m_Layout{ layout } {
 			m_Data = Alloc<byte*>(m_Layout.GetSize());
 			m_Data[0] = Alloc<byte>(m_Layout.GetStride() * m_Capacity);
@@ -262,34 +249,19 @@ namespace Vin {
 		byte** m_Data{ nullptr };
 	};
 
-	template<>
-	class ArchetypeComponentContainer<ArchetypeMemoryLayout::Interleaved> {
-	public:
-		template<typename T>
-		struct Iterator {
-
-		};
-	public:
-		ArchetypeComponentContainer() = delete;
-	private:
-		usize stride;
-		byte* data;
-	};
-
-	template<ArchetypeMemoryLayout memlayout>
 	struct Archetype {
-		ArchetypeComponentContainer<memlayout> archetype{};
+		ArchetypeComponentContainer archetype{};
 		std::vector<EntityId> entityIds{};
 		std::unordered_map<EntityId, usize> entityidx{};
 
 		Archetype(ArchetypeComponentLayout layout) : archetype{ layout } {};
 	};
 
-	template<Vin::ArchetypeMemoryLayout memlayout, typename T>
-	using _Iterator = typename Vin::ArchetypeComponentContainer<memlayout>::Iterator<T>;
+	template<typename T>
+	using _Iterator = typename Vin::ArchetypeComponentContainer::Iterator<T>;
 
-	template<typename T, Vin::ArchetypeMemoryLayout memlayout>
-	using Iterator = _Iterator<memlayout, T>;
+	template<typename T>
+	using Iterator = _Iterator<T>;
 
 	/*template<ArchetypeMemoryLayout memlayout>
 	struct Archetype {

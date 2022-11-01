@@ -84,66 +84,66 @@ namespace Vin {
 			T5* e;
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename... Args>
+		template<typename... Args>
 		struct IteratorGroup {};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1>
-		struct IteratorGroup<memlayout, T1> {
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
+		template<typename T1>
+		struct IteratorGroup<T1> {
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
 
 			inline Group<T1> operator*() {
 				return Group<T1>{ a.Get() };
 			}
 
-			inline IteratorGroup<memlayout, T1> operator++() {
+			inline IteratorGroup<T1> operator++() {
 				++a;
 				return *this;
 			}
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1>
-		struct IteratorGroup<memlayout, EntityId, T1> {
+		template<typename T1>
+		struct IteratorGroup<EntityId, T1> {
 			EntityId* id;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
 
 			inline Group<EntityId, T1> operator*() {
 				return Group<EntityId, T1>{ *id, a.Get() };
 			}
 
-			inline IteratorGroup<memlayout, EntityId, T1> operator++() {
+			inline IteratorGroup<EntityId, T1> operator++() {
 				++id;
 				++a;
 				return *this;
 			}
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1, typename T2>
-		struct IteratorGroup<memlayout, T1, T2> {
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T2> b;
+		template<typename T1, typename T2>
+		struct IteratorGroup<T1, T2> {
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
+			typename ArchetypeComponentContainer::template Iterator<T2> b;
 
 			inline Group<T1, T2> operator*() {
 				return Group<T1, T2>{ a.Get(), b.Get() };
 			}
 
-			inline IteratorGroup<memlayout, T1, T2> operator++() {
+			inline IteratorGroup<T1, T2> operator++() {
 				++a;
 				++b;
 				return *this;
 			}
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1, typename T2>
-		struct IteratorGroup<memlayout, EntityId, T1, T2> {
+		template<typename T1, typename T2>
+		struct IteratorGroup<EntityId, T1, T2> {
 			EntityId* id;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T2> b;
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
+			typename ArchetypeComponentContainer::template Iterator<T2> b;
 
 			inline Group<EntityId, T1, T2> operator*() {
 				return Group<EntityId, T1, T2>{ *id, a.Get(), b.Get() };
 			}
 
-			inline IteratorGroup<memlayout, EntityId, T1, T2> operator++() {
+			inline IteratorGroup<EntityId, T1, T2> operator++() {
 				++id;
 				++a;
 				++b;
@@ -151,17 +151,17 @@ namespace Vin {
 			}
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1, typename T2, typename T3>
-		struct IteratorGroup<memlayout, T1, T2, T3> {
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T2> b;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T3> c;
+		template<typename T1, typename T2, typename T3>
+		struct IteratorGroup<T1, T2, T3> {
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
+			typename ArchetypeComponentContainer::template Iterator<T2> b;
+			typename ArchetypeComponentContainer::template Iterator<T3> c;
 
 			inline Group<T1, T2, T3> operator*() {
 				return Group<T1, T2, T3>{ a.Get(), b.Get(), c.Get() };
 			}
 
-			inline IteratorGroup<memlayout, T1, T2, T3> operator++() {
+			inline IteratorGroup<T1, T2, T3> operator++() {
 				++a;
 				++b;
 				++c;
@@ -169,18 +169,18 @@ namespace Vin {
 			}
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1, typename T2, typename T3>
-		struct IteratorGroup<memlayout, EntityId, T1, T2, T3> {
+		template<typename T1, typename T2, typename T3>
+		struct IteratorGroup<EntityId, T1, T2, T3> {
 			EntityId* id;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T2> b;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T3> c;
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
+			typename ArchetypeComponentContainer::template Iterator<T2> b;
+			typename ArchetypeComponentContainer::template Iterator<T3> c;
 
 			inline Group<EntityId, T1, T2, T3> operator*() {
 				return Group<EntityId, T1, T2, T3>{ *id, a.Get(), b.Get(), c.Get() };
 			}
 
-			inline IteratorGroup<memlayout, EntityId, T1, T2, T3> operator++() {
+			inline IteratorGroup<EntityId, T1, T2, T3> operator++() {
 				++id;
 				++a;
 				++b;
@@ -189,18 +189,18 @@ namespace Vin {
 			}
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1, typename T2, typename T3, typename T4>
-		struct IteratorGroup<memlayout, T1, T2, T3, T4> {
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T2> b;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T3> c;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T4> d;
+		template<typename T1, typename T2, typename T3, typename T4>
+		struct IteratorGroup<T1, T2, T3, T4> {
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
+			typename ArchetypeComponentContainer::template Iterator<T2> b;
+			typename ArchetypeComponentContainer::template Iterator<T3> c;
+			typename ArchetypeComponentContainer::template Iterator<T4> d;
 
 			inline Group<T1, T2, T3, T4> operator*() {
 				return Group<T1, T2, T3, T4>{ a.Get(), b.Get(), c.Get(), d.Get() };
 			}
 
-			inline IteratorGroup<memlayout, T1, T2, T3, T4> operator++() {
+			inline IteratorGroup<T1, T2, T3, T4> operator++() {
 				++a;
 				++b;
 				++c;
@@ -209,19 +209,19 @@ namespace Vin {
 			}
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1, typename T2, typename T3, typename T4>
-		struct IteratorGroup<memlayout, EntityId, T1, T2, T3, T4> {
+		template<typename T1, typename T2, typename T3, typename T4>
+		struct IteratorGroup<EntityId, T1, T2, T3, T4> {
 			EntityId* id;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T2> b;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T3> c;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T4> d;
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
+			typename ArchetypeComponentContainer::template Iterator<T2> b;
+			typename ArchetypeComponentContainer::template Iterator<T3> c;
+			typename ArchetypeComponentContainer::template Iterator<T4> d;
 
 			inline Group<EntityId, T1, T2, T3, T4> operator*() {
 				return Group<EntityId, T1, T2, T3, T4>{ *id, a.Get(), b.Get(), c.Get(), d.Get() };
 			}
 
-			inline IteratorGroup<memlayout, EntityId, T1, T2, T3, T4> operator++() {
+			inline IteratorGroup<EntityId, T1, T2, T3, T4> operator++() {
 				++id;
 				++a;
 				++b;
@@ -231,19 +231,19 @@ namespace Vin {
 			}
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1, typename T2, typename T3, typename T4, typename T5>
-		struct IteratorGroup<memlayout, T1, T2, T3, T4, T5> {
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T2> b;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T3> c;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T4> d;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T5> e;
+		template<typename T1, typename T2, typename T3, typename T4, typename T5>
+		struct IteratorGroup<T1, T2, T3, T4, T5> {
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
+			typename ArchetypeComponentContainer::template Iterator<T2> b;
+			typename ArchetypeComponentContainer::template Iterator<T3> c;
+			typename ArchetypeComponentContainer::template Iterator<T4> d;
+			typename ArchetypeComponentContainer::template Iterator<T5> e;
 
 			inline Group<T1, T2, T3, T4, T5> operator*() {
 				return Group<T1, T2, T3, T4, T5>{ a.Get(), b.Get(), c.Get(), d.Get(), e.Get() };
 			}
 
-			inline IteratorGroup<memlayout, T1, T2, T3, T4, T5> operator++() {
+			inline IteratorGroup<T1, T2, T3, T4, T5> operator++() {
 				++a;
 				++b;
 				++c;
@@ -253,20 +253,20 @@ namespace Vin {
 			}
 		};
 
-		template<ArchetypeMemoryLayout memlayout, typename T1, typename T2, typename T3, typename T4, typename T5>
-		struct IteratorGroup<memlayout, EntityId, T1, T2, T3, T4, T5> {
+		template<typename T1, typename T2, typename T3, typename T4, typename T5>
+		struct IteratorGroup<EntityId, T1, T2, T3, T4, T5> {
 			EntityId* id;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T1> a;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T2> b;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T3> c;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T4> d;
-			typename ArchetypeComponentContainer<memlayout>::template Iterator<T5> e;
+			typename ArchetypeComponentContainer::template Iterator<T1> a;
+			typename ArchetypeComponentContainer::template Iterator<T2> b;
+			typename ArchetypeComponentContainer::template Iterator<T3> c;
+			typename ArchetypeComponentContainer::template Iterator<T4> d;
+			typename ArchetypeComponentContainer::template Iterator<T5> e;
 
 			inline Group<EntityId, T1, T2, T3, T4, T5> operator*() {
 				return Group<EntityId, T1, T2, T3, T4, T5>{ *id, a.Get(), b.Get(), c.Get(), d.Get(), e.Get() };
 			}
 
-			inline IteratorGroup<memlayout, EntityId, T1, T2, T3, T4, T5> operator++() {
+			inline IteratorGroup<EntityId, T1, T2, T3, T4, T5> operator++() {
 				++id;
 				++a;
 				++b;
@@ -278,18 +278,18 @@ namespace Vin {
 		};
 	}
 
-	template<ArchetypeMemoryLayout memlayout, typename... Args>
+	template<typename... Args>
 	class Query {
 	public:
 		struct Iterator {
 		public:
-			Iterator(QueryGroup::IteratorGroup<memlayout, Args...> grp, usize count) : grp{ grp }, count{ count } {};
+			Iterator(QueryGroup::IteratorGroup<Args...> grp, usize count) : grp{ grp }, count{ count } {};
 		public:
 			inline QueryGroup::Group<Args...> operator*() {
 				return *grp;
 			}
 
-			inline QueryGroup::IteratorGroup<memlayout, Args...> operator++() {
+			inline QueryGroup::IteratorGroup<Args...> operator++() {
 				--count;
 				return ++grp;
 			}
@@ -301,12 +301,12 @@ namespace Vin {
 				return it1.count != it2.count;
 			}
 		private:
-			QueryGroup::IteratorGroup<memlayout, Args...> grp;
+			QueryGroup::IteratorGroup<Args...> grp;
 			usize count;
 		};
 	public:
-		Query(typename ArchetypeComponentContainer<memlayout>::template Iterator<Args>... args, usize count) : grp{ args... }, count{ count } {};
-		Query(QueryGroup::IteratorGroup<memlayout, Args...> grp, usize count) : grp{ grp }, count{ count } {};
+		Query(typename ArchetypeComponentContainer::template Iterator<Args>... args, usize count) : grp{ args... }, count{ count } {};
+		Query(QueryGroup::IteratorGroup<Args...> grp, usize count) : grp{ grp }, count{ count } {};
 
 		inline usize Count() {
 			return count;
@@ -320,22 +320,22 @@ namespace Vin {
 			return Iterator{ grp, 0 };
 		}
 	private:
-		QueryGroup::IteratorGroup<memlayout, Args...> grp;
+		QueryGroup::IteratorGroup<Args...> grp;
 		usize count;
 	};
 
-	template<ArchetypeMemoryLayout memlayout, typename... Args>
-	class Query<memlayout, EntityId, Args...> {
+	template<typename... Args>
+	class Query<EntityId, Args...> {
 	public:
 		struct Iterator {
 		public:
-			Iterator(QueryGroup::IteratorGroup<memlayout, EntityId, Args...> grp, usize count) : grp{ grp }, count{ count } {};
+			Iterator(QueryGroup::IteratorGroup<EntityId, Args...> grp, usize count) : grp{ grp }, count{ count } {};
 		public:
 			inline QueryGroup::Group<EntityId, Args...> operator*() {
 				return *grp;
 			}
 
-			inline QueryGroup::IteratorGroup<memlayout, EntityId, Args...> operator++() {
+			inline QueryGroup::IteratorGroup<EntityId, Args...> operator++() {
 				--count;
 				return ++grp;
 			}
@@ -347,12 +347,12 @@ namespace Vin {
 				return it1.count != it2.count;
 			}
 		private:
-			QueryGroup::IteratorGroup<memlayout, EntityId, Args...> grp;
+			QueryGroup::IteratorGroup<EntityId, Args...> grp;
 			usize count;
 		};
 	public:
-		Query(EntityId* id, typename ArchetypeComponentContainer<memlayout>::template Iterator<Args>... args, usize count) : grp{ id, args... }, count{ count } {};
-		Query(QueryGroup::IteratorGroup<memlayout, EntityId, Args...> grp, usize count) : grp{ grp }, count{ count } {};
+		Query(EntityId* id, typename ArchetypeComponentContainer::template Iterator<Args>... args, usize count) : grp{ id, args... }, count{ count } {};
+		Query(QueryGroup::IteratorGroup<EntityId, Args...> grp, usize count) : grp{ grp }, count{ count } {};
 
 		inline usize Count() {
 			return count;
@@ -366,7 +366,7 @@ namespace Vin {
 			return Iterator{ grp, 0 };
 		}
 	private:
-		QueryGroup::IteratorGroup<memlayout, EntityId, Args...> grp;
+		QueryGroup::IteratorGroup<EntityId, Args...> grp;
 		usize count;
 	};
 

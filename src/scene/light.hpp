@@ -9,13 +9,13 @@ namespace Vin {
 		None,
 		Directional,
 		Point,
-		Spot,
-		AreaRec,
-		AreaDisc
+		//Spot,
+		//AreaRec,
+		//AreaDisc
 	};
 
 	struct ShadowSettings {
-		float strength{};
+		float strength{ 0.0f };
 		float distance{ 20.0f };
 		Vector2<int> resolution{ 1024, 1024 };
 		float bias{ 0.0001f };
