@@ -6,6 +6,10 @@
 #include "scene/material.hpp"
 #include "scene/camera.hpp"
 #include "scene/mesh.hpp"
+#include "scene/meshrenderer.hpp"
+#include "scene/light.hpp"
+
+#define VIN_FORWARDRENDERER_MAX_LIGHT_COUNT 8
 
 namespace Vin {
 	
@@ -38,10 +42,21 @@ namespace Vin {
 	public:
 		void RenderScene(Registry& registry, std::shared_ptr<Camera> camera);
 
-		RenderQueue<RenderTask<ForwardRenderTaskData>>& GetRenderQueue();
+		RenderQueue<ForwardRenderTaskData>& GetRenderQueue();
 
 	private:
-		RenderQueue<RenderTask<ForwardRenderTaskData>> m_Queue{};
+		RenderQueue<ForwardRenderTaskData> m_Queue{};
+
+		Light m_MainLight{};
+
+		int m_AdditionalLightsCount{ 0 };
+		Light m_AdditionalLights[VIN_FORWARDRENDERER_MAX_LIGHT_COUNT]{};
+
+		friend class ForwardRendererModule;
+
+		friend void ForwardRendererSystem(Vin::Registry& registry, Vin::Query<Vin::Transform<float>, Vin::MeshRenderer> query,
+			Vin::RenderQueue<Vin::ForwardRenderTaskData>& queue, std::shared_ptr<Vin::Camera> camera);
+		friend void ForwardRendererLightSystem(Vin::Query<Vin::Light> query, Vin::ForwardRendererContext* ctx);
 	};
 
 }

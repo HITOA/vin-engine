@@ -4,8 +4,10 @@
 #include "rendercontext.hpp"
 #include "assets/asset.hpp"
 #include "renderer/renderer.hpp"
+#include "scene/mesh.hpp"
+#include "scene/light.hpp"
 
-#define VIN_RENDERCONTEXT_ASSETPATH "//Core/WindowInfo"
+#define VIN_RENDERCONTEXT_ASSETPATH "//Core/RenderContext"
 
 namespace Vin {
 
@@ -28,6 +30,12 @@ namespace Vin {
 			return std::static_pointer_cast<CtxT, RenderContext>(m_Ctx);
 		}
 		
+		void SetupMaterial(Material* mat);
+		void SetupMainLight(Material* mat, Light light);
+		void SetupAddtionalLight(Material* mat, Light* lights, int lightsCount);
+
+		void Draw(Primitive* primitive);
+
 	private:
 		std::shared_ptr<RenderContext> m_Ctx{};
 	};

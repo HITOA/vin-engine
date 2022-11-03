@@ -9,10 +9,8 @@ function(make_includable input_file output_file var_name)
     file(WRITE ${output_file} "${content}")
 endfunction(make_includable)
 
-make_includable(src/resources/vinshadowfs.glsl generated/vinshadowfs.hpp vinshadowfs)
-make_includable(src/resources/vinshadowvs.glsl generated/vinshadowvs.hpp vinshadowvs)
-make_includable(src/resources/vin.glsl generated/vinshader.hpp vinshader)
-make_includable(src/resources/vinbase.glsl generated/vinbaseshader.hpp vinbaseshader)
+make_includable(src/resources/shaderlibrary/vin.glsl generated/vinshader.hpp vinshader)
+make_includable(src/resources/shaderlibrary/vinrealtimelights.glsl generated/vinrealtimelightsshader.hpp vinrealtimelightsshader)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)

@@ -120,10 +120,6 @@ class TestModule : public Vin::Module {
 		camera->SetFarPlane(4000);
 
 		sponzascene = Vin::LoadGLTF("data/sponzagltf/Sponza.gltf");
-		//sponzascene = Vin::LoadGLTF("data/Main.1_Sponza/NewSponza_Main_glTF_002.gltf");
-		//sponzascene = Vin::LoadGLTF("data/AlphaBlendModeTest/glTF/AlphaBlendModeTest.gltf");
-		//sponzascene = Vin::LoadGLTF("data/chateau/FullOWMap_Chateau_Guillard_Eevee_packed_MeltRib_V2.gltf");
-		//sponzascene = Vin::LoadGLTF("data/BoxInterleaved/glTF/BoxInterleaved.gltf");
 		//(*sponzascene)->Process(SetRot);
 
 		Vin::Transform<float> transform{ Vin::Vector3<float>{0.0f, 10.0f, 0.0f} };
@@ -134,14 +130,23 @@ class TestModule : public Vin::Module {
 			transform, Vin::MeshRenderer{ mesh.Get() }, MoveComponent{});
 
 		Vin::Light mainLight{};
+		mainLight.mainLight = true;
 
-		mainLight.color = Vin::Vector4<float>{ 1.0f, 1.0f, 1.0f, 1.0f };
+		mainLight.color = Vin::Vector3<float>{ 1.0f, 1.0f, 1.0f };
 		mainLight.shadow.distance = 20;
 
 		mainLight.direction = Vin::Vector3<float>{ 0.25, 1, 0.15 }.Normalize();
-		mainLight.intensity = 50.0f;
+		mainLight.intensity = 1.0f;
+
+		Vin::Light additionalLight1{};
+		additionalLight1.type = Vin::LightType::Point;
+		additionalLight1.color = Vin::Vector3<float>{ 1.0f, 0.0f, 0.0f };
+		additionalLight1.position = Vin::Vector3<float>{ 0.0f, 1.0f, 0.0f };
+		additionalLight1.intensity = 10.0f;
+		additionalLight1.range = 1.0f;
 
 		(*sponzascene)->CreateEntity(mainLight);
+		(*sponzascene)->CreateEntity(additionalLight1);
 
 	}
 

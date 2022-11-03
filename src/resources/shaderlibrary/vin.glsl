@@ -49,4 +49,4 @@ uniform mat4 vin_matrix_projection;
 uniform mat4 vin_matrix_mvp;
 uniform mat4 vin_matrix_lightspace;
 
-#endif //VIN_SHADER_UTILS
+#endif

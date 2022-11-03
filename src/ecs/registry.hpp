@@ -49,8 +49,8 @@ namespace Vin {
 					--it2.second;
 		}
 
-		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Query<Components...>, Args...), Args&... args) {
+		template<typename RetType, typename... Components, typename... ArgsF, typename... ArgsC>
+		void Process(RetType(system)(Query<Components...>, ArgsF...), ArgsC&&... args) {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
@@ -62,8 +62,8 @@ namespace Vin {
 			}
 		}
 
-		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Query<EntityId, Components...>, Args...), Args&... args) {
+		template<typename RetType, typename... Components, typename... ArgsF, typename... ArgsC>
+		void Process(RetType(system)(Query<EntityId, Components...>, ArgsF...), ArgsC&&... args) {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
@@ -76,8 +76,8 @@ namespace Vin {
 			}
 		}
 
-		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Registry& registry, Query<Components...>, Args...), Args&... args) {
+		template<typename RetType, typename... Components, typename... ArgsF, typename... ArgsC>
+		void Process(RetType(system)(Registry& registry, Query<Components...>, ArgsF...), ArgsC&&... args) {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {
@@ -89,8 +89,8 @@ namespace Vin {
 			}
 		}
 
-		template<typename RetType, typename... Components, typename... Args>
-		void Process(RetType(system)(Registry& registry, Query<EntityId, Components...>, Args...), Args&... args) {
+		template<typename RetType, typename... Components, typename... ArgsF, typename... ArgsC>
+		void Process(RetType(system)(Registry& registry, Query<EntityId, Components...>, ArgsF...), ArgsC&&... args) {
 			OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Scene);
 			auto itend = m_Archetypes.end();
 			for (auto it = m_Archetypes.begin(); it != itend; ++it) {

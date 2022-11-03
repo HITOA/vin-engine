@@ -8,11 +8,12 @@
 #include "renderer/bindable.hpp"
 #include "math/math.hpp"
 
-#define VIN_MATERIAL_MAX_PROPERTIES 64
+#define VIN_MATERIAL_MAX_TEXTURES 128
+#define VIN_MATERIAL_MAX_PROPERTIES 1024
 
 namespace Vin {
 	struct MaterialTextureData {
-		bool used{ false };
+		int location{ -1 };
 		std::shared_ptr<Bindable<unsigned short>> texture{ nullptr };
 	};
 
@@ -26,6 +27,7 @@ namespace Vin {
 	struct MaterialProperty {
 		MaterialPropertyType type{ MaterialPropertyType::None };
 		char data[64]{};
+		int location{ -1 };
 	};
 
 	class Material {
@@ -35,6 +37,8 @@ namespace Vin {
 
 	public:
 		void Bind();
+
+		std::shared_ptr<Program> GetProgram();
 
 		int GetField(const char* name);
 
@@ -90,10 +94,15 @@ namespace Vin {
 	private:
 		void RecalculateId();
 
+		void AddTextureData(MaterialTextureData&& data);
+		void AddPropertyData(MaterialProperty&& data);
+
 	private:
 		std::shared_ptr<Program> m_Program{ nullptr };
-		MaterialTextureData m_Textures[16]{};
-		MaterialProperty m_Properties[VIN_MATERIAL_MAX_PROPERTIES]{};
+		std::vector<MaterialTextureData> m_Textures{};
+		std::vector<MaterialProperty> m_Properties{};
+		//MaterialTextureData m_Textures[VIN_MATERIAL_MAX_TEXTURES]{};
+		//MaterialProperty m_Properties[VIN_MATERIAL_MAX_PROPERTIES]{};
 		bool m_Transparency{ false };
 		bool m_DoubleSided{ false };
 		unsigned int m_Id{};
