@@ -10,6 +10,7 @@ function(make_includable input_file output_file var_name)
 endfunction(make_includable)
 
 make_includable(src/resources/shaderlibrary/vin.glsl generated/vinshader.hpp vinshader)
+make_includable(src/resources/shaderlibrary/vininput.glsl generated/vininputshader.hpp vininputshader)
 make_includable(src/resources/shaderlibrary/vinrealtimelights.glsl generated/vinrealtimelightsshader.hpp vinrealtimelightsshader)
 
 if(NOT CMAKE_BUILD_TYPE)

@@ -61,11 +61,12 @@ std::shared_ptr<Vin::Program> Vin::LoadProgram(std::string_view vspath, std::str
 }
 
 #include "vinshader.hpp"
-
+#include "vininputshader.hpp"
 #include "vinrealtimelightsshader.hpp"
 
 void Vin::LoadShaderLibrary()
 {
 	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinshader), "vin.glsl");
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vininputshader), "vininput.glsl");
 	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinrealtimelightsshader), "vinrealtimelights.glsl");
 }

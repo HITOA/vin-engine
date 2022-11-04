@@ -30,19 +30,20 @@ void main()
 
     float diff = max(dot(fsinput.normalOS, mainLight.direction), 0.0);
     vec3 diffuse = diff * mainLight.color;
-    
-    Light additionalLight = GetAdditionalLight(0);
-    
-    float addLightDistance = length(additionalLight.position - fsinput.positionWS.xyz);
-    float addLightAttenuation = additionalLight.range / (addLightDistance * addLightDistance);
-
-    vec3 addLightDirection = normalize(additionalLight.position - fsinput.positionWS.xyz);
-    float addLightDiff = max(dot(fsinput.normalOS, addLightDirection), 0.0);
-    vec3 addLightDiffuse = vec3(addLightDiff * addLightAttenuation) * additionalLight.color;
-
 
     vec3 color = tex.rgb * diffuse;
-    color += tex.rgb * addLightDiffuse;
+    
+    InputData inputData;
+    inputData.positionWS = fsinput.positionWS.xyz;
+
+    for (int i = 0; i < GetAdditionalLightCount(); ++i) {
+        Light additionalLight = GetAdditionalLight(i, inputData);
+
+        float addLightDiff = max(dot(fsinput.normalOS, additionalLight.direction), 0.0);
+        vec3 addLightDiffuse = vec3(addLightDiff * additionalLight.attenuation) * additionalLight.color;
+
+        color += tex.rgb * addLightDiffuse;
+    }
     
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2)); 

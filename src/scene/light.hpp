@@ -9,8 +9,7 @@ namespace Vin {
 		None,
 		Directional,
 		Point,
-		Spot,
-		AreaRec
+		Spot
 	};
 
 	struct ShadowSettings {
@@ -26,13 +25,12 @@ namespace Vin {
 		bool mainLight{ false };
 
 		Vector3<float> position{}; //Usefull for point, spot and area
-		Vector3<float> direction{ 0.0f, 1.0f, 0.0f }; //Usefull for directional and spot
-		Vector3<float> scale{ 1.0f, 1.0f, 1.0f }; //Usefull for area
+		Vector3<float> direction{ 0.0f, 0.0f, 0.0f }; //Usefull for directional and spot
 
 		Vector3<float> color{ 1.0f, 1.0f, 1.0f }; //Color of the light
 
 		float range{ 100.0f }; //Point
-		Vector2<float> spotangle{ -2, 1 }; //Outer angle & Inner angle
+		Vector2<float> spotangle{ 13, 3 }; //Inner angle & Outer angle
 		float intensity{ 1.0f }; //Itensity of the light
 
 		ShadowSettings shadow{};

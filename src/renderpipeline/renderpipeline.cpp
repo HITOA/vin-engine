@@ -32,10 +32,16 @@ void Vin::RenderPipeline::SetupAddtionalLight(Material* mat, Light* lights, int 
 		mat->GetProgram()->SetFloat3(buff, lights[i].direction.data);
 		sprintf(buff, "_AdditionalLightsColor[%i]", i);
 		mat->GetProgram()->SetFloat3(buff, (lights[i].color * lights[i].intensity).data);
-		sprintf(buff, "_AdditionalLightsAttribute[%i]", i);
-		mat->GetProgram()->SetFloat3(buff, Vector3<float>{lights[i].spotangle.xy, lights[i].range}.data);
-		sprintf(buff, "_AdditionalLightsScale[%i]", i);
-		mat->GetProgram()->SetFloat3(buff, lights[i].scale.data);
+
+		if (lights[i].type == LightType::Spot) {
+			sprintf(buff, "_AdditionalLightsAttribute[%i]", i);
+			mat->GetProgram()->SetFloat3(buff, Vector3<float>{Vin::Cos<float>((lights[i].spotangle.x + lights[i].spotangle.y)* (float)Vin::deg2rad),
+				Vin::Cos<float>(lights[i].spotangle.x* (float)Vin::deg2rad), lights[i].range}.data);
+		}
+		else {
+			sprintf(buff, "_AdditionalLightsAttribute[%i]", i);
+			mat->GetProgram()->SetFloat3(buff, Vector3<float>{-2, 1, lights[i].range}.data);
+		}
 	}
 }
 
