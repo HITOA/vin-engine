@@ -14,6 +14,10 @@ void Vin::ForwardRendererModule::Render()
 
 	queue.Sort();
 
+	m_ShadowRenderer.Render(ctx->m_MainLight, queue);
+
+	std::shared_ptr<RenderTexture> shadowMap = m_ShadowRenderer.GetShadowMap();
+
 	std::shared_ptr<Camera> currCamera{};
 
 	Matrix4x4<float> projection{};
@@ -44,10 +48,15 @@ void Vin::ForwardRendererModule::Render()
 
 			currPrimitive->material->GetProgram()->SetMat4("vin_matrix_view", view.data);
 			currPrimitive->material->GetProgram()->SetMat4("vin_matrix_projection", projection.data);
+			
+			int shadowMapLoc = currPrimitive->material->GetProgram()->GetField("_ShadowMap");
+			if (shadowMapLoc != -1)
+				shadowMap->Bind(shadowMapLoc);
 		}
 
 		currPrimitive->material->GetProgram()->SetMat4("vin_matrix_model", task.data.model.data);
 		currPrimitive->material->GetProgram()->SetMat4("vin_matrix_mvp", (projection * view * task.data.model).data);
+		currPrimitive->material->GetProgram()->SetMat4("vin_matrix_lightspace", m_ShadowRenderer.GetShadowMapMatrix(task.data.model).data);
 
 		Draw(currPrimitive);
 	}

@@ -12,6 +12,10 @@ endfunction(make_includable)
 make_includable(src/resources/shaderlibrary/vin.glsl generated/vinshader.hpp vinshader)
 make_includable(src/resources/shaderlibrary/vininput.glsl generated/vininputshader.hpp vininputshader)
 make_includable(src/resources/shaderlibrary/vinrealtimelights.glsl generated/vinrealtimelightsshader.hpp vinrealtimelightsshader)
+make_includable(src/resources/shaderlibrary/vinshadows.glsl generated/vinshadowsshader.hpp vinshadowsshader)
+
+make_includable(src/resources/vinshadowfs.glsl generated/vinshadowfsshader.hpp vinshadowfsshader)
+make_includable(src/resources/vinshadowvs.glsl generated/vinshadowvsshader.hpp vinshadowvsshader)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)

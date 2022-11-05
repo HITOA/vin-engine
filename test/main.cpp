@@ -133,16 +133,16 @@ class TestModule : public Vin::Module {
 		mainLight.mainLight = true;
 
 		mainLight.color = Vin::Vector3<float>{ 1.0f, 1.0f, 1.0f };
-		mainLight.shadow.distance = 20;
+		mainLight.shadow.distance = 15;
 
 		mainLight.direction = Vin::Vector3<float>{ 0.25, 1, 0.15 }.Normalize();
-		mainLight.intensity = 0.3f;
+		mainLight.intensity = 1.0f;
 
 		Vin::Light additionalLight1{};
 		additionalLight1.type = Vin::LightType::Spot;
 		additionalLight1.direction = Vin::Vector3<float>{ 1.0f, 0.0f, 0.0f };
 		additionalLight1.position = Vin::Vector3<float>{ 0.0f, 1.0f, 0.0f };
-		additionalLight1.intensity = 100.0f;
+		additionalLight1.intensity = 200.0f;
 		additionalLight1.range = 1.0f;
 
 		Vin::Light additionalLight2{};
@@ -150,8 +150,8 @@ class TestModule : public Vin::Module {
 		additionalLight2.color = Vin::Vector3<float>{ 0.2f, 1.0f, 0.2f };
 		additionalLight2.direction = Vin::Vector3<float>{ 1.0f, 0.0f, 0.0f };
 		additionalLight2.position = Vin::Vector3<float>{ 3.0f, 1.0f, 0.0f };
-		additionalLight2.intensity = 10.0f;
-		additionalLight2.range = 1.0f;
+		additionalLight2.intensity = 1.0f;
+		additionalLight2.range = 0.3f;
 
 		(*sponzascene)->CreateEntity(mainLight);
 		(*sponzascene)->CreateEntity(additionalLight1);

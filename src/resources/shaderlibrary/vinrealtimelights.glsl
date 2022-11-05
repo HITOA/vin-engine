@@ -28,17 +28,6 @@ uniform vec3 _AdditionalLightsDirection[MAX_ADDITIONAL_LIGHTS];
 uniform vec3 _AdditionalLightsColor[MAX_ADDITIONAL_LIGHTS];
 uniform vec3 _AdditionalLightsAttribute[MAX_ADDITIONAL_LIGHTS]; // x = spot cos outer cone, y = spot cos inner cone, z = range
 
-float GetPointLightAttenuation(int index, InputData inputData) {
-    float dst = length(inputData.positionWS - _AdditionalLightsPosition[index]);
-    return 1 / (dst * dst);
-}
-
-float GetSpotLightAttenuation(int index, InputData inputData) {
-    float theta = dot(normalize(_AdditionalLightsPosition[index] - inputData.positionWS), normalize(_AdditionalLightsDirection[index]));
-    float epsilon = _AdditionalLightsAttribute[index].y - _AdditionalLightsAttribute[index].x;
-    return smoothstep(0.0, 1.0, (theta - _AdditionalLightsAttribute[index].x) / epsilon);
-}
-
 Light GetMainLight() {
     Light light;
 
@@ -57,7 +46,12 @@ Light GetAdditionalLight(int index, InputData inputData) {
     light.direction = max(normalize(_AdditionalLightsDirection[index]), normalize(light.position - inputData.positionWS));
     light.color = _AdditionalLightsColor[index];
 
-    light.attenuation = GetSpotLightAttenuation(index, inputData) * GetPointLightAttenuation(index, inputData);
+    float dst = length(inputData.positionWS - _AdditionalLightsPosition[index]);
+    float theta = dot(normalize(_AdditionalLightsPosition[index] - inputData.positionWS), normalize(_AdditionalLightsDirection[index]));
+    float epsilon = _AdditionalLightsAttribute[index].y - _AdditionalLightsAttribute[index].x;
+
+    light.attenuation = smoothstep(0.0, 1.0, (theta - _AdditionalLightsAttribute[index].x) / epsilon) * 
+    _AdditionalLightsAttribute[index].z / (dst * dst);
 
     return light;
 }

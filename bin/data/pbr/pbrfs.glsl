@@ -1,6 +1,7 @@
 #version 410 core
 
 #include "vinrealtimelights.glsl"
+#include "vinshadows.glsl"
 
 out vec4 fragcolor;
 
@@ -31,7 +32,7 @@ void main()
     float diff = max(dot(fsinput.normalOS, mainLight.direction), 0.0);
     vec3 diffuse = diff * mainLight.color;
 
-    vec3 color = tex.rgb * diffuse;
+    vec3 color = tex.rgb * diffuse * SampleShadowMap(fsinput.positionLS);
     
     InputData inputData;
     inputData.positionWS = fsinput.positionWS.xyz;

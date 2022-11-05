@@ -2,6 +2,7 @@
 
 #include "core/application.hpp"
 #include "renderpipeline/renderpipeline.hpp"
+#include "renderpipeline/shadows.hpp"
 
 namespace Vin {
 
@@ -9,6 +10,9 @@ namespace Vin {
 	public:
 		void Init();
 		void Render();
+
+	private:
+		ShadowRenderer m_ShadowRenderer{};
 	};
 
 }

@@ -2,6 +2,7 @@
 
 #include "scene/camera.hpp"
 #include "ecs/registry.hpp"
+#include "scene/mesh.hpp"
 
 namespace Vin {
 
