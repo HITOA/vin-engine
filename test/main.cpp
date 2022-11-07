@@ -134,6 +134,7 @@ class TestModule : public Vin::Module {
 
 		mainLight.color = Vin::Vector3<float>{ 1.0f, 1.0f, 1.0f };
 		mainLight.shadow.distance = 15;
+		mainLight.shadow.resolution *= 4;
 
 		mainLight.direction = Vin::Vector3<float>{ 0.25, 1, 0.15 }.Normalize();
 		mainLight.intensity = 1.0f;

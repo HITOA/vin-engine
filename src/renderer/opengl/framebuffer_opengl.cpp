@@ -7,9 +7,9 @@ Vin::OpenGLRenderTarget::OpenGLRenderTarget(const RenderTargetSpecification& spe
 	m_Specification{ spec }, m_FrameBufferId{}, m_BufferIds{}, m_NoColorAttachment{ true }
 {
 	Generate();
-	if (!IsValid())
+	if (!glCheckNamedFramebufferStatus(m_FrameBufferId, GL_FRAMEBUFFER))
 		Logger::Err("Can't create RenderTexture, bad layout.");
-	Unbind();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 Vin::OpenGLRenderTarget::~OpenGLRenderTarget()
@@ -112,11 +112,13 @@ void Vin::OpenGLRenderTarget::Generate()
 				glTexStorage2D(GL_TEXTURE_2D, 1,
 					ParseRenderBufferFormat(spec.format),
 					m_Specification.width, m_Specification.height);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-				if (attachment == GL_DEPTH_ATTACHMENT)
+				if (attachment == GL_DEPTH_ATTACHMENT) {
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+					//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+				}
 
 				glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, m_BufferIds[i], 0);
 			}

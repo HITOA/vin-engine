@@ -50,8 +50,10 @@ void Vin::ForwardRendererModule::Render()
 			currPrimitive->material->GetProgram()->SetMat4("vin_matrix_projection", projection.data);
 			
 			int shadowMapLoc = currPrimitive->material->GetProgram()->GetField("_ShadowMap");
-			if (shadowMapLoc != -1)
+			if (shadowMapLoc != -1) {
+				currPrimitive->material->GetProgram()->SetInt(shadowMapLoc, shadowMapLoc);
 				shadowMap->Bind(shadowMapLoc);
+			}
 		}
 
 		currPrimitive->material->GetProgram()->SetMat4("vin_matrix_model", task.data.model.data);

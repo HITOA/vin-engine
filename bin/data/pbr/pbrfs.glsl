@@ -32,7 +32,7 @@ void main()
     float diff = max(dot(fsinput.normalOS, mainLight.direction), 0.0);
     vec3 diffuse = diff * mainLight.color;
 
-    vec3 color = tex.rgb * diffuse * SampleShadowMap(fsinput.positionLS);
+    vec3 color = tex.rgb * diffuse * SampleShadowMapPCF(fsinput.positionLS);
     
     InputData inputData;
     inputData.positionWS = fsinput.positionWS.xyz;
