@@ -10,6 +10,7 @@ VIN_TEXCOORD0 vec2 _texcoord0;
 out struct FsInput {
     vec4 positionWS; //World space position
     vec4 positionLS; //Light space position
+    vec3 normalOS;
     mat3 TBN;
     vec2 uv0;
     vec3 cameraPosition;
@@ -19,6 +20,7 @@ void main()
 {
     fsinput.positionWS = vin_matrix_model * vec4(_position, 1.0);
     fsinput.positionLS = vin_matrix_lightspace * vec4(_position, 1.0);
+    fsinput.normalOS = _normal;
     fsinput.uv0 = _texcoord0;
 
     mat4 invview = inverse(vin_matrix_view);

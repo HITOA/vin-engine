@@ -25,17 +25,17 @@ The sponza scene rendered in the engine : (10/22/2022)
 ![Modern sponza scene](https://i.imgur.com/9y9cDtY.jpeg)  
   
 ## TODO 
-- Seperate generale rendering function (shadow map etc) to a helper class or something like that  
-- Make creating rendering pipeline much easier and high level  
+- Basic physics engine (accurate for VR)
+  
+- OpenVR & OpenXR implementation  
+- Texel Shading for VR (Sort of) 
 
-- Loading GLTF/GLB (2.0) model. (Almost complete)
+- SDFDDGI (https://deepai.org/publication/signed-distance-fields-dynamic-diffuse-global-illumination)
+
 - PostProcessing Chain system (Simple way to do postprocessing on a rendetarget, you pass the render target to a post process chain, then it end up with all the effect. you would add post process effect like chain.Add(postprocessmat))  
-- Implementing MIMALLOC for std & new/delete operator overload  
   
 - Transform hierarchy, Need a lot of optimization  
-    
-- Proper lighting (Main light with shadow map, Additional light with Eventual shadow map)  
-- Cubemap  
+
 - GPU Instancing  
 - Cascade shadow map (Entire frustum)  
 - Frustum culling (Compute shader)  
@@ -43,10 +43,7 @@ The sponza scene rendered in the engine : (10/22/2022)
 - UI/Font (https://github.com/freetype/freetype / https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf)   
    
 ## Things to considere  
-- Better soft shadow algorithm (Better PCF)
 - Vulkan implementation
-- Optimizing more !! (always good)
-- VR/XR/AR rendering pipeline ?
 
 ## Source
 A lot of useful source for developing game engine related stuff :

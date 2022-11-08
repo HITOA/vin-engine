@@ -148,7 +148,7 @@ void AddTexture(tinygltf::Model& model, Vin::Asset<Vin::Material> material, int 
 	texture = Vin::AssetDatabase::AddAsset<Vin::Texture>(image, texturePath);
 }
 
-void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> scene, 
+void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene> scene, 
 	int nodeIdx, Vin::EntityId parent, std::string_view path) {
 
 	Vin::Transform<float> transform{};
@@ -285,13 +285,13 @@ void BuildNode(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::Archetype
 	}
 }
 
-void BuildScene(tinygltf::Model& model, std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> scene, std::string_view path) {
+void BuildScene(tinygltf::Model& model, std::shared_ptr<Vin::Scene> scene, std::string_view path) {
 	for (int nodeIdx : model.scenes[model.defaultScene].nodes) {
 		BuildNode(model, scene, nodeIdx, 0, path);
 	}
 }
 
-std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> Vin::LoadGLTF(std::string_view path)
+std::shared_ptr<Vin::Scene> Vin::LoadGLTF(std::string_view path)
 {
 	tinygltf::FsCallbacks fscallback{};
 
@@ -323,8 +323,8 @@ std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> Vin::LoadGLT
 		return nullptr;
 	}
 
-	std::shared_ptr<Scene<ArchetypeMemoryLayout::Contiguous>> scene =
-		std::make_shared< Scene<ArchetypeMemoryLayout::Contiguous>>();
+	std::shared_ptr<Scene> scene =
+		std::make_shared<Scene>();
 
 	BuildScene(model, scene, path);
 

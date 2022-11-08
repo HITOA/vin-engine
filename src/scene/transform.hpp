@@ -16,8 +16,7 @@ namespace Vin {
 		Transform() : parent{ 0 }, position {}, rotation{}, scale{ (T)1.0 } {};
 		Transform(Vector3<T> position) : parent{ 0 }, position{ position }, rotation{}, scale{ (T)1.0 } {};
 
-		template<ArchetypeMemoryLayout layout>
-		Matrix4x4<T> GetModelMatrix(Registry<layout>& registry) {
+		Matrix4x4<T> GetModelMatrix(Registry& registry) {
 			Matrix4x4<T> model{ Matrix4x4<T>::identity };
 
 			Vin::Scale(model, scale);

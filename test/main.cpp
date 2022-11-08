@@ -4,12 +4,13 @@
 #include "assets/serdes/staticmesheserdes.hpp"
 
 #include <module/windowing/windowmodule.hpp>
-#include <module/rendering/renderingmodule.hpp>
 #include <module/editor/editormodule.hpp>
+#include <module/forwardrenderer/forwardrenderer.hpp>
 
 #include <utils/gltfutils.hpp>
 
 #include "scene/mesh.hpp"
+#include "scene/camera.hpp"
 
 #include "ecs/registry.hpp"
 #include "vfs/vfs.hpp"
@@ -33,10 +34,8 @@ unsigned short indices[] = {
 	1, 2, 3
 }; 
 
-struct SpeedRotation {
-	float speed{ 1 };
-
-	SpeedRotation(float speed) : speed{ speed } {};
+struct MoveComponent {
+	float speed{ 0.0004f };
 };
 
 class TestModule : public Vin::Module {
@@ -47,10 +46,10 @@ class TestModule : public Vin::Module {
 
 	Vin::Asset<Vin::StaticMesh> mesh;
 
-	Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous> scene{};
+	Vin::Scene scene{};
 	std::shared_ptr<Vin::Camera> camera;
 
-	std::shared_ptr<Vin::Scene<Vin::ArchetypeMemoryLayout::Contiguous>> sponzascene{};
+	std::shared_ptr<Vin::Scene> sponzascene{};
 
 	double t = 0;
 
@@ -63,7 +62,7 @@ class TestModule : public Vin::Module {
 
 	Vin::Vector2<int> mouseLastPos{ 0 };
 
-	static void MoveRandomSystem(Vin::Query<Vin::ArchetypeMemoryLayout::Contiguous, Vin::Transform<float>> query, float r) {
+	static void MoveRandomSystem(Vin::Query<Vin::Transform<float>> query, float r) {
 		for (auto [transform] : query) {
 			transform->position = Vin::Vector3<float>{ 0, 0, -25 };
 			transform->rotation = Vin::Quaternion<float>::Euler(Vin::Vector3<float>{ 0, 0, 0 });
@@ -72,7 +71,7 @@ class TestModule : public Vin::Module {
 		}
 	}
 
-	static void SetRot(Vin::Query<Vin::ArchetypeMemoryLayout::Contiguous, Vin::Transform<float>> query) {
+	static void SetRot(Vin::Query<Vin::Transform<float>> query) {
 		int i = 0; 
 		for (auto [transform] : query) {
 			++i;
@@ -81,6 +80,14 @@ class TestModule : public Vin::Module {
 			//Vin::Logger::Log("Scale : {}", transform->scale);
 		}
 		Vin::Logger::Log("Entity : {}", i);
+	}
+
+	static void MoveComponentSystem(Vin::Query<Vin::Transform<float>, MoveComponent> query, float deltaTime) {
+
+		for (auto [transform, movecomp] : query) {
+			transform->position.z += movecomp->speed * deltaTime;
+			//Vin::Logger::Log("position z : {}", (float)transform->position.z);
+		}
 	}
 
 	void Start() {
@@ -108,62 +115,47 @@ class TestModule : public Vin::Module {
 			primitive.material = std::make_shared<Vin::Material>(mat);
 		}
 
-		size_t k = 0;
-
-		for (int j = -3000; j <= 3000; j += 75) {
-			for (int i = -3000; i <= 3000; i += 75) {
-				++k;
-				scene->CreateEntity(
-					Vin::Transform<float>{Vin::Vector3<float>{(float)i, (float)j, -3000.0f}},
-					Vin::MeshRenderer{ mesh.Get() },
-					SpeedRotation{(float)(rand() % 100) / 25});
-			}
-		}
-
-		Vin::Logger::Log("Number of entity : {}", k);
-
-		scene->CreateEntity(
-			Vin::Transform<float>{Vin::Vector3<float>{0, 0.0f, -100.0f}}, 
-			Vin::MeshRenderer{ mesh.Get() },
-			SpeedRotation{ (float)(rand() % 100) / 25 });
-
-		scene->CreateEntity(
-			Vin::Transform<float>{Vin::Vector3<float>{-75.0f, 0.0f, -100.0f}},
-			Vin::MeshRenderer{ mesh.Get() },
-			SpeedRotation{ (float)(rand() % 100) / 25 });
-
-		scene->CreateEntity(
-			Vin::Transform<float>{Vin::Vector3<float>{75.0f, 0.0f, -100.0f}},
-			Vin::MeshRenderer{ mesh.Get() },
-			SpeedRotation{ (float)(rand() % 100) / 25 });
-
 		camera->SetFOV(52.5);
 		camera->SetNearPlane(0.1);
 		camera->SetFarPlane(4000);
 
 		sponzascene = Vin::LoadGLTF("data/sponzagltf/Sponza.gltf");
-		//sponzascene = Vin::LoadGLTF("data/Main.1_Sponza/NewSponza_Main_glTF_002.gltf");
-		//sponzascene = Vin::LoadGLTF("data/AlphaBlendModeTest/glTF/AlphaBlendModeTest.gltf");
-		//sponzascene = Vin::LoadGLTF("data/chateau/FullOWMap_Chateau_Guillard_Eevee_packed_MeltRib_V2.gltf");
-		//sponzascene = Vin::LoadGLTF("data/BoxInterleaved/glTF/BoxInterleaved.gltf");
 		//(*sponzascene)->Process(SetRot);
 
-		Vin::Transform<float> transform{ Vin::Vector3<float>{0.0f, 0.0f, -10.0f} };
+		Vin::Transform<float> transform{ Vin::Vector3<float>{0.0f, 10.0f, 0.0f} };
 
-		transform.scale *= 0.5;
+		transform.scale *= 0.05;
 
-		//(*sponzascene)->CreateEntity(
-			//transform, Vin::MeshRenderer{ mesh.Get() });
+		(*sponzascene)->CreateEntity(
+			transform, Vin::MeshRenderer{ mesh.Get() }, MoveComponent{});
 
 		Vin::Light mainLight{};
+		mainLight.mainLight = true;
 
-		mainLight.color = Vin::Vector4<float>{ 1.0f, 1.0f, 1.0f, 1.0f };
+		mainLight.color = Vin::Vector3<float>{ 1.0f, 1.0f, 1.0f };
 		mainLight.shadow.distance = 20;
 
 		mainLight.direction = Vin::Vector3<float>{ 0.25, 1, 0.15 }.Normalize();
-		mainLight.intensity = 50.0f;
+		mainLight.intensity = 1.0f;
 
-		(*sponzascene)->CreateEntity(mainLight);
+		Vin::Light additionalLight1{};
+		additionalLight1.type = Vin::LightType::Spot;
+		additionalLight1.direction = Vin::Vector3<float>{ 1.0f, 0.0f, 0.0f };
+		additionalLight1.position = Vin::Vector3<float>{ 0.0f, 1.0f, 0.0f };
+		additionalLight1.intensity = 200.0f;
+		additionalLight1.range = 1.0f;
+
+		Vin::Light additionalLight2{};
+		additionalLight2.type = Vin::LightType::Point;
+		additionalLight2.color = Vin::Vector3<float>{ 0.2f, 1.0f, 0.2f };
+		additionalLight2.direction = Vin::Vector3<float>{ 1.0f, 0.0f, 0.0f };
+		additionalLight2.position = Vin::Vector3<float>{ 3.0f, 1.0f, 0.0f };
+		additionalLight2.intensity = 1.0f;
+		additionalLight2.range = 0.3f;
+
+		//(*sponzascene)->CreateEntity(mainLight);
+		(*sponzascene)->CreateEntity(additionalLight1);
+		(*sponzascene)->CreateEntity(additionalLight2);
 
 	}
 
@@ -246,6 +238,8 @@ class TestModule : public Vin::Module {
 
 			DispatchEvent(handler);
 		}
+
+		(*sponzascene)->Process(MoveComponentSystem, deltaTime);
 	}
 
 	void Update() {
@@ -292,7 +286,7 @@ public:
 		SetProcessRate(493849348);
 
 		AddModule<Vin::WindowModule>();
-		AddModule<Vin::RenderingModule>();
+		AddModule<Vin::ForwardRendererModule>();
 		AddModule<Vin::EditorModule>();
 		AddModule<TestModule>();
 	}

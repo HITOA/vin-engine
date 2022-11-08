@@ -4,5 +4,5 @@
 #include "scene/scene.hpp"
 
 namespace Vin {
-	std::shared_ptr<Scene<ArchetypeMemoryLayout::Contiguous>> LoadGLTF(std::string_view path);
+	std::shared_ptr<Scene> LoadGLTF(std::string_view path);
 }

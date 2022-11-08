@@ -176,3 +176,183 @@ int Vin::OpenGLTexture::ParseTextureInternalFormat(TextureFormat format)
 		return GL_RGBA8;
 	}
 }
+
+Vin::OpenGLCubemap::OpenGLCubemap(size_t width, size_t height, TextureFormat format, bool mipmap) :
+	m_Width{ width }, m_Height{ height }, m_Format{ format }, m_Mipmap{ mipmap },
+	m_Filtering{ TextureFiltering::Bilinear }, m_Wrapping{ TextureWrapping::Repeat }
+{
+	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_CubemapId);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubemapId);
+
+	if (!mipmap) {
+		for (int i = 0; i < 6; ++i)
+			glTexStorage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 1, ParseTextureInternalFormat(m_Format), width, height);
+	}
+	else {
+		size_t levels = 0;
+		while (width > 1 && height > 1 && levels < GL_MAX_TEXTURE_SIZE) {
+			for (int i = 0; i < 6; ++i)
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, levels, ParseTextureInternalFormat(m_Format), width, height,
+					0, ParseTextureFormat(m_Format), ParseTextureFormatType(m_Format), NULL);
+			width = Max<int>(width / 2, 1);
+			height = Max<int>(height / 2, 1);
+			levels++;
+		}
+	}
+
+	SetFiltering(m_Filtering);
+	SetWrapping(m_Wrapping);
+}
+
+Vin::OpenGLCubemap::~OpenGLCubemap()
+{
+	glDeleteTextures(1, &m_CubemapId);
+}
+
+Vin::TextureFormat Vin::OpenGLCubemap::GetFormat()
+{
+	return m_Format;
+}
+
+Vin::TextureFiltering Vin::OpenGLCubemap::GetFiltering()
+{
+	return m_Filtering;
+}
+
+Vin::TextureWrapping Vin::OpenGLCubemap::GetWrapping()
+{
+	return m_Wrapping;
+}
+
+size_t Vin::OpenGLCubemap::GetWidth()
+{
+	return m_Width;
+}
+
+size_t Vin::OpenGLCubemap::GetHeight()
+{
+	return m_Height;
+}
+
+void Vin::OpenGLCubemap::SetFiltering(TextureFiltering filtering)
+{
+	switch (filtering)
+	{
+	case Vin::TextureFiltering::Point:
+		glTextureParameteri(m_CubemapId, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+		glTextureParameteri(m_CubemapId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		break;
+	case Vin::TextureFiltering::Bilinear:
+		glTextureParameteri(m_CubemapId, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTextureParameteri(m_CubemapId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		break;
+	case Vin::TextureFiltering::Trilinear:
+		glTextureParameteri(m_CubemapId, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTextureParameteri(m_CubemapId, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		break;
+	default:
+		glTextureParameteri(m_CubemapId, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTextureParameteri(m_CubemapId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		break;
+	}
+}
+
+void Vin::OpenGLCubemap::SetWrapping(TextureWrapping wrapping)
+{
+	glTextureParameteri(m_CubemapId, GL_TEXTURE_WRAP_S, ParseTextureWrapping(wrapping));
+	glTextureParameteri(m_CubemapId, GL_TEXTURE_WRAP_T, ParseTextureWrapping(wrapping));
+	glTextureParameteri(m_CubemapId, GL_TEXTURE_WRAP_R, ParseTextureWrapping(wrapping));
+}
+
+void Vin::OpenGLCubemap::SetData(CubemapTexture side, void* data)
+{
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubemapId);
+	glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + (int)side, 0, 0, 0, m_Width, m_Height, ParseTextureFormat(m_Format), ParseTextureFormatType(m_Format), data);
+	if (m_Mipmap) {
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	}
+}
+
+void Vin::OpenGLCubemap::Bind(unsigned short location)
+{
+	OPTICK_GPU_EVENT("Bind Cubemap");
+	glBindTextureUnit(location, m_CubemapId);
+}
+
+
+int Vin::OpenGLCubemap::ParseTextureWrapping(TextureWrapping wrapping)
+{
+	switch (wrapping)
+	{
+	case TextureWrapping::Repeat:
+		return GL_REPEAT;
+	case TextureWrapping::Clamp:
+		return GL_CLAMP_TO_BORDER;
+	case TextureWrapping::ClampEdge:
+		return GL_CLAMP_TO_EDGE;
+	case TextureWrapping::MirroredRepeat:
+		return GL_MIRRORED_REPEAT;
+	default:
+		return GL_REPEAT;
+	}
+}
+
+int Vin::OpenGLCubemap::ParseTextureFormat(TextureFormat format)
+{
+	switch (format) {
+	case TextureFormat::RGBA32:
+		return GL_RGBA;
+	case TextureFormat::RGB24:
+		return GL_RGB;
+	case TextureFormat::RG16:
+		return GL_RG;
+	case TextureFormat::R8:
+		return GL_RED;
+	case TextureFormat::R16:
+		return GL_RED;
+	case TextureFormat::BGRA32:
+		return GL_BGRA;
+	default:
+		return GL_RGBA;
+	}
+}
+
+int Vin::OpenGLCubemap::ParseTextureFormatType(TextureFormat format)
+{
+	switch (format) {
+	case TextureFormat::RGBA32:
+		return GL_UNSIGNED_BYTE;
+	case TextureFormat::RGB24:
+		return GL_UNSIGNED_BYTE;
+	case TextureFormat::RG16:
+		return GL_UNSIGNED_BYTE;
+	case TextureFormat::R8:
+		return GL_UNSIGNED_BYTE;
+	case TextureFormat::R16:
+		return GL_UNSIGNED_SHORT;
+	case TextureFormat::BGRA32:
+		return GL_UNSIGNED_BYTE;
+	default:
+		return GL_UNSIGNED_BYTE;
+	}
+}
+
+int Vin::OpenGLCubemap::ParseTextureInternalFormat(TextureFormat format)
+{
+	switch (format) {
+	case TextureFormat::RGBA32:
+		return GL_RGBA8;
+	case TextureFormat::RGB24:
+		return GL_RGB8;
+	case TextureFormat::RG16:
+		return GL_RG8;
+	case TextureFormat::R8:
+		return GL_R8;
+	case TextureFormat::R16:
+		return GL_R16;
+	case TextureFormat::BGRA32:
+		return GL_RGBA8;
+	default:
+		return GL_RGBA8;
+	}
+}

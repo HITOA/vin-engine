@@ -7,5 +7,6 @@
 namespace Vin {
 
 	std::shared_ptr<Program> LoadProgram(std::string_view vspath, std::string_view fspath);
+	void LoadShaderLibrary();
 
 }

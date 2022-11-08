@@ -2,6 +2,25 @@
 
 #include "assets/asset.hpp"
 
+std::string SolveInclude(std::string solved) {
+	for (
+		size_t pos = solved.find("#include", 0);
+		pos != std::string::npos;
+		pos = solved.find("#include", 0)) {
+
+		size_t beg = solved.find('"', pos) + 1;
+		size_t end = solved.find('"', beg);
+
+		std::string path = solved.substr(beg, end - beg);
+
+		Vin::Asset<std::string> include = Vin::AssetDatabase::LoadAsset<std::string>(path);
+
+		solved.replace(pos, end - pos + 1, *include.Get());
+	}
+
+	return solved;
+}
+
 std::string SolveInclude(Vin::Asset<std::string> shader) {
 	std::string solved{ *shader.Get() };
 
@@ -17,7 +36,7 @@ std::string SolveInclude(Vin::Asset<std::string> shader) {
 
 		Vin::Asset<std::string> include = Vin::AssetDatabase::LoadAsset<std::string>(path);
 
-		solved.replace(pos, end - pos, *include.Get());
+		solved.replace(pos, end - pos + 1, *include.Get());
 	}
 
 	return solved;
@@ -39,4 +58,17 @@ std::shared_ptr<Vin::Program> Vin::LoadProgram(std::string_view vspath, std::str
 	Vin::AssetDatabase::Unload(fsfile);
 	
 	return program;
+}
+
+#include "vinshader.hpp"
+#include "vininputshader.hpp"
+#include "vinrealtimelightsshader.hpp"
+#include "vinshadowsshader.hpp"
+
+void Vin::LoadShaderLibrary()
+{
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinshader), "vin.glsl");
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vininputshader), "vininput.glsl");
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinrealtimelightsshader), "vinrealtimelights.glsl");
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinshadowsshader), "vinshadows.glsl");
 }
