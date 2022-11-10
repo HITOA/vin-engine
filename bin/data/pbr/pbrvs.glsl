@@ -25,8 +25,7 @@ void main()
 
     mat4 invview = inverse(vin_matrix_view);
 
-    fsinput.cameraPosition = 
-    vec3(invview[3][0], invview[3][1], invview[3][2]);
+    fsinput.cameraPosition = _WorldSpaceCameraPosition;
 
     vec3 T = normalize((vin_matrix_model * vec4(_tangent.xyz, 0.0)).xyz);
     vec3 N = normalize((vin_matrix_model * vec4(_normal, 0.0)).xyz);

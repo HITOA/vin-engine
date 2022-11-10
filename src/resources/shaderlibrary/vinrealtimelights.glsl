@@ -43,11 +43,16 @@ Light GetAdditionalLight(int index, InputData inputData) {
     Light light;
 
     light.position = _AdditionalLightsPosition[index];
-    light.direction = max(normalize(_AdditionalLightsDirection[index]), normalize(light.position - inputData.positionWS));
+
+    if (length(_AdditionalLightsDirection[index]) != 0)
+        light.direction = normalize(_AdditionalLightsDirection[index]);
+    else
+        light.direction = normalize(light.position - inputData.positionWS);
+
     light.color = _AdditionalLightsColor[index];
 
     float dst = length(inputData.positionWS - _AdditionalLightsPosition[index]);
-    float theta = dot(normalize(_AdditionalLightsPosition[index] - inputData.positionWS), normalize(_AdditionalLightsDirection[index]));
+    float theta = dot(normalize(_AdditionalLightsPosition[index] - inputData.positionWS), light.direction);
     float epsilon = _AdditionalLightsAttribute[index].y - _AdditionalLightsAttribute[index].x;
 
     light.attenuation = smoothstep(0.0, 1.0, (theta - _AdditionalLightsAttribute[index].x) / epsilon) * 

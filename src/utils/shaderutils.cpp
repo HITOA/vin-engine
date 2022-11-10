@@ -62,13 +62,17 @@ std::shared_ptr<Vin::Program> Vin::LoadProgram(std::string_view vspath, std::str
 
 #include "vinshader.hpp"
 #include "vininputshader.hpp"
+#include "vinlightingshader.hpp"
 #include "vinrealtimelightsshader.hpp"
 #include "vinshadowsshader.hpp"
+#include "vinsurfaceshader.hpp"
 
 void Vin::LoadShaderLibrary()
 {
-	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinshader), "vin.glsl");
-	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vininputshader), "vininput.glsl");
-	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinrealtimelightsshader), "vinrealtimelights.glsl");
-	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinshadowsshader), "vinshadows.glsl");
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinshader), "vin.glsl").SetFlags(Vin::AssetFlag::Persistent);
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vininputshader), "vininput.glsl").SetFlags(Vin::AssetFlag::Persistent);
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinsurfaceshader), "vinsurface.glsl").SetFlags(Vin::AssetFlag::Persistent);
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinrealtimelightsshader), "vinrealtimelights.glsl").SetFlags(Vin::AssetFlag::Persistent);
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinshadowsshader), "vinshadows.glsl").SetFlags(Vin::AssetFlag::Persistent);
+	Vin::AssetDatabase::AddAsset<std::string>(SolveInclude(vinlightingshader), "vinlighting.glsl").SetFlags(Vin::AssetFlag::Persistent);
 }

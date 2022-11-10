@@ -7,6 +7,8 @@
 
 struct InputData {
     vec3 positionWS;
+    vec3 normalWS;
+    vec3 viewDirectionWS;
 };
 
 #endif

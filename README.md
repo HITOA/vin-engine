@@ -26,6 +26,7 @@ The sponza scene rendered in the engine : (10/22/2022)
   
 ## TODO 
 - Basic physics engine (accurate for VR)
+- Rewrite cleaner Cmake
   
 - OpenVR & OpenXR implementation  
 - Texel Shading for VR (Sort of) 

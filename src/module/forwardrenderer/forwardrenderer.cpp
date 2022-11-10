@@ -48,6 +48,8 @@ void Vin::ForwardRendererModule::Render()
 
 			currPrimitive->material->GetProgram()->SetMat4("vin_matrix_view", view.data);
 			currPrimitive->material->GetProgram()->SetMat4("vin_matrix_projection", projection.data);
+
+			currPrimitive->material->GetProgram()->SetFloat3("_WorldSpaceCameraPosition", currCamera->position.data);
 			
 			int shadowMapLoc = currPrimitive->material->GetProgram()->GetField("_ShadowMap");
 			if (shadowMapLoc != -1) {

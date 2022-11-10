@@ -1,6 +1,6 @@
 #version 410 core
 
-#include "vinrealtimelights.glsl"
+#include "vinlighting.glsl"
 #include "vinshadows.glsl"
 
 out vec4 fragcolor;
@@ -23,27 +23,29 @@ uniform float _AlphaCutoff;
 void main()
 {
     vec4 tex = texture(_MainTex, fsinput.uv0);
+    vec4 mr = texture(_MetallicRoughnessTex, fsinput.uv0);
 
     if (tex.a < _AlphaCutoff)
         discard;
 
-    Light mainLight = GetMainLight();
+    vec3 normal = texture(_NormalTex, fsinput.uv0).xyz;
+    normal = normal * 2.0 - 1.0;
+    normal = normalize(fsinput.TBN * normal);
 
-    float diff = max(dot(fsinput.normalOS, mainLight.direction), 0.0);
-    vec3 diffuse = diff * mainLight.color;
-
-    vec3 color = tex.rgb * diffuse * SampleShadowMapPCF(fsinput.positionLS);
-    
     InputData inputData;
     inputData.positionWS = fsinput.positionWS.xyz;
+    inputData.normalWS = normal;
+    inputData.viewDirectionWS = normalize(fsinput.cameraPosition.xyz - fsinput.positionWS.xyz);
+
+    SurfaceData surfaceData;
+    surfaceData.albedo = tex.rgb;
+    surfaceData.roughness = mr.g;
+    surfaceData.alpha = tex.a;
+
+    vec3 color = CalculateBlinnPhong(GetMainLight(), inputData, surfaceData) * SampleShadowMapPCF(fsinput.positionLS);
 
     for (int i = 0; i < GetAdditionalLightCount(); ++i) {
-        Light additionalLight = GetAdditionalLight(i, inputData);
-
-        float addLightDiff = max(dot(fsinput.normalOS, additionalLight.direction), 0.0);
-        vec3 addLightDiffuse = vec3(addLightDiff * additionalLight.attenuation) * additionalLight.color;
-
-        color += tex.rgb * addLightDiffuse;
+        color += CalculateBlinnPhong(GetAdditionalLight(i, inputData), inputData, surfaceData);
     }
     
     color = color / (color + vec3(1.0));
