@@ -119,7 +119,8 @@ class TestModule : public Vin::Module {
 		camera->SetNearPlane(0.1);
 		camera->SetFarPlane(4000);
 
-		sponzascene = Vin::LoadGLTF("data/sponzagltf/Sponza.gltf");
+		//sponzascene = Vin::LoadGLTF("data/sponzagltf/Sponza.gltf");
+		sponzascene = Vin::LoadGLTF("data/metalroughsphere/MetalRoughSpheres.gltf");
 		//(*sponzascene)->Process(SetRot);
 
 		Vin::Transform<float> transform{ Vin::Vector3<float>{0.0f, 10.0f, 0.0f} };
@@ -150,8 +151,8 @@ class TestModule : public Vin::Module {
 		additionalLight2.range = 0.3f;
 
 		(*sponzascene)->CreateEntity(mainLight);
-		(*sponzascene)->CreateEntity(additionalLight1);
-		(*sponzascene)->CreateEntity(additionalLight2);
+		//(*sponzascene)->CreateEntity(additionalLight1);
+		//(*sponzascene)->CreateEntity(additionalLight2);
 
 	}
 

@@ -9,11 +9,13 @@ namespace Vin {
 		OpenGLRenderTexture(unsigned int* textureId, uint32_t samplecount);
 
 		void Bind(unsigned short location);
+		void Unbind() final;
 
 		uint32_t GetSampleCount() const;
 	private:
 		unsigned int* m_TextureId;
 		uint32_t m_SampleCount;
+		unsigned short m_LastBindedLocation;
 	};
 
 	class OpenGLRenderTarget : public RenderTarget {

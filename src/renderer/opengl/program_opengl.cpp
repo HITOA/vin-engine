@@ -30,6 +30,7 @@ void Vin::OpenGLProgram::Bind()
 void Vin::OpenGLProgram::Unbind()
 {
 	glUseProgram(0);
+	currentlyBindedProgram = 0;
 }
 
 void Vin::OpenGLProgram::Reset()

@@ -54,6 +54,17 @@ void Vin::Material::Bind()
 
 }
 
+void Vin::Material::Unbind()
+{
+    OPTICK_EVENT();
+
+    m_Program->Unbind();
+
+    for (auto& textureData : m_Textures) {
+        textureData.texture->Unbind();
+    }
+}
+
 std::shared_ptr<Vin::Program> Vin::Material::GetProgram()
 {
     return m_Program;

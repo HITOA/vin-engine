@@ -19,6 +19,7 @@ namespace Vin {
 
 		void SetData(void* data) final;
 		void Bind(unsigned short location) final;
+		void Unbind() final;
 	private:
 		int ParseTextureWrapping(TextureWrapping wrapping);
 		int ParseTextureFormat(TextureFormat format);
@@ -31,6 +32,7 @@ namespace Vin {
 		TextureFormat m_Format;
 		TextureFiltering m_Filtering;
 		TextureWrapping m_Wrapping;
+		unsigned short m_LastBindedLocation;
 	};
 
 	class OpenGLCubemap : public Cubemap {

@@ -98,6 +98,12 @@ void Vin::OpenGLTexture::Bind(unsigned short location)
 {
 	OPTICK_GPU_EVENT("Bind Texture");
 	glBindTextureUnit(location, m_TextureId);
+	m_LastBindedLocation = location;
+}
+
+void Vin::OpenGLTexture::Unbind()
+{
+	glBindTextureUnit(m_LastBindedLocation, 0);
 }
 
 int Vin::OpenGLTexture::ParseTextureWrapping(TextureWrapping wrapping)

@@ -23,7 +23,7 @@ void Vin::ForwardRendererModule::Render()
 	Matrix4x4<float> projection{};
 	Matrix4x4<float> view{};
 
-	unsigned int currMatId{ 0 };
+	std::shared_ptr<Material> currMat{};
 
 	for (RenderTask<ForwardRenderTaskData>& task : queue) {
 		if (task.data.camera != currCamera) {
@@ -38,8 +38,10 @@ void Vin::ForwardRendererModule::Render()
 
 		Primitive* currPrimitive = task.data.primitive;
 
-		if (currMatId != currPrimitive->material->GetId()) {
-			currMatId = currPrimitive->material->GetId();
+		if (currMat.get() == nullptr || currMat->GetId() != currPrimitive->material->GetId()) {
+			if (currMat)
+				currMat->Unbind();
+			currMat = currPrimitive->material;
 			currPrimitive->material->Bind();
 
 			SetupMaterial(currPrimitive->material.get());
@@ -64,6 +66,9 @@ void Vin::ForwardRendererModule::Render()
 
 		Draw(currPrimitive);
 	}
+
+	if (currMat)
+		currMat->Unbind();
 
 	if (currCamera)
 		currCamera->Unbind();

@@ -37,6 +37,7 @@ namespace Vin {
 
 	public:
 		void Bind();
+		void Unbind();
 
 		std::shared_ptr<Program> GetProgram();
 

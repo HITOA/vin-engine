@@ -51,6 +51,8 @@ namespace Vin {
 				}
 			}
 
+			m_ShadowMapMaterial.Unbind();
+
 			Renderer::SetCullMode(CullMode::Back);
 			m_ShadowMap->Unbind();
 

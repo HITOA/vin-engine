@@ -112,12 +112,13 @@ void Vin::OpenGLRenderTarget::Generate()
 				glTexStorage2D(GL_TEXTURE_2D, 1,
 					ParseRenderBufferFormat(spec.format),
 					m_Specification.width, m_Specification.height);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 				if (attachment == GL_DEPTH_ATTACHMENT) {
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-					//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 				}
 
 				glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, m_BufferIds[i], 0);
@@ -231,6 +232,13 @@ Vin::OpenGLRenderTexture::OpenGLRenderTexture(unsigned int* textureId, uint32_t 
 void Vin::OpenGLRenderTexture::Bind(unsigned short location)
 {
 	glBindTextureUnit(location, *m_TextureId);
+	m_LastBindedLocation = location;
+}
+
+void Vin::OpenGLRenderTexture::Unbind()
+{
+	glBindTextureUnit(m_LastBindedLocation, 0);
+	m_LastBindedLocation = 0;
 }
 
 uint32_t Vin::OpenGLRenderTexture::GetSampleCount() const

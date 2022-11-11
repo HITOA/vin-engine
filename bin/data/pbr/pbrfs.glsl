@@ -34,7 +34,7 @@ void main()
 
     InputData inputData;
     inputData.positionWS = fsinput.positionWS.xyz;
-    inputData.normalWS = normal;
+    inputData.normalWS = fsinput.normalOS;
     inputData.viewDirectionWS = normalize(fsinput.cameraPosition.xyz - fsinput.positionWS.xyz);
 
     SurfaceData surfaceData;

@@ -41,7 +41,9 @@ The sponza scene rendered in the engine : (10/22/2022)
 - Cascade shadow map (Entire frustum)  
 - Frustum culling (Compute shader)  
 - Hot reloading (shader)  
-- UI/Font (https://github.com/freetype/freetype / https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf)   
+- UI/Font (https://github.com/freetype/freetype / https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf) 
+  
+- Complete DDS texture loader    
    
 ## Things to considere  
 - Vulkan implementation
