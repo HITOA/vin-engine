@@ -137,6 +137,7 @@ class TestModule : public Vin::Module {
 		mainLight.shadow.distance = 20;
 
 		mainLight.direction = Vin::Vector3<float>{ 0.25, 1, 0.15 }.Normalize();
+		mainLight.intensity = 3;
 
 		Vin::Light additionalLight1{};
 		additionalLight1.type = Vin::LightType::Spot;
@@ -146,7 +147,7 @@ class TestModule : public Vin::Module {
 
 		Vin::Light additionalLight2{};
 		additionalLight2.type = Vin::LightType::Point;
-		additionalLight2.color = Vin::Vector3<float>{ 0.2f, 1.0f, 0.2f };
+		additionalLight2.color = Vin::Vector3<float>{ 1.0f, 0.2f, 0.2f };
 		additionalLight2.position = Vin::Vector3<float>{ 3.0f, 1.0f, 0.0f };
 		additionalLight2.range = 0.3f;
 
