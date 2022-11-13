@@ -73,5 +73,5 @@ void Vin::ForwardRendererModule::Render()
 	if (currCamera)
 		currCamera->Unbind();
 
-	queue.Clear();
+	ctx->Clear();
 }

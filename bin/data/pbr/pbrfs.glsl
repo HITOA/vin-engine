@@ -29,24 +29,31 @@ void main()
         discard;
 
     vec3 normal = texture(_NormalTex, fsinput.uv0).xyz;
+    //vec3 normal = vec3(0.5, 0.5, 1.0);
     normal = normal * 2.0 - 1.0;
     normal = normalize(fsinput.TBN * normal);
 
     InputData inputData;
     inputData.positionWS = fsinput.positionWS.xyz;
-    inputData.normalWS = fsinput.normalOS;
+    inputData.normalWS = normal;
     inputData.viewDirectionWS = normalize(fsinput.cameraPosition.xyz - fsinput.positionWS.xyz);
 
     SurfaceData surfaceData;
     surfaceData.albedo = tex.rgb;
+    surfaceData.metallic = mr.r;
     surfaceData.roughness = mr.g;
     surfaceData.alpha = tex.a;
 
-    vec3 color = CalculateBlinnPhong(GetMainLight(), inputData, surfaceData) * SampleShadowMapPCF(fsinput.positionLS);
+    BRDFData brdfData;
+    InitializeBRDFData(inputData, surfaceData, brdfData);
+
+    vec3 color = CalculatePBR(GetMainLight(), inputData, surfaceData, brdfData) * SampleShadowMapPCF(fsinput.positionLS);
 
     for (int i = 0; i < GetAdditionalLightCount(); ++i) {
-        color += CalculateBlinnPhong(GetAdditionalLight(i, inputData), inputData, surfaceData);
+        color += CalculatePBR(GetAdditionalLight(i, inputData), inputData, surfaceData, brdfData);
     }
+
+    //color += vec3(0.015, 0.015, 0.03);
     
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2)); 

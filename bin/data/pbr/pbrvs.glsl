@@ -23,8 +23,6 @@ void main()
     fsinput.normalOS = _normal;
     fsinput.uv0 = _texcoord0;
 
-    mat4 invview = inverse(vin_matrix_view);
-
     fsinput.cameraPosition = _WorldSpaceCameraPosition;
 
     vec3 T = normalize((vin_matrix_model * vec4(_tangent.xyz, 0.0)).xyz);

@@ -19,7 +19,6 @@ void Vin::ForwardRendererSystem(Vin::Registry& registry, Vin::Query<Vin::Transfo
 
 void Vin::ForwardRendererLightSystem(Vin::Query<Vin::Light> query, Vin::ForwardRendererContext* ctx)
 {
-	ctx->m_AdditionalLightsCount = 0;
 	bool mainLightAdded{ false };
 
 	for (auto [light] : query) {
@@ -53,4 +52,10 @@ void Vin::ForwardRendererContext::RenderScene(Registry& registry, std::shared_pt
 Vin::RenderQueue<Vin::ForwardRenderTaskData>& Vin::ForwardRendererContext::GetRenderQueue()
 {
 	return m_Queue;
+}
+
+void Vin::ForwardRendererContext::Clear()
+{
+	m_AdditionalLightsCount = 0;
+	m_Queue.Clear();
 }

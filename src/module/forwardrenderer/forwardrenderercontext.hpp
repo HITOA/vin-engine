@@ -44,6 +44,8 @@ namespace Vin {
 
 		RenderQueue<ForwardRenderTaskData>& GetRenderQueue();
 
+		void Clear();
+
 	private:
 		RenderQueue<ForwardRenderTaskData> m_Queue{};
 
