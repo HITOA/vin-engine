@@ -154,7 +154,6 @@ class TestModule : public Vin::Module {
 		(*sponzascene)->CreateEntity(mainLight);
 		(*sponzascene)->CreateEntity(additionalLight1);
 		(*sponzascene)->CreateEntity(additionalLight2);
-
 	}
 
 	float pitch = 0;

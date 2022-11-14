@@ -12,6 +12,8 @@
 
 #include <optional>
 
+#include <thread>
+
 #include <vector>
 #include <array>
 #include <string>

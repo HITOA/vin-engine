@@ -25,6 +25,8 @@ The sponza scene rendered in the engine : (10/22/2022)
 ![Modern sponza scene](https://i.imgur.com/9y9cDtY.jpeg)  
   
 ## TODO 
+- Multithreading
+
 - Basic physics engine (accurate for VR)
 - Rewrite cleaner Cmake
   
