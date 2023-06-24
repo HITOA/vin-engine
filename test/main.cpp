@@ -279,8 +279,8 @@ public:
 
 		Vin::AssetDatabase::AddAsset<Vin::WindowInfo>(std::move(winfo), VIN_WINDOWINFO_ASSETPATH);
 
-		SetUpdateRate(249304934);
-		SetProcessRate(493849348);
+		//SetUpdateRate(249304934);
+		//SetProcessRate(493849348);
 
 		AddModule<Vin::WindowModule>();
 		AddModule<Vin::ForwardRendererModule>();
