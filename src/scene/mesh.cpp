@@ -35,8 +35,18 @@ void Vin::DynamicMesh::SetIndexBufferType(BufferIndexType type)
 
 void Vin::DynamicMesh::SetVertexData(void* data, uint32_t vertexCount, BufferUsageType usage)
 {
-	size_t size = vertexCount * m_VBO->GetBufferLayout().GetStride();
-	m_VBO->SetData(data, size, 0, false, usage);
+	if (vertexCount != this->vertexCount) {
+		size_t size = vertexCount * m_VBO->GetBufferLayout().GetStride();
+		m_VBO->SetData(data, size, 0, true, usage);
+		this->vertexCount = vertexCount;
+		for (int i = 0; i < GetMaterialCount(); ++i) {
+			m_Primitives[i].vertexCount = vertexCount;
+		}
+	}
+	else {
+		size_t size = vertexCount * m_VBO->GetBufferLayout().GetStride();
+		m_VBO->SetData(data, size, 0, false, usage);
+	}
 }
 
 void Vin::DynamicMesh::SetIndexData(void* data, uint32_t indexCount, BufferUsageType usage)
