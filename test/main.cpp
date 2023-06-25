@@ -96,7 +96,7 @@ class TestModule : public Vin::Module {
 
 		program = Vin::LoadProgram("data/pbr/pbrvs.glsl", "data/pbr/pbrfs.glsl");
 
-		Vin::AssetDatabase::AddAsset(program, "DefaultProgramThings");
+		//Vin::AssetDatabase::AddAsset(program, "DefaultProgramThings");
 
 		Vin::SetDefaultProgram(program);
 
@@ -177,8 +177,8 @@ class TestModule : public Vin::Module {
 		Vin::Vector2<int> mouseDelta = Vin::Input::GetMousePosition() - mouseLastPos;
 		mouseLastPos = Vin::Input::GetMousePosition();
 
-		pitch -= (float)mouseDelta.y * deltaTime * 0.002f;
-		yaw -= (float)mouseDelta.x * deltaTime * 0.002f;
+		pitch -= (float)mouseDelta.y * 0.005f;
+		yaw -= (float)mouseDelta.x * 0.005f;
 
 		pitch = Vin::Clamp<float>(pitch, -90 * Vin::deg2rad, 90 * Vin::deg2rad);
 

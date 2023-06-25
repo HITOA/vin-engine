@@ -21,7 +21,8 @@ unsigned int GetGLUsageFromBufferUsage(Vin::BufferUsageType usage) {
 Vin::OpenGLVertexBuffer::OpenGLVertexBuffer(size_t size)
 {
 	glCreateBuffers(1, &m_BufferId);
-	glNamedBufferData(m_BufferId, size, nullptr, GL_STATIC_DRAW);
+	if (size != 0)
+		glNamedBufferData(m_BufferId, size, nullptr, GL_STATIC_DRAW);
 }
 
 Vin::OpenGLVertexBuffer::~OpenGLVertexBuffer()

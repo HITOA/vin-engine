@@ -14,6 +14,13 @@ void Vin::ForwardRendererSystem(Vin::Registry& registry, Vin::Query<Vin::Transfo
 					queue.Push(Vin::ForwardRenderTaskData{ camera, &primitive, transform->GetModelMatrix(registry) });
 			}
 		}
+		else {
+			Vin::DynamicMesh* mesh = meshrenderer->dynamicmesh;
+			for (auto& primitive : *mesh) {
+				if (primitive.material)
+					queue.Push(Vin::ForwardRenderTaskData{ camera, &primitive, transform->GetModelMatrix(registry) });
+			}
+		}
 	}
 }
 
