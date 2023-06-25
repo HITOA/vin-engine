@@ -4,6 +4,20 @@
 
 #include "glad/gl.h"
 
+unsigned int GetGLUsageFromBufferUsage(Vin::BufferUsageType usage) {
+	switch (usage)
+	{
+	case Vin::BufferUsageType::Stream:
+		return GL_STREAM_READ;
+	case Vin::BufferUsageType::Static:
+		return GL_STATIC_DRAW;
+	case Vin::BufferUsageType::Dynamic:
+		return GL_DYNAMIC_DRAW;
+	default:
+		return GL_STATIC_DRAW;
+	}
+}
+
 Vin::OpenGLVertexBuffer::OpenGLVertexBuffer(size_t size)
 {
 	glCreateBuffers(1, &m_BufferId);
@@ -35,10 +49,11 @@ const Vin::VertexBufferLayout& Vin::OpenGLVertexBuffer::GetBufferLayout() const
 	return m_Layout;
 }
 
-void Vin::OpenGLVertexBuffer::SetData(void* data, size_t size, size_t offset, bool resize)
+void Vin::OpenGLVertexBuffer::SetData(void* data, size_t size, size_t offset, bool resize, BufferUsageType usage)
 {
+
 	if (resize)
-		glNamedBufferData(m_BufferId, size, data, GL_STATIC_DRAW);
+		glNamedBufferData(m_BufferId, size, data, GetGLUsageFromBufferUsage(usage));
 	else
 		glNamedBufferSubData(m_BufferId, offset, size, data);
 }
@@ -73,8 +88,8 @@ Vin::BufferIndexType Vin::OpenGLIndexBuffer::GetIndexType() const
 	return m_Type;
 }
 
-void Vin::OpenGLIndexBuffer::SetData(void* data, uint32_t count)
+void Vin::OpenGLIndexBuffer::SetData(void* data, uint32_t count, BufferUsageType usage)
 {
-	glNamedBufferData(m_BufferId, count * GetBufferIndexTypeSize(m_Type), data, GL_STATIC_DRAW);
+	glNamedBufferData(m_BufferId, count * GetBufferIndexTypeSize(m_Type), data, GetGLUsageFromBufferUsage(usage));
 	m_Count = count;
 }

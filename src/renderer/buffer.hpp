@@ -10,6 +10,12 @@ namespace Vin {
 		UnsignedInt32
 	};
 
+	enum class BufferUsageType {
+		Stream,
+		Static,
+		Dynamic
+	};
+
 	enum class VertexAttributeType {
 		None,
 		Float, Float2, Float3, Float4,
@@ -136,7 +142,7 @@ namespace Vin {
 		virtual void SetBufferLayout(const VertexBufferLayout& layout) = 0;
 		virtual const VertexBufferLayout& GetBufferLayout() const = 0;
 
-		virtual void SetData(void* data, size_t size, size_t offset, bool resize = false) = 0;
+		virtual void SetData(void* data, size_t size, size_t offset, bool resize = false, BufferUsageType usage = BufferUsageType::Static) = 0;
 
 		static std::shared_ptr<VertexBuffer> Create(size_t size);
 	};
@@ -148,7 +154,7 @@ namespace Vin {
 		virtual uint32_t GetCount() const = 0;
 		virtual BufferIndexType GetIndexType() const = 0;
 
-		virtual void SetData(void* data, uint32_t count) = 0;
+		virtual void SetData(void* data, uint32_t count, BufferUsageType usage = BufferUsageType::Static) = 0;
 
 		static std::shared_ptr<IndexBuffer> Create(BufferIndexType type);
 	};

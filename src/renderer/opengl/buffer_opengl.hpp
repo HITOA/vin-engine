@@ -14,7 +14,7 @@ namespace Vin {
 		void SetBufferLayout(const VertexBufferLayout& layout);
 		const VertexBufferLayout& GetBufferLayout() const;
 
-		void SetData(void* data, size_t size, size_t offset, bool resize = false);
+		void SetData(void* data, size_t size, size_t offset, bool resize = false, BufferUsageType usage = BufferUsageType::Static);
 
 	private:
 		unsigned int m_BufferId;
@@ -32,7 +32,7 @@ namespace Vin {
 		uint32_t GetCount() const;
 		BufferIndexType GetIndexType() const;
 
-		void SetData(void* data, uint32_t count);
+		void SetData(void* data, uint32_t count, BufferUsageType usage = BufferUsageType::Static);
 
 	private:
 		unsigned int m_BufferId;

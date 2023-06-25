@@ -40,5 +40,7 @@ namespace Vin {
 	* Implementing with dynamic VBO. Used for procedural mesh etc. 
 	* can contain only one submesh.Multiple material will just render the same mesh with all the material.
 	*/
-	class DynamicMesh {}; 
+	class DynamicMesh {
+		
+	}; 
 }
