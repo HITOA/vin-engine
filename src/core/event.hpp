@@ -40,7 +40,9 @@ namespace Vin {
 		inline void Bind(T event) { //Alloc and make copy of the event
 			m_Trait = EventTrait::GetTrait<T>();
 			m_Datas = Alloc<T>(1);
-			memcpy(m_Datas, &event, m_Trait.size);
+			new(m_Datas) T{ std::move(event) };
+			
+			//memcpy(m_Datas, &event, m_Trait.size);
 		}
 		inline void Unbind() { //Release the event
 			if (!m_Datas)

@@ -21,6 +21,9 @@
 #include "resources/default.hpp"
 #include "inputsystem/input.hpp"
 
+#include "module/editor/window/inspectorwindow.hpp"
+#include "module/editor/window/entitieswindow.hpp"
+
 float vertices[] = {
 	// positions          // colors           // texture coords
 	 1.0f,  1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f,   // top right

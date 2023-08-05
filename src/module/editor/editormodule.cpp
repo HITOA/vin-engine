@@ -68,6 +68,9 @@ void Vin::EditorModule::LateRender()
 
 		if (drawDebugConsoleWindow)
 			DrawDebugConsoleWindow(&drawDebugConsoleWindow);
+
+		for (auto& window : windows)
+			window.first->Draw(&window.second);
 	}
 
 	End();
@@ -75,7 +78,7 @@ void Vin::EditorModule::LateRender()
 
 void Vin::EditorModule::OnEvent(EventHandler handler)
 {
-	static char buff[256];
+	//static char buff[256];
 
 	if (WindowDropEvent* event = handler.GetEvent<WindowDropEvent>()) {
 		for (int i = 0; i < event->count; ++i) {
@@ -95,6 +98,9 @@ void Vin::EditorModule::OnEvent(EventHandler handler)
 			Logger::Log(relativepath);*/
 		}
 	}
+
+	if (RegisterEditorWindowEvent* event = handler.GetEvent<RegisterEditorWindowEvent>())
+		windows.emplace_back(std::move(event->window), event->show);
 }
 
 void Vin::EditorModule::SetImGuiStyle()
@@ -286,6 +292,12 @@ void Vin::EditorModule::DrawMainMenuBarMenuWindow()
 {
 	if (ImGui::MenuItem("Debug Console")) {
 		drawDebugConsoleWindow = true;
+	}
+
+	for (auto& window : windows) {
+		if (ImGui::MenuItem(window.first->GetName().c_str())) {
+			window.second = true;
+		}
 	}
 }
 

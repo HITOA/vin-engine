@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include "editordebugconsole.hpp"
 #include "editorassetexplorer.hpp"
+#include "editorwindow.hpp"
 
 namespace Vin {
 	class EditorModule : public Module {
@@ -40,5 +41,7 @@ namespace Vin {
 		bool drawDebugConsoleWindow{ true };
 
 		EditorDebugConsole m_DebugConsole{};
+
+		std::vector<std::pair<std::unique_ptr<EditorWindow>, bool>> windows{};
 	};
 }
