@@ -70,7 +70,8 @@ void Vin::EditorModule::LateRender()
 			DrawDebugConsoleWindow(&drawDebugConsoleWindow);
 
 		for (auto& window : windows)
-			window.first->Draw(&window.second);
+			if (window.second)
+				window.first->Draw(&window.second);
 	}
 
 	End();

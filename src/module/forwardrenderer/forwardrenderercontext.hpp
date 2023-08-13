@@ -24,6 +24,9 @@ namespace Vin {
 		static unsigned long long GetId(ForwardRenderTaskData& v) {
 			unsigned long long id{ 0 };
 
+			if (!v.primitive)
+				return id;
+
 			unsigned char viewportId = v.camera->GetId();
 			unsigned char transluencyType = v.primitive->material->GetTransparency() ? 0 : 1;
 			unsigned int depth = 0; //Calculate depth

@@ -42,6 +42,9 @@ namespace Vin {
 			m_ShadowMapMaterial.Bind();
 
 			for (auto& task : queue) {
+				if (!task.data.primitive)
+					continue;
+
 				m_ShadowMapMaterial.GetProgram()->SetMat4("vin_matrix_lightspace", (projection * view * task.data.model).data);
 				if (task.data.primitive->indexed) {
 					Renderer::DrawIndexed(task.data.primitive->vao);

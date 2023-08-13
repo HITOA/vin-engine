@@ -52,6 +52,8 @@ void Vin::ForwardRendererLightSystem(Vin::Query<Vin::Light> query, Vin::ForwardR
 
 void Vin::ForwardRendererContext::RenderScene(Registry& registry, std::shared_ptr<Camera> camera)
 {
+	m_Queue.Push(Vin::ForwardRenderTaskData{ camera, nullptr, Matrix4x4<float>{} });
+
 	registry.Process(Vin::ForwardRendererSystem, m_Queue, camera);
 	registry.Process(Vin::ForwardRendererLightSystem, this);
 }

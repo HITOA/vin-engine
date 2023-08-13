@@ -38,6 +38,9 @@ void Vin::ForwardRendererModule::Render()
 
 		Primitive* currPrimitive = task.data.primitive;
 
+		if (!currPrimitive)
+			continue;
+
 		if (currMat.get() == nullptr || currMat->GetId() != currPrimitive->material->GetId()) {
 			if (currMat)
 				currMat->Unbind();
