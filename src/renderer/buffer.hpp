@@ -94,7 +94,7 @@ namespace Vin {
 
 		void AddVertexBufferElement(VertexBufferElement& element) {
 			m_Layout.push_back(element);
-			m_Layout[0].offset += m_Stride;
+			m_Layout[m_Layout.size() - 1].offset = m_Stride;
 			m_Stride += GetVertexAttributeTypeSize(element.type);
 		}
 

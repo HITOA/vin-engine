@@ -13,7 +13,7 @@ namespace Vin {
 		Quaternion<T> rotation{};
 		Vector3<T> scale{};
 
-		Transform() : parent{ 0 }, position {}, rotation{}, scale{ (T)1.0 } {};
+		Transform() : parent{ 0 }, position {}, rotation{}, scale{ (T)1.0 } {}
 		Transform(Vector3<T> position) : parent{ 0 }, position{ position }, rotation{}, scale{ (T)1.0 } {};
 
 		Matrix4x4<T> GetModelMatrix(Registry& registry) {
