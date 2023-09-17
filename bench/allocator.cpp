@@ -1,7 +1,7 @@
 #include "allocator.h"
-#include <vin/allocator/stdallocator.h>
-#include <vin/allocator/linearallocator.h>
-#include <vin/allocator/generalallocator.h>
+#include <vin/core/allocator/stdallocator.h>
+#include <vin/core/allocator/linearallocator.h>
+#include <vin/core/allocator/buddyallocator.h>
 #include <vector>
 #include <nanobench.h>
 
@@ -24,28 +24,26 @@ void BenchmarkAllocator() {
         }
     });
 
-    Vin::Allocator::LinearAllocator linearAllocator{ (size_t)3.2e7 };
+    Vin::Core::Allocator::LinearAllocator linearAllocator{ (size_t)3.2e7 };
 
     bench.run("Vin::LinearAllocator with std container no reserve", [&](){
         {
-            std::vector<DummyData, Vin::Allocator::StdAllocator<DummyData, Vin::Allocator::LinearAllocator>> vec{
-                Vin::Allocator::StdAllocator<DummyData, Vin::Allocator::LinearAllocator>{ &linearAllocator } };
+            std::vector<DummyData, Vin::Core::Allocator::StdAllocator<DummyData, Vin::Core::Allocator::LinearAllocator>> vec{
+                Vin::Core::Allocator::StdAllocator<DummyData, Vin::Core::Allocator::LinearAllocator>{ &linearAllocator } };
             for (size_t i = 0; i < ITER_COUNT; ++i)
                 vec.push_back(DummyData{});
         }
         linearAllocator.Reset();
     });
 
-    Vin::Allocator::GeneralAllocator generalAllocator{ (size_t)3.2e7 };
+    Vin::Core::Allocator::BuddyAllocator buddyAllocator{ 16 << 18, 16 };
 
-
-    bench.run("Vin::GeneralAllocator with std container no reserve", [&](){
+    bench.run("Vin::BuddyAllocator with std container no reserve", [&](){
         {
-            std::vector<DummyData, Vin::Allocator::StdAllocator<DummyData, Vin::Allocator::GeneralAllocator>> vec{
-                    Vin::Allocator::StdAllocator<DummyData, Vin::Allocator::GeneralAllocator>{ &generalAllocator } };
+            std::vector<DummyData, Vin::Core::Allocator::StdAllocator<DummyData, Vin::Core::Allocator::BuddyAllocator>> vec{
+                    Vin::Core::Allocator::StdAllocator<DummyData, Vin::Core::Allocator::BuddyAllocator>{ &buddyAllocator } };
             for (size_t i = 0; i < ITER_COUNT; ++i)
                 vec.push_back(DummyData{});
         }
-        linearAllocator.Reset();
     });
 }

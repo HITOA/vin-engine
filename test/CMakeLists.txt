@@ -6,7 +6,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -lwayland-client -lwayland-egl")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_executable(vin_test main.cpp)

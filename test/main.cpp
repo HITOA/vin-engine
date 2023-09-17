@@ -1,69 +1,62 @@
-#include <vin/vin.h>
-#include <vin/allocator/stdallocator.h>
 #include <iostream>
-#include <vector>
-#include <chrono>
-
-class BaseModule {
-public:
-    virtual void Update(size_t i) = 0;
-};
-
-class App {
-public:
-    void AddModule(BaseModule* module) {
-        modules.emplace_back(module);
-    }
-
-    void CallUpdate(size_t i) {
-        for (auto& module : modules)
-            module->Update(i);
-    }
-private:
-    std::vector<BaseModule*> modules{};
-};
-
-class Module1 : public BaseModule {
-public:
-    void Update(size_t i) final {
-        v += 2 * i;
-        if (v % 457875634 == 0)
-            printf("%ld\n", v);
-    }
-private:
-    size_t v = 0;
-};
-
-class Module2 : public BaseModule {
-public:
-    void Update(size_t i) final {
-        v += 4 + i;
-        if (v % 457875634 == 0)
-            printf("%ld\n", v);
-    }
-private:
-    size_t v = 0;
-};
-
-template<class... T>
-class AppS {
-public:
-    inline void CallUpdate(size_t i) {
-    }
-private:
-    
-};
+#define GLFW_EXPOSE_NATIVE_WAYLAND
+#define GLFW_EXPOSE_NATIVE_EGL
+#include <wayland-egl.h>
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+#include <bgfx/bgfx.h>
 
 int main() {
-    App app{};
-    app.AddModule(new Module1{});
-    app.AddModule(new Module2{});
+    setbuf(stdout, 0);
 
-    auto start = std::chrono::high_resolution_clock::now();
+    if (!glfwInit()) {
+        std::cerr << "Couldn't initialize GLFW." << std::endl;
+        return -1;
+    }
 
-    for (size_t i = 0; i < 10000000; ++i)
-        app.CallUpdate(i);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);
 
-    auto end = std::chrono::high_resolution_clock::now();
-    printf("Virtual Module took %ld ms", std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+    if (!window) {
+        std::cerr << "Coudln't Create Window." << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+
+    wl_surface* surface = glfwGetWaylandWindow(window);
+    if (!surface) {
+        std::cerr << "Can't get wayland surface" << std::endl;
+        return -1;
+    }
+
+    int width{};
+    int height{};
+    glfwGetFramebufferSize(window, &width, &height);
+
+    bgfx::Init init;
+    init.platformData.nwh = wl_egl_window_create(surface, 640, 480);
+    init.platformData.ndt = glfwGetWaylandDisplay();
+    init.platformData.type = bgfx::NativeWindowHandleType::Wayland;
+    //init.platformData.nwh = (void*)glfwGetX11Window(window);
+    //init.platformData.ndt = glfwGetX11Display();
+    init.resolution.width = 640;
+    init.resolution.height = 480;
+    init.resolution.reset = BGFX_RESET_VSYNC;
+    init.type = bgfx::RendererType::Vulkan;
+    init.vendorId = 0;
+    bgfx::init(init);
+
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+        glfwGetFramebufferSize(window, &width, &height);
+        bgfx::reset(width, height, BGFX_RESET_VSYNC);
+        bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
+        bgfx::setViewRect(0, 0, 0, width, height);
+        bgfx::touch(0);
+        bgfx::frame();
+    }
+
+    bgfx::shutdown();
+    glfwDestroyWindow(window);
+    glfwTerminate();
 }

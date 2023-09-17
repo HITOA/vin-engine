@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(vin_engine)
 
+set(CMAKE_CXX_STANDARD 17)
 
 set(3RDPARTY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 

@@ -7,3 +7,6 @@
 [submodule "library/3rdparty/glfw"]
 	path = library/3rdparty/glfw
 	url = https://github.com/glfw/glfw
+[submodule "library/3rdparty/bgfx.cmake"]
+	path = library/3rdparty/bgfx.cmake
+	url = https://github.com/bkaradzic/bgfx.cmake
