@@ -1,12 +1,9 @@
-[submodule "library/3rdparty/LLGL"]
-	path = library/3rdparty/LLGL
-	url = https://github.com/LukasBanana/LLGL
-[submodule "library/3rdparty/--recursive"]
-	path = library/3rdparty/--recursive
-	url = https://github.com/skypjack/entt
 [submodule "library/3rdparty/entt"]
 	path = library/3rdparty/entt
 	url = https://github.com/skypjack/entt
 [submodule "bench/3rdparty/nanobench"]
 	path = bench/3rdparty/nanobench
 	url = https://github.com/martinus/nanobench
+[submodule "library/3rdparty/glfw"]
+	path = library/3rdparty/glfw
+	url = https://github.com/glfw/glfw

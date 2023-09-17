@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cstddef>
 
-namespace Vin::Allocator {
+namespace Vin::Core::Allocator {
 
     class LinearAllocator {
     public:
@@ -13,9 +13,16 @@ namespace Vin::Allocator {
             this->blk = (char*)malloc(blkSize);
             this->blkSize = blkSize;
             this->offset = 0;
+            this->ownsBlk = true;
+        }
+        LinearAllocator(char* blk, size_t blkSize) {
+            this->blk = blk;
+            this->blkSize = blkSize;
+            this->offset = 0;
         }
         ~LinearAllocator() {
-            free(blk);
+            if (ownsBlk)
+                free(blk);
         }
     public:
         inline void* Allocate(size_t size) {
@@ -31,6 +38,7 @@ namespace Vin::Allocator {
         char* blk{ nullptr };
         size_t blkSize{ 0 };
         size_t offset{ 0 };
+        bool ownsBlk{ false };
     };
 }
 

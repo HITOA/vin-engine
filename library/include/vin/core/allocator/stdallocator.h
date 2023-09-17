@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <limits>
 
-namespace Vin::Allocator {
+namespace Vin::Core::Allocator {
 
     template<class T, class A>
     class StdAllocator {
@@ -31,7 +31,7 @@ namespace Vin::Allocator {
             throw std::bad_alloc();
         }
 
-        void deallocate(T* ptr, size_t n) {
+        void deallocate(T* ptr, size_t) {
             allocator->Free(ptr);
         }
     private:
