@@ -32,6 +32,10 @@ add_library(vin_engine
         include/vin/core/memory/allocator.h
         include/vin/core/memory/mallocator.h
         include/vin/core/error/error.h
+        include/vin/core/memory/bestfitallocator.h
+        include/vin/core/memory/buddyallocator.h
+        include/vin/core/memory/doublebufferallocator.h
+        include/vin/core/memory/memorymanager.h
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_link_libraries(vin_engine bgfx glfw)

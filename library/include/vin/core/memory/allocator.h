@@ -3,11 +3,8 @@
 
 #include <vin/core/memory/mallocator.h>
 #include <vin/core/memory/stackallocator.h>
-
-namespace Vin::Core::Memory {
-
-
-
-}
+#include <vin/core/memory/bestfitallocator.h>
+#include <vin/core/memory/buddyallocator.h>
+#include <vin/core/memory/doublebufferallocator.h>
 
 #endif //VIN_ENGINE_ALLOCATOR_H
