@@ -5,14 +5,19 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 #include <bgfx/bgfx.h>
+#include <vin/core/error/error.h>
 
 int main() {
+    ASSERT(1 != 1, "OWO ERROR");
+
     setbuf(stdout, 0);
 
     if (!glfwInit()) {
         std::cerr << "Couldn't initialize GLFW." << std::endl;
         return -1;
     }
+
+
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);

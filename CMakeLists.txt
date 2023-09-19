@@ -3,8 +3,17 @@ project(vin_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(3RDPARTY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
+option(VIN_BUILD_WITH_WAYLAND "Build with Wayland support instead of X11" ON)
+option(VIN_BUILD_NDEBUG "Disable debugging information" OFF)
+option(VIN_BUILD_TEST "Build vin test app" ON)
+option(VIN_BUILD_BENCH "Build vin benchmark" ON)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/library)
-add_subdirectory(${PROJECT_SOURCE_DIR}/test)
-add_subdirectory(${PROJECT_SOURCE_DIR}/bench)
+
+if(VIN_BUILD_TEST)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+endif()
+
+if(VIN_BUILD_BENCH)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/bench)
+endif()

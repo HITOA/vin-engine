@@ -5,6 +5,16 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+if (VIN_BUILD_WITH_WAYLAND)
+    set(GLFW_BUILD_WAYLAND ON)
+    set(GLFW_BUILD_X11 OFF)
+    set(BGFX_BUILD_WITH_WAYLAND ON)
+else()
+    set(GLFW_BUILD_WAYLAND OFF)
+    set(GLFW_BUILD_X11 ON)
+    set(BGFX_BUILD_WITH_WAYLAND OFF)
+endif()
+
 add_subdirectory(3rdparty/bgfx.cmake)
 add_subdirectory(3rdparty/glfw)
 
@@ -12,16 +22,20 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-add_library(vin_engine src/vin.cpp
+add_library(vin_engine
         include/vin/vin.h
-        include/vin/core/allocator/linearallocator.h
-        include/vin/core/allocator/stdallocator.h
         include/vin/core/thread/threadpool.h
         src/threadpool.cpp
-        include/vin/core/allocator/buddyallocator.h
         include/vin/core/memory/memutils.h
-        include/vin/core/memory/memorymanager.h
-        src/memorymanager.cpp
+        include/vin/core/memory/stackallocator.h
+        include/vin/core/memory/allocatordef.h
+        include/vin/core/memory/allocator.h
+        include/vin/core/memory/mallocator.h
+        include/vin/core/error/error.h
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_link_libraries(vin_engine bgfx glfw)
+
+if (VIN_BUILD_NDEBUG)
+    target_compile_definitions(vin_engine PUBLIC "VIN_BUILD_NDEBUG")
+endif()

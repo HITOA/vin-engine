@@ -1,49 +1,32 @@
 #include "allocator.h"
-#include <vin/core/allocator/stdallocator.h>
-#include <vin/core/allocator/linearallocator.h>
-#include <vin/core/allocator/buddyallocator.h>
-#include <vector>
+#include <vin/core/memory/allocator.h>
 #include <nanobench.h>
 
-#define ITER_COUNT 8384
-
-struct DummyData {
-    int i{};
-    char c[32]{};
-};
+#define ALLOCATION_SIZE 64
 
 void BenchmarkAllocator() {
     ankerl::nanobench::Bench bench{};
     bench.relative(true);
 
-    bench.run("std::allocator with std container no reserve", [&](){
+    bench.epochIterations(256);
+
+    Vin::Core::Memory::Mallocator mallocator{};
+    Vin::Core::Memory::StackAllocator<ALLOCATION_SIZE * 2, 16> stackAllocator{};
+
+    bench.run("Mallocator", [&](){
         {
-            std::vector<DummyData, std::allocator<DummyData>> vec{};
-            for (size_t i = 0; i < ITER_COUNT; ++i)
-                vec.push_back(DummyData{});
+            Vin::Core::Memory::Blk blk = mallocator.Allocate(ALLOCATION_SIZE);
+            mallocator.Deallocate(blk);
+            bench.doNotOptimizeAway(blk);
         }
     });
 
-    Vin::Core::Allocator::LinearAllocator linearAllocator{ (size_t)3.2e7 };
-
-    bench.run("Vin::LinearAllocator with std container no reserve", [&](){
+    bench.run("Stack Allocator", [&](){
         {
-            std::vector<DummyData, Vin::Core::Allocator::StdAllocator<DummyData, Vin::Core::Allocator::LinearAllocator>> vec{
-                Vin::Core::Allocator::StdAllocator<DummyData, Vin::Core::Allocator::LinearAllocator>{ &linearAllocator } };
-            for (size_t i = 0; i < ITER_COUNT; ++i)
-                vec.push_back(DummyData{});
-        }
-        linearAllocator.Reset();
-    });
-
-    Vin::Core::Allocator::BuddyAllocator buddyAllocator{ 16 << 18, 16 };
-
-    bench.run("Vin::BuddyAllocator with std container no reserve", [&](){
-        {
-            std::vector<DummyData, Vin::Core::Allocator::StdAllocator<DummyData, Vin::Core::Allocator::BuddyAllocator>> vec{
-                    Vin::Core::Allocator::StdAllocator<DummyData, Vin::Core::Allocator::BuddyAllocator>{ &buddyAllocator } };
-            for (size_t i = 0; i < ITER_COUNT; ++i)
-                vec.push_back(DummyData{});
+            Vin::Core::Memory::Blk blk = stackAllocator.Allocate(ALLOCATION_SIZE);
+            stackAllocator.Deallocate(blk);
+            bench.doNotOptimizeAway(blk);
         }
     });
+
 }
