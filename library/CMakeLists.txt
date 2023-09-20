@@ -23,21 +23,24 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_library(vin_engine
+        3rdparty/tlsf/tlsf.h
+        3rdparty/tlsf/tlsf.c
         include/vin/vin.h
         include/vin/core/thread/threadpool.h
         src/threadpool.cpp
+        include/vin/core/error/error.h
         include/vin/core/memory/memutils.h
         include/vin/core/memory/stackallocator.h
         include/vin/core/memory/allocatordef.h
         include/vin/core/memory/allocator.h
         include/vin/core/memory/mallocator.h
-        include/vin/core/error/error.h
-        include/vin/core/memory/bestfitallocator.h
-        include/vin/core/memory/buddyallocator.h
         include/vin/core/memory/doublebufferallocator.h
         include/vin/core/memory/memorymanager.h
+        include/vin/core/memory/segregator.h
+        include/vin/core/memory/tlsfallocator.h
 )
 target_include_directories(vin_engine PUBLIC include/)
+target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)
 target_link_libraries(vin_engine bgfx glfw)
 
 if (VIN_BUILD_NDEBUG)

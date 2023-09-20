@@ -4,15 +4,12 @@
 #include <vin/core/memory/allocator.h>
 
 #define MEMORY_ALIGNMENT 16
-#define MEMORY_SMALL (1 << 16)
-#define MEMORY_MEDIUM (1 << 20)
-#define MEMORY_LARGE (1 << 28)
 
 namespace Vin::Core::Memory {
 
-    using SingleFrameAllocator = StackAllocator<MEMORY_SMALL, MEMORY_ALIGNMENT>;
-    using DoubleFrameAllocator = DoubleBufferAllocator<StackAllocator<MEMORY_SMALL, MEMORY_ALIGNMENT>>;
-    using PersistentAllocator = BestFitAllocator<MEMORY_LARGE, MEMORY_ALIGNMENT>;
+    using SingleFrameAllocator = StackAllocator<1 << 16, MEMORY_ALIGNMENT>;
+    using DoubleFrameAllocator = DoubleBufferAllocator<StackAllocator<1 << 16, MEMORY_ALIGNMENT>>;
+    using PersistentAllocator = TLSFAllocator<1024 * 1024>;
 
     enum class Strategy {
         None,
@@ -27,7 +24,7 @@ namespace Vin::Core::Memory {
      * If you don't know wich strategy to use :
      *      - SingleFrame If You Don't Need The Memory The Next Frame (usefull for temporary object)
      *      - DoubleFrame If You Don't Need The Memory In Two Frame (usefull for temporary object that need to be passed to the next frame)
-     *      - Persistent If You Need Persistent Memory That You Will Manually Deallocate
+     *      - Persistent If You Need Persistent Memory That You Will Manually Deallocate. Two Level Segregate Allocator.
      *      - Shared If You Need To Pass Object To Another Thread
      */
     class MemoryManager {
@@ -76,6 +73,19 @@ namespace Vin::Core::Memory {
         template<>
         inline bool Deallocate<Strategy::Persistent>(Blk& blk) {
             return persistentAllocator.Deallocate(blk);
+        }
+
+        template<>
+        inline Blk Allocate<Strategy::Shared>(size_t size) {
+            static_assert(false, "Shared Allocator Not Implemented Yet.");
+        }
+        template<>
+        inline bool Reallocate<Strategy::Shared>(Blk& blk, size_t newSize) {
+            static_assert(false, "Shared Allocator Not Implemented Yet.");
+        }
+        template<>
+        inline bool Deallocate<Strategy::Shared>(Blk& blk) {
+            static_assert(false, "Shared Allocator Not Implemented Yet.");
         }
 
         /**

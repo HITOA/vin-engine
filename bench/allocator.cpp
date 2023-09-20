@@ -3,7 +3,7 @@
 #include <nanobench.h>
 
 #define ALLOCATION_SIZE 64
-#define ALLOCATION_COUNT 256
+#define ALLOCATION_COUNT 2560
 
 void AllocDeallocBenchmark() {
     ankerl::nanobench::Bench bench{};
@@ -14,8 +14,7 @@ void AllocDeallocBenchmark() {
 
     Vin::Core::Memory::Mallocator mallocator{};
     Vin::Core::Memory::StackAllocator<ALLOCATION_SIZE * 2, 16> stackAllocator{};
-    Vin::Core::Memory::BestFitAllocator<ALLOCATION_SIZE * 2, 16> bestFitAllocator{};
-    Vin::Core::Memory::BuddyAllocator<ALLOCATION_SIZE * 2, 16> buddyAllocator{};
+    Vin::Core::Memory::TLSFAllocator<1024 * 1024> tlsfAllocator{};
 
     bench.run("Mallocator", [&](){
         {
@@ -33,18 +32,10 @@ void AllocDeallocBenchmark() {
         }
     });
 
-    bench.run("Best Fit Allocator", [&](){
+    bench.run("Two Level Segregate Fit Allocator", [&](){
         {
-            Vin::Core::Memory::Blk blk = bestFitAllocator.Allocate(ALLOCATION_SIZE);
-            bestFitAllocator.Deallocate(blk);
-            bench.doNotOptimizeAway(blk);
-        }
-    });
-
-    bench.run("Buddy Allocator", [&](){
-        {
-            Vin::Core::Memory::Blk blk = buddyAllocator.Allocate(ALLOCATION_SIZE);
-            buddyAllocator.Deallocate(blk);
+            Vin::Core::Memory::Blk blk = tlsfAllocator.Allocate(ALLOCATION_SIZE);
+            tlsfAllocator.Deallocate(blk);
             bench.doNotOptimizeAway(blk);
         }
     });
@@ -59,8 +50,7 @@ void AllocResetBenchmark() {
 
     Vin::Core::Memory::Mallocator mallocator{};
     Vin::Core::Memory::StackAllocator<ALLOCATION_SIZE * ALLOCATION_COUNT * 2, 16> stackAllocator{};
-    Vin::Core::Memory::BestFitAllocator<ALLOCATION_SIZE * ALLOCATION_COUNT * 2, 16> bestFitAllocator{};
-    Vin::Core::Memory::BuddyAllocator<ALLOCATION_SIZE * ALLOCATION_COUNT * 2, 16> buddyAllocator{};
+    Vin::Core::Memory::TLSFAllocator<1024 * 1024> tlsfAllocator{};
 
     bench.run("Mallocator", [&](){
         {
@@ -83,23 +73,18 @@ void AllocResetBenchmark() {
         }
     });
 
-    bench.run("Best Fit Allocator", [&](){
+    bench.run("TLSF Allocator", [&](){
         {
-            for (int i = 0; i < ALLOCATION_COUNT; ++i) {
-                bench.doNotOptimizeAway(bestFitAllocator.Allocate(ALLOCATION_SIZE));
+            static Vin::Core::Memory::Blk ptrs[ALLOCATION_COUNT]{};
+            for (auto& ptr : ptrs) {
+                ptr = tlsfAllocator.Allocate(ALLOCATION_SIZE);
             }
-            bestFitAllocator.Reset();
+            for (auto& ptr : ptrs) {
+                tlsfAllocator.Deallocate(ptr);
+            }
         }
     });
 
-    bench.run("Buddy Allocator", [&](){
-        {
-            for (int i = 0; i < ALLOCATION_COUNT; ++i) {
-                bench.doNotOptimizeAway(buddyAllocator.Allocate(ALLOCATION_SIZE));
-            }
-            buddyAllocator.Reset();
-        }
-    });
 }
 
 void BenchmarkAllocator() {
