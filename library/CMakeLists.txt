@@ -38,6 +38,9 @@ add_library(vin_engine
         include/vin/core/memory/memorymanager.h
         include/vin/core/memory/segregator.h
         include/vin/core/memory/tlsfallocator.h
+        include/vin/core/io/virtualfilesystem.h
+        include/vin/core/templates/singleton.h
+        include/vin/core/templates/ref.h
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)

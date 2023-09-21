@@ -8,25 +8,22 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <vin/core/memory/memutils.h>
-#include <vin/core/memory/allocatordef.h>
 
 namespace Vin::Core::Memory {
 
     class Mallocator {
     public:
-        inline Blk Allocate(size_t size) {
-            return {malloc(size), size };
+        inline void* Allocate(size_t size) {
+            return malloc(size);
         }
-        inline bool Reallocate(Blk& blk, size_t newSize) {
-            void* ptr = realloc(blk.ptr, newSize);
-            if (ptr == nullptr)
-                return false;
-            blk.ptr = ptr;
-            blk.size = newSize;
-            return true;
+        inline void* Reallocate(void* ptr, size_t newSize) {
+            return realloc(ptr, newSize);
         }
-        inline bool Deallocate(Blk& blk) {
-            free(blk.ptr);
+        inline void Deallocate(void* ptr) {
+            free(ptr);
+        }
+        inline void Reset() {}
+        inline bool Owns(void* ptr) {
             return true;
         }
     };

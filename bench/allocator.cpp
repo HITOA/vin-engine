@@ -73,7 +73,7 @@ void AllocResetBenchmark() {
         }
     });
 
-    bench.run("TLSF Allocator", [&](){
+    bench.run("Two Level Segregate Fit Allocator", [&](){
         {
             static Vin::Core::Memory::Blk ptrs[ALLOCATION_COUNT]{};
             for (auto& ptr : ptrs) {

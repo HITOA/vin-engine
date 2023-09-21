@@ -6,8 +6,87 @@
 #include <GLFW/glfw3native.h>
 #include <bgfx/bgfx.h>
 #include <vin/core/error/error.h>
+#include <typeindex>
+
+#include <vin/core/templates/ref.h>
+
+template<typename... Ts>
+struct DependencyList {
+    const std::type_index depInfo[sizeof...(Ts)]{ typeid(Ts)... };
+    static const size_t depCount{ sizeof...(Ts) };
+    void** fields[sizeof...(Ts)]{};
+
+    DependencyList(Ts*&... args) : fields{ (void**)(&args)... } {}
+};
+
+class Module {
+public:
+    inline DependencyList<> GetDependencies() { return {}; }
+};
+
+class WindowModule : public Module {
+
+};
+
+class RenderingModule : public Module {
+public:
+    inline DependencyList<WindowModule> GetDependencies() { return { window }; }
+
+private:
+    WindowModule* window{ nullptr };
+};
+
+class CustomModule : public Module {
+public:
+    inline DependencyList<WindowModule, RenderingModule> GetDependencies() { return { window, rendering }; }
+
+private:
+    WindowModule* window{ nullptr };
+    RenderingModule* rendering{ nullptr };
+};
+
+template<typename T>
+inline void InjectModuleDependencies(T& module) {
+    printf("%lu\n", module.GetDependencies().depCount);
+};
+
+class BaseTest {
+public:
+    virtual ~BaseTest() {
+        printf("UWU\n");
+    };
+
+    virtual void Test() {
+        printf("Test\n");
+    }
+};
+
+class Derived : public BaseTest {
+public:
+    ~Derived() {
+        printf("Dead\n");
+    }
+    void Test() final {
+        printf("OWO\n");
+    }
+};
+
+inline void Call(Vin::Core::Ref<BaseTest> obj) {
+    obj->Test();
+}
 
 int main() {
+    Vin::Core::Ref<RenderingModule> renderingModule{};
+    WindowModule windowModule{};
+
+    {
+        Vin::Core::Ref<BaseTest> derived{ Vin::Core::Ref<Derived>{} };
+        Call(derived);
+    }
+
+    InjectModuleDependencies(windowModule);
+    InjectModuleDependencies(*renderingModule);
+
     ASSERT(1 != 1, "OWO ERROR");
 
     setbuf(stdout, 0);

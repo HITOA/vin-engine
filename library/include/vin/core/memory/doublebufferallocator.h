@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <vin/core/memory/memutils.h>
-#include <vin/core/memory/allocatordef.h>
 
 namespace Vin::Core::Memory {
 
@@ -14,28 +13,26 @@ namespace Vin::Core::Memory {
     template<typename AllocatorType>
     class DoubleBufferAllocator {
     public:
-        inline Blk Allocate(size_t size) {
+        inline void* Allocate(size_t size) {
             if (aIsInFront)
                 return allocatorA.Allocate(size);
             return allocatorB.Allocate(size);
         }
-        inline bool Reallocate(Blk& blk, size_t newSize) {
+        inline void* Reallocate(void* ptr, size_t newSize) {
             if (aIsInFront)
-                return allocatorA.Reallocate(blk, newSize);
-            return allocatorB.Reallocate(blk, newSize);
+                return allocatorA.Reallocate(ptr, newSize);
+            return allocatorB.Reallocate(ptr, newSize);
         }
         /*
          * This function shouldn't be called
          */
-        inline bool Deallocate(Blk& blk) {
-            return false;
-        }
+        inline void Deallocate(void*) {}
         inline void Reset() {
             allocatorA.Reset();
             allocatorB.Reset();
         }
-        inline bool Owns(Blk& blk) {
-            return allocatorA.Owns(blk) || allocatorB.Owns(blk);
+        inline bool Owns(void* ptr) {
+            return allocatorA.Owns(ptr) || allocatorB.Owns(ptr);
         }
         /**
          * Swap front and back allocator, clear the previous back allocator

@@ -4,8 +4,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <vin/core/memory/memutils.h>
-#include <vin/core/memory/allocatordef.h>
 #include <tlsf.h>
+#include <memory_resource>
 
 #define MAX_TLSF_POOL_COUNT 32
 
@@ -30,25 +30,32 @@ namespace Vin::Core::Memory {
         }
 
     public:
-        inline Blk Allocate(size_t size) {
+        inline void* Allocate(size_t size) {
             void* ptr = tlsf_malloc(tlsf, size);
             if (!ptr) {
                 AddPool();
                 ptr = tlsf_malloc(tlsf, size);
             }
-            return { ptr, size };
+            return ptr;
         }
-        inline bool Reallocate(Blk& blk, size_t newSize) {
-            blk.ptr = tlsf_realloc(tlsf, blk.ptr, newSize);
-            blk.size = newSize;
+        inline void* Reallocate(void* ptr, size_t newSize) {
+            return tlsf_realloc(tlsf, ptr, newSize);
         }
-        inline bool Deallocate(Blk& blk) {
-            tlsf_free(tlsf, blk.ptr);
-            return true;
+        inline void Deallocate(void* ptr) {
+            tlsf_free(tlsf, ptr);
         }
         inline void Reset() {}
-        inline bool Owns(Blk& blk) {
+        inline bool Owns(void* ptr) {
             return true;
+        }
+
+        inline void* AllocateAlligned(size_t size, size_t alignment) {
+            void* ptr = tlsf_memalign(tlsf, alignment, size);
+            if (!ptr) {
+                AddPool();
+                ptr = tlsf_memalign(tlsf, alignment, size);
+            }
+            return ptr;
         }
 
     private:
@@ -67,6 +74,29 @@ namespace Vin::Core::Memory {
         pool_t pools[MAX_TLSF_POOL_COUNT]{};
         size_t poolCount{ 0 };
     };
+
+    /*template<size_t PoolSize = 1024 * 1024>
+    class TLSFMemoryResource : public std::pmr::memory_resource {
+    public:
+        explicit TLSFMemoryResource(TLSFAllocator<PoolSize>* allocator) : allocator{ allocator } {}
+
+    private:
+        void* do_allocate( std::size_t size, std::size_t alignment ) override {
+            return allocator->AllocateAlligned(size, alignment);
+        }
+        void do_deallocate( void* p, std::size_t size, std::size_t alignment ) override {
+            allocator->Deallocate({ p, 0 });
+        }
+        [[nodiscard]] bool do_is_equal( const std::pmr::memory_resource& other ) const noexcept override {
+            TLSFMemoryResource<PoolSize>* o = dynamic_cast<TLSFMemoryResource<PoolSize>*>(&other);
+            if (!o)
+                return false;
+            return o->allocator == allocator;
+        }
+
+    private:
+        TLSFAllocator<PoolSize>* allocator{ nullptr };
+    };*/
 
 }
 

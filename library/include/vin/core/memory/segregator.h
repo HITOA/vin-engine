@@ -4,34 +4,33 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <vin/core/memory/memutils.h>
-#include <vin/core/memory/allocatordef.h>
 
 namespace Vin::Core::Memory {
 
     template<size_t Threshold, typename SmallAllocatorType, typename LargeAllocatorType>
     class Segregator {
     public:
-        inline Blk Allocate(size_t size) {
+        inline void* Allocate(size_t size) {
             if (size <= Threshold)
                 return smallAllocator.Allocate(size);
             return largeAllocator.Allocate(size);
         }
-        inline bool Reallocate(Blk& blk, size_t newSize) {
-            if (smallAllocator.Owns(blk))
-                return smallAllocator.Reallocate(blk, newSize);
-            return largeAllocator.Reallocate(blk, newSize);
+        inline bool Reallocate(void* ptr, size_t newSize) {
+            if (smallAllocator.Owns(ptr))
+                return smallAllocator.Reallocate(ptr, newSize);
+            return largeAllocator.Reallocate(ptr, newSize);
         }
-        inline bool Deallocate(Blk& blk) {
-            if (smallAllocator.Owns(blk))
-                return smallAllocator.Deallocate(blk);
-            return largeAllocator.Deallocate(blk);
+        inline void Deallocate(void* ptr) {
+            if (smallAllocator.Owns(ptr))
+                return smallAllocator.Deallocate(ptr);
+            return largeAllocator.Deallocate(ptr);
         }
         inline void Reset() {
             smallAllocator.Reset();
             largeAllocator.Reset();
         }
-        inline bool Owns(Blk& blk) {
-            return smallAllocator.Owns(blk) || largeAllocator.Owns(blk);
+        inline bool Owns(void* ptr) {
+            return smallAllocator.Owns(ptr) || largeAllocator.Owns(ptr);
         }
     private:
         SmallAllocatorType smallAllocator{};

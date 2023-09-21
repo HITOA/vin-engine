@@ -2,6 +2,7 @@
 #define VIN_ENGINE_MEMORYMANAGER_H
 
 #include <vin/core/memory/allocator.h>
+#include <vin/core/templates/singleton.h>
 
 #define MEMORY_ALIGNMENT 16
 
@@ -10,6 +11,7 @@ namespace Vin::Core::Memory {
     using SingleFrameAllocator = StackAllocator<1 << 16, MEMORY_ALIGNMENT>;
     using DoubleFrameAllocator = DoubleBufferAllocator<StackAllocator<1 << 16, MEMORY_ALIGNMENT>>;
     using PersistentAllocator = TLSFAllocator<1024 * 1024>;
+    //using PersistentAllocatorMemoryResource = TLSFMemoryResource<1024 * 1024>;
 
     enum class Strategy {
         None,
@@ -27,66 +29,63 @@ namespace Vin::Core::Memory {
      *      - Persistent If You Need Persistent Memory That You Will Manually Deallocate. Two Level Segregate Allocator.
      *      - Shared If You Need To Pass Object To Another Thread
      */
-    class MemoryManager {
+    class MemoryManager : public Singleton<MemoryManager> {
     public:
+        inline void* Allocate(size_t size, Strategy strategy) {
+            switch (strategy) {
+                case Strategy::SingleFrame:
+                    return singleFrameAllocator.Allocate(size);
+                case Strategy::DoubleFrame:
+                    return doubleFrameAllocator.Allocate(size);
+                case Strategy::Persistent:
+                    return persistentAllocator.Allocate(size);
+                default:
+                    return nullptr;
+            }
+        }
+        inline void* Reallocate(void* ptr, size_t newSize, Strategy strategy) {
+            switch (strategy) {
+                case Strategy::SingleFrame:
+                    return singleFrameAllocator.Reallocate(ptr, newSize);
+                case Strategy::DoubleFrame:
+                    return doubleFrameAllocator.Reallocate(ptr, newSize);
+                case Strategy::Persistent:
+                    return persistentAllocator.Reallocate(ptr, newSize);
+                default:
+                    return nullptr;
+            }
+        }
+        inline void Deallocate(void* ptr, Strategy strategy) {
+            switch (strategy) {
+                case Strategy::SingleFrame:
+                    return singleFrameAllocator.Deallocate(ptr);
+                case Strategy::DoubleFrame:
+                    return doubleFrameAllocator.Deallocate(ptr);
+                case Strategy::Persistent:
+                    return persistentAllocator.Deallocate(ptr);
+                default:
+                    return;
+            }
+        }
+
         template<Strategy strategy>
-        inline Blk Allocate(size_t size) { return { nullptr, 0 }; }
+        inline void* Allocate(size_t size) {
+            return Allocate(size, strategy);
+        }
+
         template<Strategy strategy>
-        inline bool Reallocate(Blk& blk, size_t newSize) { return false; }
+        inline void* Reallocate(void* ptr, size_t newSize) {
+            return Reallocate(ptr, newSize, strategy);
+        }
+
         template<Strategy strategy>
-        inline bool Deallocate(Blk& blk) { return false; }
-
-        template<>
-        inline Blk Allocate<Strategy::SingleFrame>(size_t size) {
-            return singleFrameAllocator.Allocate(size);
-        }
-        template<>
-        inline bool Reallocate<Strategy::SingleFrame>(Blk& blk, size_t newSize) {
-            return singleFrameAllocator.Reallocate(blk, newSize);
-        }
-        template<>
-        inline bool Deallocate<Strategy::SingleFrame>(Blk& blk) {
-            return singleFrameAllocator.Deallocate(blk);
+        inline void Deallocate(void* ptr) {
+            return Deallocate(ptr, strategy);
         }
 
-        template<>
-        inline Blk Allocate<Strategy::DoubleFrame>(size_t size) {
-            return doubleFrameAllocator.Allocate(size);
-        }
-        template<>
-        inline bool Reallocate<Strategy::DoubleFrame>(Blk& blk, size_t newSize) {
-            return doubleFrameAllocator.Reallocate(blk, newSize);
-        }
-        template<>
-        inline bool Deallocate<Strategy::DoubleFrame>(Blk& blk) {
-            return doubleFrameAllocator.Deallocate(blk);
-        }
-
-        template<>
-        inline Blk Allocate<Strategy::Persistent>(size_t size) {
-            return persistentAllocator.Allocate(size);
-        }
-        template<>
-        inline bool Reallocate<Strategy::Persistent>(Blk& blk, size_t newSize) {
-            return persistentAllocator.Reallocate(blk, newSize);
-        }
-        template<>
-        inline bool Deallocate<Strategy::Persistent>(Blk& blk) {
-            return persistentAllocator.Deallocate(blk);
-        }
-
-        template<>
-        inline Blk Allocate<Strategy::Shared>(size_t size) {
-            static_assert(false, "Shared Allocator Not Implemented Yet.");
-        }
-        template<>
-        inline bool Reallocate<Strategy::Shared>(Blk& blk, size_t newSize) {
-            static_assert(false, "Shared Allocator Not Implemented Yet.");
-        }
-        template<>
-        inline bool Deallocate<Strategy::Shared>(Blk& blk) {
-            static_assert(false, "Shared Allocator Not Implemented Yet.");
-        }
+        /*inline auto GetMemoryResource() {
+            return &persistentAllocatorMemoryResource;
+        }*/
 
         /**
          * Swap Double Frame Allocator and Reset Single Frame Allocator
@@ -100,6 +99,7 @@ namespace Vin::Core::Memory {
         SingleFrameAllocator singleFrameAllocator{};
         DoubleFrameAllocator doubleFrameAllocator{};
         PersistentAllocator persistentAllocator{};
+        //PersistentAllocatorMemoryResource persistentAllocatorMemoryResource{ &persistentAllocator };
     };
 
 }
