@@ -6,6 +6,7 @@
 #include <vin/core/memory/memutils.h>
 #include <tlsf.h>
 #include <memory_resource>
+#include <iostream>
 
 #define MAX_TLSF_POOL_COUNT 32
 
@@ -14,7 +15,7 @@ namespace Vin::Core::Memory {
     /**
      * Two Level Segregated Fit Allocator
      */
-    template<size_t PoolSize = 1024 * 1024>
+    template<size_t PoolSize = 0x10000>
     class TLSFAllocator {
     public:
         TLSFAllocator() {
@@ -23,9 +24,8 @@ namespace Vin::Core::Memory {
             AddPool();
         }
         ~TLSFAllocator() {
-            while (poolCount <= 0)
-                PopPool();
-            tlsf_destroy(tlsf);
+            for (size_t i = 0; i < poolCount; ++i)
+                free(pools[i]);
             free(tlsf);
         }
 
@@ -49,15 +49,6 @@ namespace Vin::Core::Memory {
             return true;
         }
 
-        inline void* AllocateAlligned(size_t size, size_t alignment) {
-            void* ptr = tlsf_memalign(tlsf, alignment, size);
-            if (!ptr) {
-                AddPool();
-                ptr = tlsf_memalign(tlsf, alignment, size);
-            }
-            return ptr;
-        }
-
     private:
         inline void AddPool() {
             pools[poolCount] = malloc(PoolSize);
@@ -74,29 +65,6 @@ namespace Vin::Core::Memory {
         pool_t pools[MAX_TLSF_POOL_COUNT]{};
         size_t poolCount{ 0 };
     };
-
-    /*template<size_t PoolSize = 1024 * 1024>
-    class TLSFMemoryResource : public std::pmr::memory_resource {
-    public:
-        explicit TLSFMemoryResource(TLSFAllocator<PoolSize>* allocator) : allocator{ allocator } {}
-
-    private:
-        void* do_allocate( std::size_t size, std::size_t alignment ) override {
-            return allocator->AllocateAlligned(size, alignment);
-        }
-        void do_deallocate( void* p, std::size_t size, std::size_t alignment ) override {
-            allocator->Deallocate({ p, 0 });
-        }
-        [[nodiscard]] bool do_is_equal( const std::pmr::memory_resource& other ) const noexcept override {
-            TLSFMemoryResource<PoolSize>* o = dynamic_cast<TLSFMemoryResource<PoolSize>*>(&other);
-            if (!o)
-                return false;
-            return o->allocator == allocator;
-        }
-
-    private:
-        TLSFAllocator<PoolSize>* allocator{ nullptr };
-    };*/
 
 }
 

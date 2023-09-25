@@ -31,16 +31,27 @@ add_library(vin_engine
         include/vin/core/error/error.h
         include/vin/core/memory/memutils.h
         include/vin/core/memory/stackallocator.h
-        include/vin/core/memory/allocatordef.h
         include/vin/core/memory/allocator.h
         include/vin/core/memory/mallocator.h
         include/vin/core/memory/doublebufferallocator.h
         include/vin/core/memory/memorymanager.h
         include/vin/core/memory/segregator.h
         include/vin/core/memory/tlsfallocator.h
-        include/vin/core/io/virtualfilesystem.h
-        include/vin/core/templates/singleton.h
         include/vin/core/templates/ref.h
+        include/vin/core/templates/stdcontainers.h
+        include/vin/core/memory/memoryresource.h
+        src/memorymanager.cpp
+        include/vin/core/memory/stdallocator.h
+        include/vin/application/module.h
+        include/vin/application/dependencylist.h
+        include/vin/application/application.h
+        src/application.cpp
+        include/vin/modules/window/windowmodule.h
+        src/windowmodule.cpp
+        include/vin/core/templates/event.h
+        include/vin/modules/rendering/renderingmodule.h
+        src/renderingmodule.cpp
+        include/vin/core/templates/utils.h
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)
@@ -48,4 +59,17 @@ target_link_libraries(vin_engine bgfx glfw)
 
 if (VIN_BUILD_NDEBUG)
     target_compile_definitions(vin_engine PUBLIC "VIN_BUILD_NDEBUG")
+endif()
+
+if (UNIX AND NOT APPLE)
+    target_compile_definitions(vin_engine PUBLIC "VIN_LINUX")
+    if (VIN_BUILD_WITH_WAYLAND)
+        target_compile_definitions(vin_engine PUBLIC "VIN_USE_WAYLAND")
+    else ()
+        target_compile_definitions(vin_engine PUBLIC "VIN_USE_X11")
+    endif()
+endif()
+
+if (WIN32)
+    target_compile_definitions(vin_engine PUBLIC "VIN_WIN32")
 endif()

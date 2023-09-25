@@ -23,7 +23,7 @@ namespace Vin::Core::Memory {
             free(ptr);
         }
         inline void Reset() {}
-        inline bool Owns(void* ptr) {
+        inline bool Owns(void*) {
             return true;
         }
     };

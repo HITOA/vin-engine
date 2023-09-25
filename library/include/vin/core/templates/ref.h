@@ -13,33 +13,31 @@ namespace Vin::Core {
     template<typename T, Memory::Strategy strategy = Memory::Strategy::Persistent>
     class Ref {
     public:
-        template<typename... Args>
-        explicit Ref(Args... args) {
-            Memory::MemoryManager* memoryManager = Memory::MemoryManager::GetInstance();
-            counter = (RefData*)memoryManager->Allocate<strategy>(sizeof(RefData) + sizeof(T));
-            counter->owners = 1;
-            obj = (T*)((char*)counter + sizeof(RefData));
-            Memory::Construct(obj, args...);
+        Ref() : counter{ nullptr }, obj{ nullptr } {};
+        Ref(RefData* counter, T* obj) : counter{ counter }, obj{ obj } {
+            if (counter != nullptr)
+                counter->owners += 1;
         }
-        template<typename U>
-        Ref(const Ref<U, strategy>& ref) {
-            static_assert(std::is_base_of<T, U>::value);
-            obj = (T*)ref.Get();
-            counter = (RefData*)((char*)obj - sizeof(RefData));
-            ++counter->owners;
-        }
-        Ref(Ref<T, strategy>& ref) {
+        Ref(const Ref<T, strategy>& ref) {
             counter = ref.counter;
             obj = ref.obj;
-            ++counter->owners;
+            if (counter != nullptr)
+                counter->owners += 1;
         }
         ~Ref() {
-            --counter->owners;
-            if (counter->owners <= 0) {
-                Memory::Destroy(obj);
-                Memory::MemoryManager* memoryManager = Memory::MemoryManager::GetInstance();
-                memoryManager->Deallocate<strategy>(counter);
+            if (counter) {
+                counter->owners -= 1;
+                if (counter->owners <= 0) {
+                    Memory::Destroy(obj);
+                    Memory::MemoryManager::Deallocate<strategy>(counter);
+                }
             }
+        }
+
+        Ref<T, strategy>& operator=(Ref<T, strategy> rhs) {
+            std::swap(this->counter, rhs.counter);
+            std::swap(this->obj, rhs.obj);
+            return *this;
         }
 
     public:
@@ -47,8 +45,15 @@ namespace Vin::Core {
             return obj;
         }
 
+        inline RefData* GetRefData() const {
+            return counter;
+        }
+
         inline int GetOwnerCount() const {
-            return counter->owners;
+            if (counter != nullptr)
+                return counter->owners;
+            else
+                return 0;
         }
 
         inline T* operator->() const {
@@ -59,10 +64,33 @@ namespace Vin::Core {
             return *obj;
         }
 
-    protected:
+        inline operator bool() {
+            return counter && obj;
+        }
+
+        template<typename U>
+        inline operator Ref<U, strategy>() {
+            static_assert(std::is_base_of<U, T>::value);
+            return Ref<U, strategy>{ this->counter, (U*)this->obj };
+        }
+
+    private:
         RefData* counter{ nullptr };
         T* obj{ nullptr };
+
+        template<typename U, typename... Args,  Memory::Strategy _strategy>
+        friend Ref<U, _strategy> MakeRef(Args...);
     };
+
+    template<typename T, typename... Args, Memory::Strategy strategy = Memory::Strategy::Persistent>
+    inline Ref<T, strategy> MakeRef(Args... args) {
+        Ref<T, strategy> ref{};
+        ref.counter = (RefData*)Memory::MemoryManager::Allocate<strategy>(sizeof(RefData) + sizeof(T)) ;
+        ref.counter->owners = 1;
+        ref.obj = (T*)(((char*)ref.counter) + sizeof(RefData));
+        Memory::Construct(ref.obj, args...);
+        return std::move(ref);
+    }
 
 }
 
