@@ -38,6 +38,11 @@ void Vin::Module::WindowModule::Initialize() {
 
 void Vin::Module::WindowModule::Uninitialize() {
     glfwDestroyWindow(window);
+    glfwTerminate();
+}
+
+void Vin::Module::WindowModule::EarlyUpdate() {
+    glfwPollEvents();
 }
 
 void* Vin::Module::WindowModule::GetNativeWindowHandle() {
@@ -51,7 +56,7 @@ void* Vin::Module::WindowModule::GetNativeWindowHandle() {
 
     #elif VIN_USE_X11
 
-    return glfwGetX11Window(window);
+    return (void*)glfwGetX11Window(window);
 
     #endif
 #elif VIN_WIN32

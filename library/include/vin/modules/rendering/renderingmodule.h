@@ -14,7 +14,10 @@ namespace Vin::Module {
         void Initialize() final;
         void Uninitialize() final;
 
+        void LateUpdate() final;
+
     private:
+        int frameBufferWidth{}, frameBufferHeight{};
         Core::Ref<WindowModule> windowModule{};
     };
 

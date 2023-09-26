@@ -1,18 +1,9 @@
 #include <iostream>
 #define GLFW_EXPOSE_NATIVE_WAYLAND
 #define GLFW_EXPOSE_NATIVE_EGL
-#include <wayland-egl.h>
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
-#include <bgfx/bgfx.h>
-#include <vin/core/error/error.h>
-#include <typeindex>
-#include <vin/core/templates/stdcontainers.h>
-#include <vin/core/templates/event.h>
-
-#include <vin/core/templates/ref.h>
 
 #include <vin/vin.h>
+#include <vin/modules/window/windowmodule.h>
 #include <vin/modules/rendering/renderingmodule.h>
 
 

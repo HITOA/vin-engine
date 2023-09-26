@@ -23,6 +23,8 @@ namespace Vin::Module {
         void Initialize() final;
         void Uninitialize() final;
 
+        void EarlyUpdate() final;
+
         void* GetNativeWindowHandle();
         void* GetNativeDisplayHandle();
 

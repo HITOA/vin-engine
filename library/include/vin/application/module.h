@@ -14,6 +14,10 @@ namespace Vin::Application {
 
         virtual void Initialize() {};
         virtual void Uninitialize() {};
+
+        virtual void EarlyUpdate() {};
+        virtual void Update() {};
+        virtual void LateUpdate() {};
     };
 
 }

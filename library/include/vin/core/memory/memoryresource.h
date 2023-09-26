@@ -18,7 +18,7 @@ namespace Vin::Core::Memory {
         void do_deallocate( void* p, std::size_t, std::size_t)  override {
             allocator->Deallocate(p);
         }
-        [[nodiscard]] bool do_is_equal( const std::pmr::memory_resource& other ) const noexcept override {
+        [[nodiscard]] bool do_is_equal( const std::pmr::memory_resource&) const noexcept override {
             return true;
         }
 

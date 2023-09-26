@@ -13,6 +13,7 @@ namespace Vin::Application {
     class App {
     public:
         void Run();
+        void Loop();
 
         template<typename T, typename... Args>
         inline void AddModule(Args... args) {
