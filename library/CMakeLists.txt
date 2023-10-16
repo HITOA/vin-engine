@@ -52,6 +52,22 @@ add_library(vin_engine
         include/vin/modules/rendering/renderingmodule.h
         src/renderingmodule.cpp
         include/vin/core/templates/utils.h
+        include/vin/vfs/vfs.h
+        include/vin/vfs/filesystem.h
+        include/vin/vfs/file.h
+        src/vfs.cpp
+        include/vin/vfs/native/nativefilesystem.h
+        src/nativefilesystem.cpp
+        include/vin/vfs/native/nativefile.h
+        src/nativefile.cpp
+        include/vin/resource/resourcemanager.h
+        include/vin/resource/resourcehandle.h
+        include/vin/resource/resourceloader.h
+        include/vin/core/logger/logger.h
+        src/logger.cpp
+        include/vin/core/logger/formatter.h
+        include/vin/core/templates/hash.h
+        src/resourcemanager.cpp
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)

@@ -3,17 +3,56 @@
 #define GLFW_EXPOSE_NATIVE_EGL
 
 #include <vin/vin.h>
-#include <vin/modules/window/windowmodule.h>
-#include <vin/modules/rendering/renderingmodule.h>
+#include <vin/vfs/vfs.h>
+#include <vin/vfs/native/nativefilesystem.h>
 
+#include <filesystem>
+#include <vin/resource/resourcemanager.h>
+#include <vin/core/logger/logger.h>
 
 int main() {
     //setbuf(stdout, 0);
 
-    Vin::App app{};
-    app.AddModule<Vin::Module::WindowModule>();
-    app.AddModule<Vin::Module::RenderingModule>();
-    app.Run();
+    Vin::Logger::Logger::AddLogOutput(&std::cout);
+
+    std::filesystem::current_path("/mnt/SSD1TO/Project/vin-engine");
+
+    Vin::VFS::VirtualFileSystem::AddFileSystem("/", Vin::Core::MakeRef<Vin::VFS::NativeFileSystem>());
+    Vin::VFS::VirtualFileSystem::AddFileSystem("/tmp", Vin::Core::MakeRef<Vin::VFS::NativeFileSystem>("/tmp"));
+
+
+    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
+
+    Vin::Ref<Vin::String> str = Vin::Resource::ResourceManager::Load<Vin::String>("/data/text.txt");
+
+    if (str) {
+        Vin::Logger::Logger::Log(str->c_str());
+    }
+
+    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
+
+    str = Vin::Resource::ResourceManager::Load<Vin::String>("/data/text.txt");
+    if (str) {
+        Vin::Logger::Logger::Log(str->c_str());
+    }
+
+    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
+
+    str = Vin::Resource::ResourceManager::Load<Vin::String>("/data/text2.txt");
+    if (str) {
+        Vin::Logger::Logger::Log(str->c_str());
+    }
+
+    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
+
+    Vin::Resource::ResourceManager::UnloadUnused();
+
+    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
+
+    //Vin::App app{};
+    //app.AddModule<Vin::Module::WindowModule>();
+    //app.AddModule<Vin::Module::RenderingModule>();
+    //app.Run();
 
     /*ASSERT(1 != 1, "OWO ERROR")
 

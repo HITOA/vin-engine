@@ -13,7 +13,10 @@ namespace Vin::Core {
 
     template<typename T = char, Memory::Strategy strategy = Memory::Strategy::Persistent>
     using BasicString = std::basic_string<T, std::char_traits<T>, Memory::VinStdAllocator<T, strategy>>;
+    template<typename T = char>
+    using BasicStringView = std::basic_string_view<T, std::char_traits<T>>;
     using String = BasicString<>;
+    using StringView = BasicStringView<>;
 
     template<typename T, Memory::Strategy strategy = Memory::Strategy::Persistent>
     using Vector = std::vector<T, Memory::VinStdAllocator<T, strategy>>;
