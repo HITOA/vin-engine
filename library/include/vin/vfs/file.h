@@ -4,7 +4,7 @@
 #include <vin/core/templates/ref.h>
 #include <vin/core/templates/stdcontainers.h>
 
-namespace Vin::VFS {
+namespace Vin::IO {
 
     enum class FileMode {
         Read = 0,

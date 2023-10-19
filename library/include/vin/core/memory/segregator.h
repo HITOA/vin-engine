@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <vin/core/memory/memutils.h>
 
-namespace Vin::Core::Memory {
+namespace Vin::Core {
 
     template<size_t Threshold, typename SmallAllocatorType, typename LargeAllocatorType>
     class Segregator {

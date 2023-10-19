@@ -7,6 +7,7 @@ option(VIN_BUILD_WITH_WAYLAND "Build with Wayland support instead of X11" ON)
 option(VIN_BUILD_NDEBUG "Disable debugging information" OFF)
 option(VIN_BUILD_TEST "Build vin test app" ON)
 option(VIN_BUILD_BENCH "Build vin benchmark" ON)
+option(VIN_BUILD_EDITOR "Build vin editor" ON)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/library)
 
@@ -16,4 +17,8 @@ endif()
 
 if(VIN_BUILD_BENCH)
     add_subdirectory(${PROJECT_SOURCE_DIR}/bench)
+endif()
+
+if(VIN_BUILD_EDITOR)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/editor)
 endif()

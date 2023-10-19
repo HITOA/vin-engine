@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <utility>
 
-namespace Vin::Core {
+namespace Vin {
 
 }
 

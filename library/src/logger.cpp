@@ -1,12 +1,12 @@
 #include <vin/core/logger/logger.h>
 
-Vin::Core::Vector<std::ostream*> Vin::Core::Logger::Logger::outs{};
+Vin::Vector<std::ostream*> Vin::Logger::outs{};
 
-void Vin::Core::Logger::Logger::AddLogOutput(std::ostream *output) {
+void Vin::Logger::AddLogOutput(std::ostream *output) {
     outs.push_back(output);
 }
 
-void Vin::Core::Logger::Logger::Write(Core::StringView str) {
+void Vin::Logger::Write(StringView str) {
     for (auto& outstream : outs) {
         *outstream << str;
     }

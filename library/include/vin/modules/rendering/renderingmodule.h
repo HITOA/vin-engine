@@ -5,20 +5,46 @@
 #include <vin/modules/window/windowmodule.h>
 #include <vin/core/templates/ref.h>
 
-namespace Vin::Module {
+namespace Vin::Modules {
 
-    class RenderingModule : public Application::Module {
+    /**
+     * BGFX RenderingApi
+     */
+    enum class RenderingApi {
+        Noop,         //!< No rendering.
+        Agc,          //!< AGC
+        Direct3D9,    //!< Direct3D 9.0
+        Direct3D11,   //!< Direct3D 11.0
+        Direct3D12,   //!< Direct3D 12.0
+        Gnm,          //!< GNM
+        Metal,        //!< Metal
+        Nvn,          //!< NVN
+        OpenGLES,     //!< OpenGL ES 2.0+
+        OpenGL,       //!< OpenGL 2.1+
+        Vulkan,       //!< Vulkan
+        WebGPU,       //!< WebGPU
+
+        Count
+    };
+
+    class RenderingModule : public Module {
     public:
-        Application::DependencyList<WindowModule> dependencies{ windowModule };
+        DependencyList<WindowModule> dependencies{ windowModule };
+
+        RenderingModule() = default;
+        explicit RenderingModule(RenderingApi renderingApi);
+
+        RenderingApi GetRenderingApi();
 
         void Initialize() final;
         void Uninitialize() final;
 
-        void LateUpdate() final;
+        void LateUpdate(TimeStep) final;
 
     private:
         int frameBufferWidth{}, frameBufferHeight{};
-        Core::Ref<WindowModule> windowModule{};
+        Ref<WindowModule> windowModule{};
+        RenderingApi renderingApi{ RenderingApi::Count };
     };
 
 }

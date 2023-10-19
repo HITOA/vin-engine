@@ -13,5 +13,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_executable(vin_bench main.cpp
         allocator.h
-        allocator.cpp)
+        allocator.cpp
+        ../editor/src/main.cpp)
 target_link_libraries(vin_bench vin_engine nanobench)

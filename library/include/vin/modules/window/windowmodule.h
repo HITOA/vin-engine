@@ -6,34 +6,37 @@
 #include <vin/core/templates/event.h>
 #include <GLFW/glfw3.h>
 
-namespace Vin::Module {
+struct GLFWwindow;
+
+namespace Vin::Modules {
 
     void GlfwWindowSizeCallback(GLFWwindow* window, int width, int height);
     void GlfwWindowFrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 
-    class WindowModule : public Application::Module {
+    class WindowModule : public Module {
     public:
-        Core::Event<void(int, int)> onWindowResize{};
-        Core::Event<void(int, int)> onFrameBufferResize{};
+        Event<void(int, int)> onWindowResize{};
+        Event<void(int, int)> onFrameBufferResize{};
 
     public:
         WindowModule();
-        WindowModule(int width, int height, Core::String title);
+        WindowModule(int width, int height, String title);
 
         void Initialize() final;
         void Uninitialize() final;
 
-        void EarlyUpdate() final;
+        void EarlyUpdate(TimeStep) final;
 
         void* GetNativeWindowHandle();
         void* GetNativeDisplayHandle();
+        GLFWwindow* GetGlfwWindow();
 
         void GetWindowSize(int& width, int& height);
         void GetFrameBufferSize(int& width, int& height);
 
     private:
         int width{ 640 }, height{ 480 };
-        Core::String title{ "Application" };
+        String title{ "Application" };
         GLFWwindow* window{ nullptr };
 
         friend void GlfwWindowSizeCallback(GLFWwindow* window, int width, int height);

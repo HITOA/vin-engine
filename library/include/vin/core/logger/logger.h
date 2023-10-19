@@ -5,16 +5,16 @@
 #include <ostream>
 #include <vin/core/logger/formatter.h>
 
-namespace Vin::Core::Logger {
+namespace Vin {
 
     class Logger {
     public:
         static void AddLogOutput(std::ostream* output);
-        static void Write(Core::StringView str);
+        static void Write(StringView str);
 
         template<typename Arg>
         static inline void Print(Arg arg) {
-            Write(Formatter<Arg>{}(arg));
+            Write(Core::Formatter<Arg>{}(arg));
         }
 
         template<typename Arg, typename... Args>

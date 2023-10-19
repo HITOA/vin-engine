@@ -3,18 +3,18 @@
 
 #include <vin/vfs/filesystem.h>
 
-namespace Vin::VFS {
+namespace Vin::IO {
 
     class NativeFileSystem : public FileSystem {
     public:
         NativeFileSystem();
-        NativeFileSystem(Core::StringView root);
+        NativeFileSystem(StringView root);
 
-        Core::Ref<File> Open(Core::StringView path, FileMode mode) final;
-        bool Exists(Core::StringView path) final;
+        Ref<File> Open(StringView path, FileMode mode) final;
+        bool Exists(StringView path) final;
 
     private:
-        Core::String root{};
+        String root{};
     };
 
 }

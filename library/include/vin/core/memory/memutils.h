@@ -4,7 +4,7 @@
 #include <new>
 #include <stddef.h>
 
-namespace Vin::Core::Memory {
+namespace Vin::Core {
 
     template<typename T, typename... Args>
     inline void Construct(T* ptr, Args... args) {

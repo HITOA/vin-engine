@@ -3,7 +3,7 @@
 
 #include <vin/core/templates/stdcontainers.h>
 
-namespace Vin::Core {
+namespace Vin {
 
     template<typename T>
     inline unsigned int Hash(T& v) {
@@ -12,7 +12,7 @@ namespace Vin::Core {
     }
 
     template<>
-    inline unsigned int Hash<Core::StringView>(Core::StringView& v) {
+    inline unsigned int Hash<StringView>(StringView& v) {
         unsigned int hash = 2166136261U;
         for (auto& c : v) {
             hash ^= c;

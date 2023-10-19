@@ -1,3 +1,3 @@
 #include <vin/resource/resourcemanager.h>
 
-Vin::Core::Vector<Vin::Resource::ResourceHandle> Vin::Resource::ResourceManager::resources{};
+Vin::Vector<Vin::ResourceHandle> Vin::ResourceManager::resources{};

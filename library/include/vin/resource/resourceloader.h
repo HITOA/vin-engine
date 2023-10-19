@@ -5,7 +5,7 @@
 #include <vin/core/templates/ref.h>
 #include <vin/vfs/file.h>
 
-namespace Vin::Resource {
+namespace Vin {
 
     template<typename T>
     struct ResourceLoader {
@@ -15,9 +15,9 @@ namespace Vin::Resource {
     //Example ResourceLoader
 
     template<>
-    struct ResourceLoader<Core::String> {
-        Core::Ref<Core::String> operator()(const Core::Ref<VFS::File>& file) {
-            Core::Ref<Core::String> str{ Core::MakeRef<Core::String>() };
+    struct ResourceLoader<String> {
+        Ref<String> operator()(const Ref<IO::File>& file) {
+            Ref<String> str{ MakeRef<String>() };
 
             str->resize(file->GetSize() + 1);
             file->ReadBytes(str->data(), str->size() - 1);

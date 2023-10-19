@@ -4,7 +4,7 @@
 #include <vin/core/templates/stdcontainers.h>
 #include <functional>
 
-namespace Vin::Core {
+namespace Vin {
 
     template<typename F>
     class Event {

@@ -8,38 +8,38 @@
 #include <vin/core/error/error.h>
 #include <vin/core/templates/hash.h>
 
-namespace Vin::Resource {
+namespace Vin {
 
     class ResourceManager {
     public:
         template<typename T>
-        static Core::Ref<T> Load(Core::StringView path) {
-            unsigned int hashedPath = Core::Hash<Core::StringView>(path);
+        static Ref<T> Load(StringView path) {
+            unsigned int hashedPath = Hash<StringView>(path);
 
             for (auto& handle : resources) {
                 if (handle.path == hashedPath) {
                     if (handle.typeIndex == typeid(T)) {
-                        return Core::Ref<T>{handle.ref.GetRefData(), (T *) handle.ref.Get()};
+                        return Ref<T>{handle.ref.GetRefData(), (T *) handle.ref.Get()};
                     } else {
-                        Core::Logger::Logger::Err("Can't load resource: resource already loaded as another type.");
-                        return Core::Ref<T>{ nullptr, nullptr };
+                        Logger::Logger::Err("Can't load resource: resource already loaded as another type.");
+                        return Ref<T>{ nullptr, nullptr };
                     }
                 }
             }
 
-            Core::Ref<VFS::File> file = VFS::VirtualFileSystem::Open(path, VFS::FileMode::Read);
+            Ref<IO::File> file = VirtualFileSystem::Open(path, IO::FileMode::Read);
 
             if (!file) {
-                Core::Logger::Logger::Err("Can't load resource: \"", path, "\" not found.");
-                return Core::Ref<T>{ nullptr, nullptr };
+                Logger::Err("Can't load resource: \"", path, "\" not found.");
+                return Ref<T>{ nullptr, nullptr };
             }
 
-            Core::Ref<T> resource = ResourceLoader<T>{}(file);
+            Ref<T> resource = ResourceLoader<T>{}(file);
             file->Close();
 
             if (!resource) {
-                Core::Logger::Logger::Err("Can't load resource: \"", path, "\" can't be loaded.");
-                return Core::Ref<T>{ nullptr, nullptr };
+                Logger::Err("Can't load resource: \"", path, "\" can't be loaded.");
+                return Ref<T>{ nullptr, nullptr };
             }
 
             resources.emplace_back(resource.GetRefData(), (char*)resource.Get(), typeid(T), hashedPath);
@@ -64,7 +64,7 @@ namespace Vin::Resource {
 
 
     private:
-        static Core::Vector<ResourceHandle> resources;
+        static Vector<ResourceHandle> resources;
     };
 
 }

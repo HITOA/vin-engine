@@ -1,6 +1,6 @@
 #include <vin/core/thread/threadpool.h>
 
-Vin::Core::Thread::ThreadPool::ThreadPool()
+Vin::Core::ThreadPool::ThreadPool()
 {
     unsigned int threadCount = std::thread::hardware_concurrency();
     workers.resize(threadCount);
@@ -9,14 +9,14 @@ Vin::Core::Thread::ThreadPool::ThreadPool()
     }
 }
 
-Vin::Core::Thread::ThreadPool::ThreadPool(unsigned int threadCount) {
+Vin::Core::ThreadPool::ThreadPool(unsigned int threadCount) {
     workers.resize(threadCount);
     for (unsigned int i = 0; i < threadCount; ++i) {
         workers[i] = std::thread{ std::bind(&ThreadPool::TheadLoop, this) };
     }
 }
 
-Vin::Core::Thread::ThreadPool::~ThreadPool()
+Vin::Core::ThreadPool::~ThreadPool()
 {
     {
         std::unique_lock<std::mutex> lock{ mutex };
@@ -30,7 +30,7 @@ Vin::Core::Thread::ThreadPool::~ThreadPool()
     workers.clear();
 }
 
-void Vin::Core::Thread::ThreadPool::Execute(const std::function<void()>& job)
+void Vin::Core::ThreadPool::Execute(const std::function<void()>& job)
 {
     {
         std::unique_lock<std::mutex> lock{ mutex };
@@ -39,12 +39,12 @@ void Vin::Core::Thread::ThreadPool::Execute(const std::function<void()>& job)
     cv.notify_one();
 }
 
-unsigned int Vin::Core::Thread::ThreadPool::GetThreadCount() const
+unsigned int Vin::Core::ThreadPool::GetThreadCount() const
 {
     return workers.size();
 }
 
-void Vin::Core::Thread::ThreadPool::TheadLoop()
+void Vin::Core::ThreadPool::TheadLoop()
 {
     while (true) {
         std::function<void()> job;

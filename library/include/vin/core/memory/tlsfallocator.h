@@ -10,7 +10,7 @@
 
 #define MAX_TLSF_POOL_COUNT 32
 
-namespace Vin::Core::Memory {
+namespace Vin::Core {
 
     /**
      * Two Level Segregated Fit Allocator

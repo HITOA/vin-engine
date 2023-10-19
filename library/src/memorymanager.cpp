@@ -1,6 +1,6 @@
 #include <vin/core/memory/memorymanager.h>
 
-namespace Vin::Core::Memory {
+namespace Vin::Core {
 
     SingleFrameAllocator MemoryManager::singleFrameAllocator{};
     DoubleFrameAllocator MemoryManager::doubleFrameAllocator{};

@@ -3,9 +3,9 @@
 
 #include <vin/core/memory/memorymanager.h>
 
-namespace Vin::Core::Memory {
+namespace Vin::Core {
 
-    template<class T, Strategy strategy>
+    template<class T, AllocationStrategy strategy>
     class VinStdAllocator {
     public:
         using value_type = T;
@@ -27,10 +27,10 @@ namespace Vin::Core::Memory {
         };
     };
 
-    template<class T, class U, Strategy strategy>
+    template<class T, class U, Core::AllocationStrategy strategy>
     bool operator==(const VinStdAllocator<T, strategy>&, const VinStdAllocator<U, strategy>&) { return true; }
 
-    template<class T, class U, Strategy strategy>
+    template<class T, class U, Core::AllocationStrategy strategy>
     bool operator!=(const VinStdAllocator<T, strategy>&, const VinStdAllocator<U, strategy>&) { return false; }
 
 }

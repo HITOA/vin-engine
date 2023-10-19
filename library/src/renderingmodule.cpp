@@ -2,7 +2,13 @@
 #include <vin/core/error/error.h>
 #include <bgfx/bgfx.h>
 
-void Vin::Module::RenderingModule::Initialize() {
+Vin::Modules::RenderingModule::RenderingModule(Vin::Modules::RenderingApi renderingApi) : renderingApi{ renderingApi } {}
+
+Vin::Modules::RenderingApi Vin::Modules::RenderingModule::GetRenderingApi() {
+    return renderingApi;
+}
+
+void Vin::Modules::RenderingModule::Initialize() {
     ASSERT(windowModule, "RenderingModule need WindowModule ton initialize.")
 
     int width{}, height{};
@@ -19,7 +25,7 @@ void Vin::Module::RenderingModule::Initialize() {
     init.resolution.width = width;
     init.resolution.height = height;
     init.resolution.reset = BGFX_RESET_VSYNC;
-    init.type = bgfx::RendererType::Vulkan;
+    init.type = (bgfx::RendererType::Enum)renderingApi;
     init.vendorId = 0;
     bgfx::init(init);
 
@@ -33,11 +39,11 @@ void Vin::Module::RenderingModule::Initialize() {
     };
 }
 
-void Vin::Module::RenderingModule::Uninitialize() {
+void Vin::Modules::RenderingModule::Uninitialize() {
     bgfx::shutdown();
 }
 
-void Vin::Module::RenderingModule::LateUpdate() {
+void Vin::Modules::RenderingModule::LateUpdate(TimeStep) {
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
     bgfx::setViewRect(0, 0, 0, frameBufferWidth, frameBufferHeight);
     bgfx::touch(0);

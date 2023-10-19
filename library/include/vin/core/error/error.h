@@ -7,7 +7,7 @@
 #define ASSERT(condition, msg) (condition);
 #else
 #define ASSERT(condition, msg) if (!(condition)) {    \
-           Vin::Core::Logger::Logger::Err("Assertion failed in ", __FILE__, ":", __LINE__, " in function \"", __FUNCTION__, "\" : ", #msg, ", ", #condition);  \
+           Vin::Logger::Err("Assertion failed in ", __FILE__, ":", __LINE__, " in function \"", __FUNCTION__, "\" : ", #msg, ", ", #condition);  \
            abort();                                   \
        }
 #endif

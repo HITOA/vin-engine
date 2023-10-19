@@ -4,13 +4,13 @@
 #include <stddef.h>
 #include <vin/core/memory/memorymanager.h>
 
-namespace Vin::Core {
+namespace Vin {
 
     struct RefData {
         int owners{ 0 };
     };
 
-    template<typename T, Memory::Strategy strategy = Memory::Strategy::Persistent>
+    template<typename T, Core::AllocationStrategy strategy = Core::AllocationStrategy::Persistent>
     class Ref {
     public:
         Ref() : counter{ nullptr }, obj{ nullptr } {};
@@ -28,8 +28,8 @@ namespace Vin::Core {
             if (counter) {
                 counter->owners -= 1;
                 if (counter->owners <= 0) {
-                    Memory::Destroy(obj);
-                    Memory::MemoryManager::Deallocate<strategy>(counter);
+                    Core::Destroy(obj);
+                    Core::MemoryManager::Deallocate<strategy>(counter);
                 }
             }
         }
@@ -78,17 +78,17 @@ namespace Vin::Core {
         RefData* counter{ nullptr };
         T* obj{ nullptr };
 
-        template<typename U, typename... Args,  Memory::Strategy _strategy>
+        template<typename U, typename... Args,  Core::AllocationStrategy _strategy>
         friend Ref<U, _strategy> MakeRef(Args...);
     };
 
-    template<typename T, typename... Args, Memory::Strategy strategy = Memory::Strategy::Persistent>
+    template<typename T, typename... Args, Core::AllocationStrategy strategy = Core::AllocationStrategy::Persistent>
     inline Ref<T, strategy> MakeRef(Args... args) {
         Ref<T, strategy> ref{};
-        ref.counter = (RefData*)Memory::MemoryManager::Allocate<strategy>(sizeof(RefData) + sizeof(T)) ;
+        ref.counter = (RefData*)Core::MemoryManager::Allocate<strategy>(sizeof(RefData) + sizeof(T)) ;
         ref.counter->owners = 1;
         ref.obj = (T*)(((char*)ref.counter) + sizeof(RefData));
-        Memory::Construct(ref.obj, args...);
+        Core::Construct(ref.obj, args...);
         return std::move(ref);
     }
 

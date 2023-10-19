@@ -18,34 +18,36 @@
     #include <GLFW/glfw3native.h>
 #endif
 
-Vin::Module::WindowModule::WindowModule() = default;
-Vin::Module::WindowModule::WindowModule(int width, int height, Core::String title)
+Vin::Modules::WindowModule::WindowModule() = default;
+Vin::Modules::WindowModule::WindowModule(int width, int height, String title)
     : width{ width }, height{ height }, title{ std::move( title) } {}
 
-void Vin::Module::WindowModule::Initialize() {
+void Vin::Modules::WindowModule::Initialize() {
     ASSERT(glfwInit(), "Couldn't initialize GLFW.")
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+
+    ASSERT(window, "Couldn't create window.")
 
     glfwSetWindowUserPointer(window, this);
 
     glfwSetWindowSizeCallback(window, GlfwWindowSizeCallback);
     glfwSetFramebufferSizeCallback(window, GlfwWindowFrameBufferSizeCallback);
 
-    ASSERT(window, "Couldn't create window.")
+    glfwMakeContextCurrent(window);
 }
 
-void Vin::Module::WindowModule::Uninitialize() {
+void Vin::Modules::WindowModule::Uninitialize() {
     glfwDestroyWindow(window);
     glfwTerminate();
 }
 
-void Vin::Module::WindowModule::EarlyUpdate() {
+void Vin::Modules::WindowModule::EarlyUpdate(TimeStep) {
     glfwPollEvents();
 }
 
-void* Vin::Module::WindowModule::GetNativeWindowHandle() {
+void* Vin::Modules::WindowModule::GetNativeWindowHandle() {
 #ifdef VIN_LINUX
     #ifdef VIN_USE_WAYLAND
 
@@ -53,7 +55,6 @@ void* Vin::Module::WindowModule::GetNativeWindowHandle() {
     ASSERT(surface, "Couldn't get wayland surface.")
 
     return wl_egl_window_create(surface, width, height);
-
     #elif VIN_USE_X11
 
     return (void*)glfwGetX11Window(window);
@@ -66,7 +67,7 @@ void* Vin::Module::WindowModule::GetNativeWindowHandle() {
 #endif
 }
 
-void* Vin::Module::WindowModule::GetNativeDisplayHandle() {
+void* Vin::Modules::WindowModule::GetNativeDisplayHandle() {
 #ifdef VIN_LINUX
     #ifdef VIN_USE_WAYLAND
 
@@ -84,23 +85,27 @@ void* Vin::Module::WindowModule::GetNativeDisplayHandle() {
 #endif
 }
 
-void Vin::Module::WindowModule::GetWindowSize(int& width, int& height) {
+GLFWwindow* Vin::Modules::WindowModule::GetGlfwWindow() {
+    return window;
+}
+
+void Vin::Modules::WindowModule::GetWindowSize(int& width, int& height) {
     width = this->width;
     height = this->height;
 }
 
-void Vin::Module::WindowModule::GetFrameBufferSize(int& width, int& height) {
+void Vin::Modules::WindowModule::GetFrameBufferSize(int& width, int& height) {
     glfwGetFramebufferSize(window, &width, &height);
 }
 
-void Vin::Module::GlfwWindowSizeCallback(GLFWwindow *window, int width, int height) {
+void Vin::Modules::GlfwWindowSizeCallback(GLFWwindow *window, int width, int height) {
     WindowModule* windowModule = (WindowModule*)glfwGetWindowUserPointer(window);
     windowModule->width = width;
     windowModule->height = height;
     windowModule->onWindowResize.Invoke(width, height);
 }
 
-void Vin::Module::GlfwWindowFrameBufferSizeCallback(GLFWwindow *window, int width, int height) {
+void Vin::Modules::GlfwWindowFrameBufferSizeCallback(GLFWwindow *window, int width, int height) {
     WindowModule* windowModule = (WindowModule*)glfwGetWindowUserPointer(window);
     windowModule->onFrameBufferResize.Invoke(width, height);
 }

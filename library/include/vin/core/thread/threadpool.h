@@ -10,7 +10,7 @@
 #include <functional>
 #include <condition_variable>
 
-namespace Vin::Core::Thread {
+namespace Vin::Core {
 
     class ThreadPool {
     public:

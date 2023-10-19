@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <memory_resource>
 
-namespace Vin::Core::Memory {
+namespace Vin::Core {
 
     template<typename Allocator>
     class MemoryResource : public std::pmr::memory_resource {

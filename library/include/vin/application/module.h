@@ -2,8 +2,9 @@
 #define VIN_ENGINE_MODULE_H
 
 #include <vin/application/dependencylist.h>
+#include <vin/time/timer.h>
 
-namespace Vin::Application {
+namespace Vin {
 
     class Module {
     public:
@@ -15,9 +16,9 @@ namespace Vin::Application {
         virtual void Initialize() {};
         virtual void Uninitialize() {};
 
-        virtual void EarlyUpdate() {};
-        virtual void Update() {};
-        virtual void LateUpdate() {};
+        virtual void EarlyUpdate(TimeStep) {};
+        virtual void Update(TimeStep) {};
+        virtual void LateUpdate(TimeStep) {};
     };
 
 }

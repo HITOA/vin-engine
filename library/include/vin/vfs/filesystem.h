@@ -5,13 +5,15 @@
 #include <vin/core/templates/stdcontainers.h>
 #include <vin/vfs/file.h>
 
-namespace Vin::VFS {
+namespace Vin::IO {
 
     class FileSystem {
     public:
+        virtual ~FileSystem() = default;
+
         virtual bool AllowWriting() { return false; }
-        virtual Core::Ref<File> Open(Core::StringView path, FileMode mode) = 0;
-        virtual bool Exists(Core::StringView path) = 0;
+        virtual Ref<File> Open(StringView path, FileMode mode) = 0;
+        virtual bool Exists(StringView path) = 0;
     };
 
 }

@@ -5,21 +5,21 @@
 #include <string>
 #include <vector>
 
-namespace Vin::Core {
+namespace Vin {
 
     /**
      * STD Container in Vin namespace, they use the vin allocator.
      */
 
-    template<typename T = char, Memory::Strategy strategy = Memory::Strategy::Persistent>
-    using BasicString = std::basic_string<T, std::char_traits<T>, Memory::VinStdAllocator<T, strategy>>;
+    template<typename T = char, Core::AllocationStrategy strategy = Core::AllocationStrategy::Persistent>
+    using BasicString = std::basic_string<T, std::char_traits<T>, Core::VinStdAllocator<T, strategy>>;
     template<typename T = char>
     using BasicStringView = std::basic_string_view<T, std::char_traits<T>>;
     using String = BasicString<>;
     using StringView = BasicStringView<>;
 
-    template<typename T, Memory::Strategy strategy = Memory::Strategy::Persistent>
-    using Vector = std::vector<T, Memory::VinStdAllocator<T, strategy>>;
+    template<typename T, Core::AllocationStrategy strategy = Core::AllocationStrategy::Persistent>
+    using Vector = std::vector<T, Core::VinStdAllocator<T, strategy>>;
 
 }
 

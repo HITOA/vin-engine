@@ -4,12 +4,12 @@
 #include <vin/vfs/file.h>
 #include <fstream>
 
-namespace Vin::VFS {
+namespace Vin::IO {
 
     class NativeFile : public File {
     public:
         NativeFile() = delete;
-        NativeFile(Core::StringView path, FileMode mode);
+        NativeFile(StringView path, FileMode mode);
 
         void Close() final;
 

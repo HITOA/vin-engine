@@ -10,3 +10,6 @@
 [submodule "library/3rdparty/bgfx.cmake"]
 	path = library/3rdparty/bgfx.cmake
 	url = https://github.com/bkaradzic/bgfx.cmake
+[submodule "editor/3rdparty/cxxopts"]
+	path = editor/3rdparty/cxxopts
+	url = https://github.com/jarro2783/cxxopts.git

@@ -9,6 +9,8 @@
 #include <filesystem>
 #include <vin/resource/resourcemanager.h>
 #include <vin/core/logger/logger.h>
+#include <glslang/Public/ShaderLang.h>
+#include <glslang/Public/ResourceLimits.h>
 
 int main() {
     //setbuf(stdout, 0);
@@ -17,42 +19,33 @@ int main() {
 
     std::filesystem::current_path("/mnt/SSD1TO/Project/vin-engine");
 
-    Vin::VFS::VirtualFileSystem::AddFileSystem("/", Vin::Core::MakeRef<Vin::VFS::NativeFileSystem>());
-    Vin::VFS::VirtualFileSystem::AddFileSystem("/tmp", Vin::Core::MakeRef<Vin::VFS::NativeFileSystem>("/tmp"));
+    Vin::VirtualFileSystem::AddFileSystem("/", Vin::MakeRef<Vin::IO::NativeFileSystem>());
+    Vin::VirtualFileSystem::AddFileSystem("/tmp", Vin::MakeRef<Vin::IO::NativeFileSystem>("/tmp"));
+
+    Vin::Ref<Vin::String> shader = Vin::ResourceManager::Load<Vin::String>("/data/shaders/fs.glsl");
 
 
-    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
+    if (shader) {
+        const char* shsource = shader->c_str();
 
-    Vin::Ref<Vin::String> str = Vin::Resource::ResourceManager::Load<Vin::String>("/data/text.txt");
+        glslang::InitializeProcess();
 
-    if (str) {
-        Vin::Logger::Logger::Log(str->c_str());
+        glslang::TShader sh{ EShLanguage::EShLangFragment };
+        sh.setStrings(&shsource, 1);
+
+        sh.setEnvInput(glslang::EShSourceGlsl, EShLanguage::EShLangFragment, glslang::EShClientVulkan, 100);
+        sh.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_0);
+        sh.setEnvTarget(glslang::EshTargetSpv, glslang::EShTargetSpv_1_0);
+
+        sh.parse(GetDefaultResources(), 100, false, EShMessages{});
+
+        glslang::FinalizeProcess();
     }
 
-    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
-
-    str = Vin::Resource::ResourceManager::Load<Vin::String>("/data/text.txt");
-    if (str) {
-        Vin::Logger::Logger::Log(str->c_str());
-    }
-
-    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
-
-    str = Vin::Resource::ResourceManager::Load<Vin::String>("/data/text2.txt");
-    if (str) {
-        Vin::Logger::Logger::Log(str->c_str());
-    }
-
-    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
-
-    Vin::Resource::ResourceManager::UnloadUnused();
-
-    Vin::Logger::Logger::Log("Resource Count : ", Vin::Resource::ResourceManager::GetResourceCount());
-
-    //Vin::App app{};
-    //app.AddModule<Vin::Module::WindowModule>();
-    //app.AddModule<Vin::Module::RenderingModule>();
-    //app.Run();
+    Vin::App app{};
+    app.AddModule<Vin::Modules::WindowModule>();
+    app.AddModule<Vin::Modules::RenderingModule>();
+    app.Run();
 
     /*ASSERT(1 != 1, "OWO ERROR")
 

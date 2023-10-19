@@ -5,17 +5,17 @@
 #include <vin/core/templates/stdcontainers.h>
 #include <vin/vfs/filesystem.h>
 
-namespace Vin::VFS {
+namespace Vin {
 
     class VirtualFileSystem {
     public:
-        static void AddFileSystem(Core::StringView root, Core::Ref<FileSystem> fs);
+        static void AddFileSystem(StringView root, Ref<IO::FileSystem> fs);
 
-        static Core::Ref<File> Open(Core::StringView path, FileMode mode);
-        static bool Exists(Core::StringView path);
+        static Ref<IO::File> Open(StringView path, IO::FileMode mode);
+        static bool Exists(StringView path);
 
     private:
-        static Core::Vector<std::pair<Core::String, Core::Ref<FileSystem>>> filesystems;
+        static Vector<std::pair<String, Ref<IO::FileSystem>>> filesystems;
     };
 
 }

@@ -15,6 +15,8 @@ else()
     set(BGFX_BUILD_WITH_WAYLAND OFF)
 endif()
 
+set(ENABLE_OPT OFF)
+
 add_subdirectory(3rdparty/bgfx.cmake)
 add_subdirectory(3rdparty/glfw)
 
@@ -68,10 +70,13 @@ add_library(vin_engine
         include/vin/core/logger/formatter.h
         include/vin/core/templates/hash.h
         src/resourcemanager.cpp
+        include/vin/scene/resources/shader.h
+        include/vin/time/timer.h
+        src/timer.cpp
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)
-target_link_libraries(vin_engine bgfx glfw)
+target_link_libraries(vin_engine bgfx glfw glslang)
 
 if (VIN_BUILD_NDEBUG)
     target_compile_definitions(vin_engine PUBLIC "VIN_BUILD_NDEBUG")

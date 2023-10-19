@@ -6,13 +6,13 @@
 
 #define MEMORY_ALIGNMENT 16
 
-namespace Vin::Core::Memory {
+namespace Vin::Core {
 
     using SingleFrameAllocator = StackAllocator<1 << 16, MEMORY_ALIGNMENT>;
     using DoubleFrameAllocator = DoubleBufferAllocator<StackAllocator<1 << 16, MEMORY_ALIGNMENT>>;
     using PersistentAllocator = TLSFAllocator<>;
 
-    enum class Strategy {
+    enum class AllocationStrategy {
         None = 0,
         SingleFrame, //Allocate Through Single Frame (Stack) Allocator
         DoubleFrame, //Allocate Through Double Buffer (2xStack) Allocator
@@ -31,56 +31,56 @@ namespace Vin::Core::Memory {
 
     class MemoryManager {
     public:
-        template<Strategy strategy>
+        template<AllocationStrategy strategy>
         static inline void* Allocate(size_t size) {
             switch (strategy) {
-                case Strategy::SingleFrame:
+                case AllocationStrategy::SingleFrame:
                     return singleFrameAllocator.Allocate(size);
-                case Strategy::DoubleFrame:
+                case AllocationStrategy::DoubleFrame:
                     return doubleFrameAllocator.Allocate(size);
-                case Strategy::Persistent:
+                case AllocationStrategy::Persistent:
                     return persistentAllocator.Allocate(size);
                 default:
                     return nullptr;
             }
         }
 
-        template<Strategy strategy>
+        template<AllocationStrategy strategy>
         static inline void* Reallocate(void* ptr, size_t newSize) {
             switch (strategy) {
-                case Strategy::SingleFrame:
+                case AllocationStrategy::SingleFrame:
                     return singleFrameAllocator.Reallocate(ptr, newSize);
-                case Strategy::DoubleFrame:
+                case AllocationStrategy::DoubleFrame:
                     return doubleFrameAllocator.Reallocate(ptr, newSize);
-                case Strategy::Persistent:
+                case AllocationStrategy::Persistent:
                     return persistentAllocator.Reallocate(ptr, newSize);
                 default:
                     return nullptr;
             }
         }
 
-        template<Strategy strategy>
+        template<AllocationStrategy strategy>
         static inline void Deallocate(void* ptr) {
             switch (strategy) {
-                case Strategy::SingleFrame:
+                case AllocationStrategy::SingleFrame:
                     return singleFrameAllocator.Deallocate(ptr);
-                case Strategy::DoubleFrame:
+                case AllocationStrategy::DoubleFrame:
                     return doubleFrameAllocator.Deallocate(ptr);
-                case Strategy::Persistent:
+                case AllocationStrategy::Persistent:
                     return persistentAllocator.Deallocate(ptr);
                 default:
                     return;
             }
         }
 
-        template<Strategy strategy>
+        template<AllocationStrategy strategy>
         static inline std::pmr::memory_resource* GetMemoryResource() {
             switch (strategy) {
-                case Strategy::SingleFrame:
+                case AllocationStrategy::SingleFrame:
                     return &singleFrameMemoryResource;
-                case Strategy::DoubleFrame:
+                case AllocationStrategy::DoubleFrame:
                     return &doubleFrameMemoryResource;
-                case Strategy::Persistent:
+                case AllocationStrategy::Persistent:
                     return &persistentMemoryResource;
                 default:
                     return nullptr;

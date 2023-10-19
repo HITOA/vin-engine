@@ -1,6 +1,7 @@
 #include <vin/application/application.h>
+#include <vin/time/timer.h>
 
-void Vin::Application::App::Run() {
+void Vin::App::Run() {
     for (auto& module : modules)
         module->Initialize();
 
@@ -10,17 +11,22 @@ void Vin::Application::App::Run() {
         module->Get()->Uninitialize();
 }
 
-void Vin::Application::App::Loop() {
+void Vin::App::Loop() {
+
+    Timer timer{};
+    TimeStep lastStep = timer.GetTimeStep();
 
     bool shouldClose = false;
 
     while(!shouldClose) {
+        TimeStep curr = timer.GetTimeStep();
         for (auto module = modules.rbegin(); module != modules.rend(); ++module)
-            module->Get()->EarlyUpdate();
+            module->Get()->EarlyUpdate(curr - lastStep);
         for (auto module = modules.rbegin(); module != modules.rend(); ++module)
-            module->Get()->Update();
+            module->Get()->Update(curr - lastStep);
         for (auto module = modules.rbegin(); module != modules.rend(); ++module)
-            module->Get()->LateUpdate();
+            module->Get()->LateUpdate(curr - lastStep);
+        lastStep = curr;
     }
 
 }
