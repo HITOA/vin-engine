@@ -7,7 +7,17 @@
 #define EDITOR_GUI_VIEW_ID 200
 
 class EditorWindow {
+public:
+    virtual ~EditorWindow() = default;
 
+    virtual void Draw(bool* open) = 0;
+};
+
+struct EditorWindowEntry {
+    Vin::Ref<EditorWindow> window{ nullptr, nullptr };
+    bool open{ false };
+    Vin::String path{};
+    Vin::String name{};
 };
 
 class EditorModule : public Vin::Module {
@@ -19,7 +29,11 @@ public:
 
     void Update(Vin::TimeStep) final;
 
+    void RegisterEditorWindow(Vin::Ref<EditorWindow> window, Vin::StringView path);
+
+private:
     void DrawDockSpace();
+    void DrawMainMenuBar();
 
     void InitImguiWithBgfx();
     void ShutdownImguiWithBgfx();
@@ -35,6 +49,7 @@ public:
 private:
     Vin::Ref<Vin::Modules::WindowModule> windowModule{};
     Vin::Ref<Vin::Modules::RenderingModule> renderingModule{};
+    Vin::Vector<EditorWindowEntry> editorWindows{};
 
     bgfx::VertexLayout  imguiVertexLayout{};
     bgfx::TextureHandle imguiFontTexture{};

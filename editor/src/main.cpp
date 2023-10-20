@@ -1,6 +1,11 @@
 #include <cxxopts.hpp>
 #include <iostream>
 #include "editor.h"
+#include "windows/console.h"
+
+void RegisterEditorWindow(Vin::Ref<EditorModule> editor) {
+    editor->RegisterEditorWindow(Vin::MakeRef<Console>(), "Window/Console");
+}
 
 int main(int argc, char** argv) {
     cxxopts::Options options{"Vin Editor", "Game Engine Editor for Vin Engine"};
@@ -45,7 +50,8 @@ int main(int argc, char** argv) {
 
     application.AddModule<Vin::Modules::WindowModule>();
     application.AddModule<Vin::Modules::RenderingModule>(renderingApi);
-    application.AddModule<EditorModule>();
+    RegisterEditorWindow(application.AddModule<EditorModule>());
+
 
     application.Run();
 

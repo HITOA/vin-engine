@@ -15,9 +15,10 @@ add_subdirectory(3rdparty/imgui)
 add_executable(vin_editor src/main.cpp
         src/editor.h
         src/editor.cpp
-        src/big.h
         src/imgui/fsocornutimgui.h
         src/imgui/vsocornutimgui.h
         src/imgui/imgui_impl_glfw.h
-        src/imgui/imgui_impl_glfw.cpp)
+        src/imgui/imgui_impl_glfw.cpp
+        src/windows/console.h
+        src/windows/console.cpp)
 target_link_libraries(vin_editor vin_engine cxxopts imgui bx)

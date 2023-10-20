@@ -1,10 +1,12 @@
 #include "editor.h"
 #include <imgui.h>
+#include "imgui_internal.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/fsocornutimgui.h"
 #include "imgui/vsocornutimgui.h"
 #include <bgfx/bgfx.h>
 #include <bx/math.h>
+#include <stdio.h>
 
 void EditorModule::Initialize() {
     if (!windowModule) {
@@ -23,10 +25,6 @@ void EditorModule::Initialize() {
     InitImguiWithBgfx();
     ImGui_ImplGlfw_InitForOther(windowModule->GetGlfwWindow(), true);
 
-    //windowModule->onWindowResize += [](int width, int height) {
-        //imguiReset(width, height);
-    //};
-
 }
 
 void EditorModule::Uninitialize() {
@@ -39,31 +37,27 @@ void EditorModule::Update(Vin::TimeStep dt) {
     Begin();
 
     DrawDockSpace();
+    DrawMainMenuBar();
 
-    ImGui::ShowDemoWindow();
-
-    if (ImGui::Begin("Preferences")) {
-        if (ImGui::BeginTabBar("Preferences Tab Bar", ImGuiTabBarFlags_None)) {
-
-            if (ImGui::BeginTabItem("Style")) {
-                ImGuiStyle& style = ImGui::GetStyle();
-
-                static float stylealpha = 0.75;
-                ImGui::SliderFloat("Style Alpha", &stylealpha, 0.20f, 1.00f);
-
-                style.Alpha = stylealpha;
-
-                ImGui::EndTabItem();
-            }
-
-            ImGui::EndTabBar();
-        }
-        ImGui::Separator();
-        ImGui::Button("Apply");
-    }
-    ImGui::End();
+    for (auto& entry : editorWindows)
+        if (entry.open)
+            entry.window->Draw(&entry.open);
 
     End();
+}
+
+void EditorModule::RegisterEditorWindow(Vin::Ref<EditorWindow> window, Vin::StringView path) {
+    EditorWindowEntry entry{};
+    entry.window = window;
+    entry.open = false;
+    entry.path = path;
+
+    auto it = std::find(path.crbegin(), path.crend(), '/');
+    if (it == std::rend(path))
+        return;
+
+    entry.name = path.substr(std::distance(std::rbegin(path), it));
+    editorWindows.push_back(entry);
 }
 
 void EditorModule::DrawDockSpace() {
@@ -76,7 +70,7 @@ void EditorModule::DrawDockSpace() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    ImGui::Begin("Main DockSpace", (bool*)0,
+    ImGui::Begin("Main DockSpace", nullptr,
                  ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
                  ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground);
@@ -88,11 +82,59 @@ void EditorModule::DrawDockSpace() {
     ImGui::End();
 }
 
+void EditorModule::DrawMainMenuBar() {
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+
+            ImGui::EndMenu();
+        }
+
+        for (auto& entry : editorWindows) {
+
+            Vin::String curr = entry.path;
+            auto it = std::find(curr.begin(), curr.end(), '/');
+            size_t i = 0;
+            bool open = true;
+
+            while (it != curr.end()) {
+                size_t n = std::distance(curr.begin(), it);
+                //Vin::Logger::Log(curr.substr(0, n));
+                if (!ImGui::BeginMenu(curr.substr(0, n).c_str())) {
+                    open = false;
+                    break;
+                }
+                curr = curr.substr(n + 1);
+                it = std::find(curr.begin(), curr.end(), '/');
+                ++i;
+            }
+
+            if (open) {
+                if (ImGui::MenuItem(curr.c_str())) {
+                    entry.open = true;
+                }
+            }
+
+            for (;i > 0; --i) {
+                ImGui::EndMenu();
+            }
+
+        }
+
+        ImGui::EndMainMenuBar();
+    }
+}
+
 void EditorModule::InitImguiWithBgfx() {
     unsigned char* data;
     int width, height;
 
+    windowModule->onWindowResize += [](int width, int height) {
+        bgfx::setViewRect( EDITOR_GUI_VIEW_ID, 0, 0, width, height );
+    };
+
     ImGuiIO& io = ImGui::GetIO();
+
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     imguiVertexLayout.begin()
             .begin()

@@ -16,11 +16,12 @@ namespace Vin {
         void Loop();
 
         template<typename T, typename... Args>
-        inline void AddModule(Args... args) {
+        inline Ref<T> AddModule(Args... args) {
             Ref<T> module{ MakeRef<T>(args...) };
             InjectDependencies(module->dependencies);
             modules.emplace_back(module);
             modulesInfo.emplace_back(typeid(Ref<T>));
+            return module;
         }
 
     private:
