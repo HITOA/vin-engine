@@ -1,11 +1,11 @@
 #include "console.h"
 #include <imgui.h>
 
-Console::Console() {
+ConsoleWindow::ConsoleWindow() {
     Vin::Logger::AddLogOutput(&ostream);
 }
 
-std::streamsize Console::xsputn(const char *s, std::streamsize n) {
+std::streamsize ConsoleWindow::xsputn(const char *s, std::streamsize n) {
     Vin::String newstr{ s };
     EntryData::Type type{ EntryData::Info };
 
@@ -26,7 +26,7 @@ std::streamsize Console::xsputn(const char *s, std::streamsize n) {
     return n;
 }
 
-void Console::Draw(bool *open) {
+void ConsoleWindow::Draw(bool *open) {
     static bool autoscroll = true;
 
     if (ImGui::Begin("Debug Console", open)) {

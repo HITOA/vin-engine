@@ -16,11 +16,12 @@ namespace Vin {
         template<typename Arg>
         static inline void Print(Arg arg) {
             Write(Core::Formatter<Arg>{}(arg));
+            Commit();
         }
 
         template<typename Arg, typename... Args>
         static inline void Print(Arg arg, Args... args) {
-            Print(arg);
+            Write(Core::Formatter<Arg>{}(arg));
             Print(args...);
         }
 
@@ -29,7 +30,6 @@ namespace Vin {
             time_t t = time(NULL);
             tm* tm = localtime(&t);
             Print("[Log][", tm->tm_hour, ":", tm->tm_min, ":", tm->tm_sec, "] : ", args..., "\n");
-            Commit();
         }
 
         template<typename... Args>
@@ -37,7 +37,6 @@ namespace Vin {
             time_t t = time(NULL);
             tm* tm = localtime(&t);
             Print("[Warning][", tm->tm_hour, ":", tm->tm_min, ":", tm->tm_sec, "] : ", args..., "\n");
-            Commit();
         }
 
         template<typename... Args>
@@ -45,7 +44,6 @@ namespace Vin {
             time_t t = time(NULL);
             tm* tm = localtime(&t);
             Print("[Error][", tm->tm_hour, ":", tm->tm_min, ":", tm->tm_sec, "] : ", args..., "\n");
-            Commit();
         }
     private:
         static Vector<std::ostream*> outs;

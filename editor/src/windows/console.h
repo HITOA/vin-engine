@@ -6,7 +6,7 @@
 
 #define EDITOR_CONSOLE_MAX_ENTRY 256
 
-class Console : public EditorWindow, std::stringbuf {
+class ConsoleWindow : public EditorWindow, std::stringbuf {
 private:
     struct EntryData {
         Vin::String str;
@@ -20,7 +20,7 @@ private:
     };
 
 public:
-    Console();
+    ConsoleWindow();
 
     std::streamsize xsputn(const char* s, std::streamsize n) override;
     void Draw(bool* open) final;

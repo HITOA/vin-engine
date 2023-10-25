@@ -4,6 +4,7 @@
 #include <vin/core/memory/stdallocator.h>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 namespace Vin {
 
@@ -20,6 +21,9 @@ namespace Vin {
 
     template<typename T, Core::AllocationStrategy strategy = Core::AllocationStrategy::Persistent>
     using Vector = std::vector<T, Core::VinStdAllocator<T, strategy>>;
+
+    template<typename KeyT, typename ValueT, typename Hash = std::hash<KeyT>, typename KeyEqual = std::equal_to<KeyT>, Core::AllocationStrategy strategy = Core::AllocationStrategy::Persistent>
+    using UnorderedMap = std::unordered_map<KeyT, ValueT, Hash, KeyEqual, Core::VinStdAllocator<std::pair<const KeyT, ValueT>, strategy>>;
 
 }
 

@@ -73,6 +73,8 @@ add_library(vin_engine
         include/vin/scene/resources/shader.h
         include/vin/time/timer.h
         src/timer.cpp
+        include/vin/asset/assettype.h
+        include/vin/asset/assetfile.h
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)

@@ -3,14 +3,23 @@
 
 #include <vin/vin.h>
 #include <bgfx/bgfx.h>
+#include "config/editorimportsettings.h"
+#include "project.h"
 
 #define EDITOR_GUI_VIEW_ID 200
+
+class EditorModule;
 
 class EditorWindow {
 public:
     virtual ~EditorWindow() = default;
 
+    virtual void Initialize() {};
+
     virtual void Draw(bool* open) = 0;
+
+public:
+    EditorModule* editor{ nullptr };
 };
 
 struct EditorWindowEntry {
@@ -20,9 +29,15 @@ struct EditorWindowEntry {
     Vin::String name{};
 };
 
+struct EditorOptions {
+    Vin::String workingDir{};
+};
+
 class EditorModule : public Vin::Module {
 public:
     Vin::DependencyList<Vin::Modules::WindowModule, Vin::Modules::RenderingModule> dependencies{ windowModule, renderingModule };
+
+    explicit EditorModule(EditorOptions& options);
 
     void Initialize() final;
     void Uninitialize() final;
@@ -30,6 +45,16 @@ public:
     void Update(Vin::TimeStep) final;
 
     void RegisterEditorWindow(Vin::Ref<EditorWindow> window, Vin::StringView path);
+
+    void SaveEditorConfig();
+    void LoadEditorConfig();
+
+    Vin::StringView GetWorkingDirectory();
+
+    EditorImportSettings* GetEditorImportSettings();
+
+    void ImportAsset(Vin::StringView apath, Vin::StringView rpath);
+    void UnimportAsset(Vin::StringView apath, Vin::StringView rpath);
 
 private:
     void DrawDockSpace();
@@ -55,6 +80,11 @@ private:
     bgfx::TextureHandle imguiFontTexture{};
     bgfx::UniformHandle imguiFontUniform{};
     bgfx::ProgramHandle imguiProgram{};
+
+    Vin::Ref<Project> project{ nullptr, nullptr };
+
+    EditorOptions options{};
+    EditorImportSettings importSettings{};
 };
 
 #endif //VIN_ENGINE_EDITOR_H

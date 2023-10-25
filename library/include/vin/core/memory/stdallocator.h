@@ -11,7 +11,8 @@ namespace Vin::Core {
         using value_type = T;
 
         VinStdAllocator() = default;
-        VinStdAllocator(const VinStdAllocator&) noexcept = default;
+        template<class U>
+        VinStdAllocator(const VinStdAllocator<U, strategy>&) noexcept {};
 
         [[nodiscard]] T* allocate(size_t n) {
             return (T*)MemoryManager::Allocate<strategy>(sizeof(T) * n);

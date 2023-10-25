@@ -6,9 +6,35 @@
 #include "imgui/vsocornutimgui.h"
 #include <bgfx/bgfx.h>
 #include <bx/math.h>
-#include <stdio.h>
+#include <filesystem>
+#include "msgbox.h"
+#include <fstream>
+#include "assetimporter.h"
+
+
+EditorModule::EditorModule(EditorOptions& options) : options{ options } {
+    std::filesystem::path workingDir{ options.workingDir };
+    if (!std::filesystem::exists(workingDir / "project.vin")) {
+        MessageResult r = Show("Project file doesn't exists in working directory, do you want to create one ?",
+                               "Project file doesn't exists.", MessageType::Question, MessageButton::YesNo);
+        switch (r) {
+            case MessageResult::Yes:
+                project = Vin::MakeRef<Project>((workingDir / "project.vin").c_str());
+                break;
+            case MessageResult::No:
+                exit(0);
+                break;
+            default:
+                break;
+        }
+    } else {
+        project = Vin::MakeRef<Project>((workingDir / "project.vin").c_str());
+    }
+}
 
 void EditorModule::Initialize() {
+    LoadEditorConfig();
+
     if (!windowModule) {
         Vin::Logger::Err("A Window module is needed for the editor to function.");
         abort();
@@ -18,8 +44,6 @@ void EditorModule::Initialize() {
         Vin::Logger::Err("A Rendering module is needed for the editor to function.");
         abort();
     }
-    //imguiInit(windowModule->GetGlfwWindow());
-    //imguiReset(width, height);
 
     ImGui::CreateContext();
     InitImguiWithBgfx();
@@ -33,7 +57,6 @@ void EditorModule::Uninitialize() {
 }
 
 void EditorModule::Update(Vin::TimeStep dt) {
-    Vin::Logger::Log("fps : ", (float)(1.0f / dt.GetSecond()));
     Begin();
 
     DrawDockSpace();
@@ -57,7 +80,79 @@ void EditorModule::RegisterEditorWindow(Vin::Ref<EditorWindow> window, Vin::Stri
         return;
 
     entry.name = path.substr(std::distance(std::rbegin(path), it));
+    entry.window->editor = this;
+    entry.window->Initialize();
     editorWindows.push_back(entry);
+}
+
+void EditorModule::SaveEditorConfig() {
+    Config config{};
+
+    importSettings.Serialize(config);
+
+    Vin::String serializedConfig = SerializeConfig(config);
+
+    Vin::String configPath = GetConfigDir() + "/editor.ini";
+    std::ofstream configFile{ std::filesystem::path{ configPath } };
+    configFile << serializedConfig;
+    configFile.close();
+}
+
+void EditorModule::LoadEditorConfig() {
+    Vin::String configPath = GetConfigDir() + "/editor.ini";
+
+    if (!std::filesystem::exists(configPath))
+        return;
+
+    std::ifstream configFile{ std::filesystem::path{ configPath } };
+    configFile.ignore(std::numeric_limits<std::streamsize>::max());
+    std::size_t length = configFile.gcount();
+    configFile.clear();
+    configFile.seekg(0, std::ios_base::beg);
+    Vin::String serializedConfig{};
+    serializedConfig.resize(length);
+    configFile.read(serializedConfig.data(), length);
+
+    Config config = DeserializeConfig(serializedConfig);
+
+    importSettings.Deserialize(config);
+}
+
+Vin::StringView EditorModule::GetWorkingDirectory() {
+    return options.workingDir;
+}
+
+EditorImportSettings* EditorModule::GetEditorImportSettings() {
+    return &importSettings;
+}
+
+void EditorModule::ImportAsset(Vin::StringView apath, Vin::StringView rpath) {
+    std::filesystem::path path{ apath };
+    Vin::AssetType type = GetType(path.extension().c_str());
+
+    if (type == Vin::AssetType::None) {
+        Vin::Logger::Err("Can't import \"", rpath, "\" : Unknown asset type.");
+        return;
+    }
+
+    switch (type) {
+        case Vin::AssetType::Text:
+            GenerateAssetFile<Vin::AssetType::Text>(apath, importSettings);
+            project->ImportAsset(rpath, type);
+            break;
+        case Vin::AssetType::Texture:
+            GenerateAssetFile<Vin::AssetType::Texture>(apath, importSettings);
+            project->ImportAsset(rpath, type);
+            break;
+        default:
+            GenerateAssetFile<Vin::AssetType::Text>(apath, importSettings);
+            project->ImportAsset(rpath, type);
+            break;
+    }
+}
+
+void EditorModule::UnimportAsset(Vin::StringView apath, Vin::StringView rpath) {
+
 }
 
 void EditorModule::DrawDockSpace() {

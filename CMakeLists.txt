@@ -9,6 +9,14 @@ option(VIN_BUILD_TEST "Build vin test app" ON)
 option(VIN_BUILD_BENCH "Build vin benchmark" ON)
 option(VIN_BUILD_EDITOR "Build vin editor" ON)
 
+if (WIN32)
+    add_compile_definitions(VIN_WIN32)
+elseif (APPLE)
+    add_compile_definitions(VIN_APPLE)
+elseif (UNIX)
+    add_compile_definitions(VIN_LINUX)
+endif()
+
 add_subdirectory(${PROJECT_SOURCE_DIR}/library)
 
 if(VIN_BUILD_TEST)

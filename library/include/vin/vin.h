@@ -5,5 +5,6 @@
 #include <vin/application/application.h>
 #include <vin/modules/window/windowmodule.h>
 #include <vin/modules/rendering/renderingmodule.h>
+#include <vin/asset/assetfile.h>
 
 #endif //VIN_ENGINE_VIN_H
