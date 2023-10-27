@@ -16,6 +16,8 @@ public:
     void ImportAsset(Vin::StringView path, Vin::AssetType type);
     void UnimportAsset(Vin::StringView path);
 
+    bool IsAssetImported(Vin::StringView path);
+
 private:
     Vin::String name{ "New Project" };
 

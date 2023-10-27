@@ -27,8 +27,9 @@ void ContentBrowserWindow::Draw(bool *open) {
         ImGui::SliderFloat("Zoom", &zoom, 32, 256);
 
         float width = ImGui::GetContentRegionAvail().x;
+        int cCount = (width / (zoom + 16.0f));
 
-        ImGui::Columns((width / (zoom + 16.0f)), 0, false);
+        ImGui::Columns(cCount >= 1 ? cCount : 1, 0, false);
 
         for (auto& entry : contents) {
             if (ImGui::Button(entry.name, { zoom, zoom }));
@@ -56,7 +57,16 @@ void ContentBrowserWindow::Refresh(Vin::StringView path) {
         if (entry.is_directory()) {
             ContentEntry contentEntry{};
             strcpy(contentEntry.name, entry.path().filename().c_str());
-            contentEntry.isDirectory = entry.is_directory();
+            contentEntry.isDirectory = true;
+            contents.push_back(contentEntry);
+        } else {
+            std::filesystem::path curr{ std::filesystem::relative(entry, workingDir) };
+            if (!editor->IsAssetImported(curr.c_str()))
+                continue;
+
+            ContentEntry contentEntry{};
+            strcpy(contentEntry.name, entry.path().filename().c_str());
+            contentEntry.isDirectory = false;
             contents.push_back(contentEntry);
         }
     }
@@ -99,4 +109,6 @@ void ContentBrowserWindow::AddFilesDialog() {
         }
         NFD_PathSet_Free(&pathSet);
     }
+
+    Refresh(currentDir);
 }

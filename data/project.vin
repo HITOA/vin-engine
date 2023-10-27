@@ -1,14 +1,13 @@
 {
- "importedAsset": [
-  [],
-  [
-   "text.txt",
-   1
-  ],
-  [
-   "text2.txt",
-   1
-  ]
- ],
- "name": "New Project"
+    "importedAsset": [
+        [
+            "text.txt",
+            1
+        ],
+        [
+            "text2.txt",
+            1
+        ]
+    ],
+    "name": "New Project"
 }

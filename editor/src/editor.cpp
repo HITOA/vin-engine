@@ -155,6 +155,10 @@ void EditorModule::UnimportAsset(Vin::StringView apath, Vin::StringView rpath) {
 
 }
 
+bool EditorModule::IsAssetImported(Vin::StringView rpath) {
+    return project->IsAssetImported(rpath);
+}
+
 void EditorModule::DrawDockSpace() {
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);

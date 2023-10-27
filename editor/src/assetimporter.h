@@ -25,9 +25,6 @@ inline void GenerateAssetFile(Vin::StringView path, EditorImportSettings& import
     std::filesystem::path assetPath{ path };
     assetPath.replace_extension(".vasset");
 
-    Vin::Logger::Log(filePath.c_str());
-    Vin::Logger::Log(assetPath.c_str());
-
     std::fstream file{ filePath, std::fstream::in | std::fstream::binary };
     std::fstream asset{ assetPath, std::fstream::out | std::fstream::trunc | std::fstream::binary };
 
@@ -46,8 +43,6 @@ inline void GenerateAssetFile(Vin::StringView path, EditorImportSettings& import
     std::vector<char> fileContent{};
     fileContent.resize(size);
     file.read(fileContent.data(), fileContent.size());
-
-    Vin::Logger::Log((int)fileContent.size());
 
     asset.write(fileContent.data(), fileContent.size());
 

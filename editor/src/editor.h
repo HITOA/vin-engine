@@ -56,6 +56,8 @@ public:
     void ImportAsset(Vin::StringView apath, Vin::StringView rpath);
     void UnimportAsset(Vin::StringView apath, Vin::StringView rpath);
 
+    bool IsAssetImported(Vin::StringView rpath);
+
 private:
     void DrawDockSpace();
     void DrawMainMenuBar();
