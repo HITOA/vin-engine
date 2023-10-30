@@ -53,8 +53,7 @@ public:
 
     EditorImportSettings* GetEditorImportSettings();
 
-    void ImportAsset(Vin::StringView apath, Vin::StringView rpath);
-    void UnimportAsset(Vin::StringView apath, Vin::StringView rpath);
+    void ImportAsset(Vin::StringView path);
 
     bool IsAssetImported(Vin::StringView rpath);
 

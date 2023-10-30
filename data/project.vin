@@ -1,13 +1,32 @@
 {
-    "importedAsset": [
-        [
-            "text.txt",
-            1
-        ],
-        [
-            "text2.txt",
-            1
-        ]
+    "importedTextAsset": [
+        {
+            "importSettings": {
+                "compressed": false
+            },
+            "importedAssetFilePath": "text2.vasset",
+            "originalAssetFilePath": "text2.txt"
+        },
+        {
+            "importSettings": {
+                "compressed": false
+            },
+            "importedAssetFilePath": "text.vasset",
+            "originalAssetFilePath": "text.txt"
+        }
+    ],
+    "importedTextureAsset": [
+        {
+            "importSettings": {
+                "encodingFormat": 0,
+                "encodingQuality": 0,
+                "linear": false,
+                "mipmaps": true,
+                "pma": false
+            },
+            "importedAssetFilePath": "textures/leafy_grass_diff_1k.vasset",
+            "originalAssetFilePath": "textures/leafy_grass_diff_1k.jpg"
+        }
     ],
     "name": "New Project"
 }

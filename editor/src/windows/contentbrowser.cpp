@@ -32,10 +32,15 @@ void ContentBrowserWindow::Draw(bool *open) {
         ImGui::Columns(cCount >= 1 ? cCount : 1, 0, false);
 
         for (auto& entry : contents) {
-            if (ImGui::Button(entry.name, { zoom, zoom }));
+            ImGui::Button(entry.name, { zoom, zoom });
             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
                 if (entry.isDirectory) {
                     Refresh(currentDir + entry.name + "/");
+                }
+            }
+            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                if (!entry.isDirectory) {
+                    ImGui::OpenPopup("ContentBrowserEntryPopup");
                 }
             }
 
@@ -45,6 +50,8 @@ void ContentBrowserWindow::Draw(bool *open) {
         }
 
         ImGui::Columns();
+
+        DrawContentBrowserEntryPopup();
     }
     ImGui::End();
 }
@@ -92,6 +99,19 @@ void ContentBrowserWindow::DrawContentBrowserPopup() {
     ImGui::PopStyleVar();
 }
 
+void ContentBrowserWindow::DrawContentBrowserEntryPopup() {
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
+    if (ImGui::BeginPopup("ContentBrowserEntryPopup")) {
+
+        if (ImGui::Button("Import Settings")) {
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
+    ImGui::PopStyleVar();
+}
+
 void ContentBrowserWindow::AddFilesDialog() {
     std::filesystem::path dir{ workingDir };
     dir /= currentDir;
@@ -105,7 +125,7 @@ void ContentBrowserWindow::AddFilesDialog() {
                 Vin::Logger::Err("File \"", (const char*)NFD_PathSet_GetPath(&pathSet, i), "\" not in the working directory. ");
                 continue;
             }
-            editor->ImportAsset(NFD_PathSet_GetPath(&pathSet, i), currentPath.c_str());
+            editor->ImportAsset(NFD_PathSet_GetPath(&pathSet, i));
         }
         NFD_PathSet_Free(&pathSet);
     }

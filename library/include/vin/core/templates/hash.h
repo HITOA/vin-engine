@@ -13,7 +13,7 @@ namespace Vin {
 
     template<>
     inline unsigned int Hash<StringView>(StringView& v) {
-        unsigned int hash = 2166136261U;
+        static unsigned int hash = 2166136261U;
         for (auto& c : v) {
             hash ^= c;
             hash *= 16777619U;

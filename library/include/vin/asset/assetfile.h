@@ -15,8 +15,6 @@ namespace Vin {
         size_t size;
     };
 
-    template<AssetType type>
-    struct AssetFileTypeHeader {};
 }
 
 #endif //VIN_ENGINE_ASSETFILE_H

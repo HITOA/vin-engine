@@ -9,7 +9,7 @@
 #include <filesystem>
 #include "msgbox.h"
 #include <fstream>
-#include "assetimporter.h"
+#include "importer/assetimporter.h"
 
 
 EditorModule::EditorModule(EditorOptions& options) : options{ options } {
@@ -126,33 +126,37 @@ EditorImportSettings* EditorModule::GetEditorImportSettings() {
     return &importSettings;
 }
 
-void EditorModule::ImportAsset(Vin::StringView apath, Vin::StringView rpath) {
-    std::filesystem::path path{ apath };
-    Vin::AssetType type = GetType(path.extension().c_str());
+void EditorModule::ImportAsset(Vin::StringView path) {
+    std::filesystem::path assetPath{ path };
+    std::filesystem::path relPath = std::filesystem::relative(assetPath, options.workingDir);
+
+    Vin::AssetType type = GetType(assetPath.extension().c_str());
 
     if (type == Vin::AssetType::None) {
-        Vin::Logger::Err("Can't import \"", rpath, "\" : Unknown asset type.");
+        Vin::Logger::Err("Can't import \"", path, "\" : Unknown asset type.");
         return;
     }
 
     switch (type) {
         case Vin::AssetType::Text:
-            GenerateAssetFile<Vin::AssetType::Text>(apath, importSettings);
-            project->ImportAsset(rpath, type);
-            break;
+            {
+                AssetImporter<Vin::AssetType::Text> importer{};
+                AssetTextImportSettings textImportSettings{};
+                Vin::String importedPath = importer(path, importSettings, textImportSettings);
+                project->ImportTextAsset(relPath.c_str(), std::filesystem::relative(importedPath, options.workingDir).c_str(), textImportSettings);
+                break;
+            }
         case Vin::AssetType::Texture:
-            GenerateAssetFile<Vin::AssetType::Texture>(apath, importSettings);
-            project->ImportAsset(rpath, type);
-            break;
+            {
+                AssetImporter<Vin::AssetType::Texture> importer{};
+                AssetTextureImportSettings textureImportSettings{};
+                Vin::String importedPath = importer(path, importSettings, textureImportSettings);
+                project->ImportTextureAsset(relPath.c_str(), std::filesystem::relative(importedPath, options.workingDir).c_str(), textureImportSettings);
+                break;
+            }
         default:
-            GenerateAssetFile<Vin::AssetType::Text>(apath, importSettings);
-            project->ImportAsset(rpath, type);
             break;
     }
-}
-
-void EditorModule::UnimportAsset(Vin::StringView apath, Vin::StringView rpath) {
-
 }
 
 bool EditorModule::IsAssetImported(Vin::StringView rpath) {

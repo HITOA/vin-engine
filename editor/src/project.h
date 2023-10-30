@@ -2,7 +2,15 @@
 #define VIN_ENGINE_PROJECT_H
 
 #include <vin/vin.h>
-#include <fstream>
+#include "importer/assettext.h"
+#include "importer/assettexture.h"
+
+template<typename T>
+struct ImportedAssetEntry {
+    Vin::String originalAssetFilePath{};
+    Vin::String importedAssetFilePath{};
+    T importSettings{};
+};
 
 class Project {
 public:
@@ -13,15 +21,19 @@ public:
     void LoadProjectFile();
     void SaveProjectFile();
 
-    void ImportAsset(Vin::StringView path, Vin::AssetType type);
-    void UnimportAsset(Vin::StringView path);
+    void ImportTextAsset(Vin::StringView originalAssetPath, Vin::StringView importedAssetPath, AssetTextImportSettings& textImportSettings);
+    void ImportTextureAsset(Vin::StringView originalAssetPath, Vin::StringView importedAssetPath, AssetTextureImportSettings& textureImportSettings);
 
     bool IsAssetImported(Vin::StringView path);
 
 private:
+
+
+private:
     Vin::String name{ "New Project" };
 
-    Vin::UnorderedMap<Vin::String, Vin::AssetType> importedAssets{};
+    Vin::Vector<ImportedAssetEntry<AssetTextImportSettings>> importedTextAsset{};
+    Vin::Vector<ImportedAssetEntry<AssetTextureImportSettings>> importedTextureAsset{};
 
     Vin::String projectFilePath{};
 };

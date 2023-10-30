@@ -18,6 +18,7 @@ public:
 
 private:
     void DrawContentBrowserPopup();
+    void DrawContentBrowserEntryPopup();
     void AddFilesDialog();
 
 private:
