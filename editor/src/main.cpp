@@ -8,12 +8,14 @@
 #include "windows/console.h"
 #include "windows/contentbrowser.h"
 #include "windows/preferences.h"
+#include "windows/inspector.h"
 
 void RegisterEditorWindow(Vin::Ref<EditorModule> editor) {
     editor->RegisterEditorWindow(Vin::MakeRef<PreferencesWindow>(), "File/Preferences");
 
     editor->RegisterEditorWindow(Vin::MakeRef<ConsoleWindow>(), "Window/Console");
     editor->RegisterEditorWindow(Vin::MakeRef<ContentBrowserWindow>(), "Window/Content Browser");
+    editor->RegisterEditorWindow(Vin::MakeRef<InspectorWindow>(), "Window/Inspector");
 }
 
 int main(int argc, char** argv) {

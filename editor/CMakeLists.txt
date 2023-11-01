@@ -38,5 +38,10 @@ add_executable(vin_editor src/main.cpp
         src/exec.h
         src/importer/assetimporter.h
         src/importer/assettexture.h
-        src/importer/assettext.h)
+        src/importer/assettext.h
+        src/windows/inspector.h
+        src/inspector/inspector.h
+        src/windows/inspector.cpp
+        src/inspector/inspectorasset.h
+        src/inspector/inspectorasset.cpp)
 target_link_libraries(vin_editor vin_engine cxxopts imgui bx nativefiledialog)

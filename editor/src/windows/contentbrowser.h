@@ -4,8 +4,9 @@
 #include "../editor.h"
 
 struct ContentEntry {
-    char name[256]{ false };
+    char name[256]{};
     bool isDirectory{ false };
+    Vin::AssetType type{};
 };
 
 class ContentBrowserWindow : public EditorWindow {
@@ -18,8 +19,8 @@ public:
 
 private:
     void DrawContentBrowserPopup();
-    void DrawContentBrowserEntryPopup();
     void AddFilesDialog();
+    void SetInspectorToContentEntry(ContentEntry& entry);
 
 private:
     Vin::StringView workingDir{};

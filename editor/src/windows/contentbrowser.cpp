@@ -1,4 +1,6 @@
 #include "contentbrowser.h"
+#include "inspector.h"
+#include "../inspector/inspectorasset.h"
 #include <filesystem>
 #include <imgui.h>
 #include <nfd.h>
@@ -27,10 +29,11 @@ void ContentBrowserWindow::Draw(bool *open) {
         ImGui::SliderFloat("Zoom", &zoom, 32, 256);
 
         float width = ImGui::GetContentRegionAvail().x;
-        int cCount = (width / (zoom + 16.0f));
+        int cCount = (int)(width / (zoom + 16.0f));
 
-        ImGui::Columns(cCount >= 1 ? cCount : 1, 0, false);
+        ImGui::Columns(cCount >= 1 ? cCount : 1, nullptr, false);
 
+        size_t i = 0;
         for (auto& entry : contents) {
             ImGui::Button(entry.name, { zoom, zoom });
             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
@@ -39,19 +42,19 @@ void ContentBrowserWindow::Draw(bool *open) {
                 }
             }
             if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-                if (!entry.isDirectory) {
-                    ImGui::OpenPopup("ContentBrowserEntryPopup");
-                }
+                //TODO?
+            }
+            if (ImGui::IsItemFocused()) {
+                SetInspectorToContentEntry(entry);
             }
 
             ImGui::TextWrapped(entry.name);
 
             ImGui::NextColumn();
+            ++i;
         }
 
         ImGui::Columns();
-
-        DrawContentBrowserEntryPopup();
     }
     ImGui::End();
 }
@@ -74,6 +77,7 @@ void ContentBrowserWindow::Refresh(Vin::StringView path) {
             ContentEntry contentEntry{};
             strcpy(contentEntry.name, entry.path().filename().c_str());
             contentEntry.isDirectory = false;
+            contentEntry.type = GetType(entry.path().extension().c_str());
             contents.push_back(contentEntry);
         }
     }
@@ -91,19 +95,6 @@ void ContentBrowserWindow::DrawContentBrowserPopup() {
 
         if (ImGui::Button("Refresh")) {
             Refresh(currentDir);
-            ImGui::CloseCurrentPopup();
-        }
-
-        ImGui::EndPopup();
-    }
-    ImGui::PopStyleVar();
-}
-
-void ContentBrowserWindow::DrawContentBrowserEntryPopup() {
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
-    if (ImGui::BeginPopup("ContentBrowserEntryPopup")) {
-
-        if (ImGui::Button("Import Settings")) {
             ImGui::CloseCurrentPopup();
         }
 
@@ -131,4 +122,34 @@ void ContentBrowserWindow::AddFilesDialog() {
     }
 
     Refresh(currentDir);
+}
+
+void ContentBrowserWindow::SetInspectorToContentEntry(ContentEntry &entry) {
+    std::filesystem::path rpath{ currentDir };
+    rpath /= entry.name;
+    std::filesystem::path apath{ workingDir };
+    apath /= rpath;
+
+    switch (entry.type) {
+        case Vin::AssetType::Text: {
+            AssetTextImportSettings importSettings = editor->GetProject()->GetTextAssetImportSettings(rpath.c_str());
+            Vin::Ref<InspectorTextAsset> textAssetInspector{ Vin::MakeRef<InspectorTextAsset>() };
+            textAssetInspector->importSettings = importSettings;
+            textAssetInspector->assetPath = apath.c_str();
+            textAssetInspector->editor = editor;
+            InspectorWindow::SetInspector(textAssetInspector);
+            break;
+        }
+        case Vin::AssetType::Texture: {
+            AssetTextureImportSettings importSettings = editor->GetProject()->GetTextureAssetImportSettings(rpath.c_str());
+            Vin::Ref<InspectorTextureAsset> textAssetInspector{ Vin::MakeRef<InspectorTextureAsset>() };
+            textAssetInspector->importSettings = importSettings;
+            textAssetInspector->assetPath = apath.c_str();
+            textAssetInspector->editor = editor;
+            InspectorWindow::SetInspector(textAssetInspector);
+            break;
+        }
+        default:
+            break;
+    }
 }

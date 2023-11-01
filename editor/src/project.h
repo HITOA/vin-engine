@@ -22,7 +22,10 @@ public:
     void SaveProjectFile();
 
     void ImportTextAsset(Vin::StringView originalAssetPath, Vin::StringView importedAssetPath, AssetTextImportSettings& textImportSettings);
+    AssetTextImportSettings GetTextAssetImportSettings(Vin::StringView path);
+
     void ImportTextureAsset(Vin::StringView originalAssetPath, Vin::StringView importedAssetPath, AssetTextureImportSettings& textureImportSettings);
+    AssetTextureImportSettings GetTextureAssetImportSettings(Vin::StringView path);
 
     bool IsAssetImported(Vin::StringView path);
 

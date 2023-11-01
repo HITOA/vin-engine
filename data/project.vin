@@ -1,20 +1,5 @@
 {
-    "importedTextAsset": [
-        {
-            "importSettings": {
-                "compressed": false
-            },
-            "importedAssetFilePath": "text2.vasset",
-            "originalAssetFilePath": "text2.txt"
-        },
-        {
-            "importSettings": {
-                "compressed": false
-            },
-            "importedAssetFilePath": "text.vasset",
-            "originalAssetFilePath": "text.txt"
-        }
-    ],
+    "importedTextAsset": null,
     "importedTextureAsset": [
         {
             "importSettings": {
@@ -24,8 +9,30 @@
                 "mipmaps": true,
                 "pma": false
             },
-            "importedAssetFilePath": "textures/leafy_grass_diff_1k.vasset",
-            "originalAssetFilePath": "textures/leafy_grass_diff_1k.jpg"
+            "importedAssetFilePath": "icons/text-x-generic.vasset",
+            "originalAssetFilePath": "icons/text-x-generic.png"
+        },
+        {
+            "importSettings": {
+                "encodingFormat": 0,
+                "encodingQuality": 0,
+                "linear": false,
+                "mipmaps": true,
+                "pma": false
+            },
+            "importedAssetFilePath": "icons/image-x-generic.vasset",
+            "originalAssetFilePath": "icons/image-x-generic.png"
+        },
+        {
+            "importSettings": {
+                "encodingFormat": 0,
+                "encodingQuality": 0,
+                "linear": false,
+                "mipmaps": true,
+                "pma": false
+            },
+            "importedAssetFilePath": "icons/default-folder.vasset",
+            "originalAssetFilePath": "icons/default-folder.png"
         }
     ],
     "name": "New Project"

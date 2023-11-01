@@ -5,6 +5,7 @@
 #include <bgfx/bgfx.h>
 #include "config/editorimportsettings.h"
 #include "project.h"
+#include "importer/assetimporter.h"
 
 #define EDITOR_GUI_VIEW_ID 200
 
@@ -54,8 +55,11 @@ public:
     EditorImportSettings* GetEditorImportSettings();
 
     void ImportAsset(Vin::StringView path);
+    void ImportTextAsset(AssetTextImportSettings& textImportSettings, std::filesystem::path& assetPath);
+    void ImportTextureAsset(AssetTextureImportSettings& textureImportSettings, std::filesystem::path& assetPath);
 
     bool IsAssetImported(Vin::StringView rpath);
+    Vin::Ref<Project> GetProject();
 
 private:
     void DrawDockSpace();

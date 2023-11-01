@@ -86,22 +86,56 @@ void Project::SaveProjectFile() {
 
 void Project::ImportTextAsset(Vin::StringView originalAssetPath, Vin::StringView importedAssetPath,
                               AssetTextImportSettings &textImportSettings) {
-    ImportedAssetEntry<AssetTextImportSettings> entry{};
-    entry.originalAssetFilePath = originalAssetPath;
-    entry.importedAssetFilePath = importedAssetPath;
-    entry.importSettings = textImportSettings;
-    importedTextAsset.push_back(entry);
+    auto it = std::find_if(importedTextAsset.begin(), importedTextAsset.end(), [&](ImportedAssetEntry<AssetTextImportSettings>& entry){
+        return entry.originalAssetFilePath == originalAssetPath;
+    });
+    if (it != importedTextAsset.end()) {
+        it->importedAssetFilePath = importedAssetPath;
+        it->importSettings = textImportSettings;
+    } else {
+        ImportedAssetEntry<AssetTextImportSettings> entry{};
+        entry.originalAssetFilePath = originalAssetPath;
+        entry.importedAssetFilePath = importedAssetPath;
+        entry.importSettings = textImportSettings;
+        importedTextAsset.push_back(entry);
+    }
     SaveProjectFile();
+}
+
+AssetTextImportSettings Project::GetTextAssetImportSettings(Vin::StringView path) {
+    auto it = std::find_if(importedTextAsset.begin(), importedTextAsset.end(), [&](ImportedAssetEntry<AssetTextImportSettings>& entry){
+        return entry.originalAssetFilePath == path;
+    });
+    if (it != importedTextAsset.end())
+        return it->importSettings;
+    return AssetTextImportSettings{};
 }
 
 void Project::ImportTextureAsset(Vin::StringView originalAssetPath, Vin::StringView importedAssetPath,
                                  AssetTextureImportSettings &textureImportSettings) {
-    ImportedAssetEntry<AssetTextureImportSettings> entry{};
-    entry.originalAssetFilePath = originalAssetPath;
-    entry.importedAssetFilePath = importedAssetPath;
-    entry.importSettings = textureImportSettings;
-    importedTextureAsset.push_back(entry);
+    auto it = std::find_if(importedTextureAsset.begin(), importedTextureAsset.end(), [&](ImportedAssetEntry<AssetTextureImportSettings>& entry){
+        return entry.originalAssetFilePath == originalAssetPath;
+    });
+    if (it != importedTextureAsset.end()) {
+        it->importedAssetFilePath = importedAssetPath;
+        it->importSettings = textureImportSettings;
+    } else {
+        ImportedAssetEntry<AssetTextureImportSettings> entry{};
+        entry.originalAssetFilePath = originalAssetPath;
+        entry.importedAssetFilePath = importedAssetPath;
+        entry.importSettings = textureImportSettings;
+        importedTextureAsset.push_back(entry);
+    }
     SaveProjectFile();
+}
+
+AssetTextureImportSettings Project::GetTextureAssetImportSettings(Vin::StringView path) {
+    auto it = std::find_if(importedTextureAsset.begin(), importedTextureAsset.end(), [&](ImportedAssetEntry<AssetTextureImportSettings>& entry){
+        return entry.originalAssetFilePath == path;
+    });
+    if (it != importedTextureAsset.end())
+        return it->importSettings;
+    return AssetTextureImportSettings{};
 }
 
 bool Project::IsAssetImported(Vin::StringView path) {
