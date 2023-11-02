@@ -10,7 +10,7 @@
                 "pma": true
             },
             "importedAssetFilePath": "icons/text-x-generic.vasset",
-            "originalAssetFilePath": "icons/text-x-generic.png"
+            "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/text-x-generic.png"
         },
         {
             "importSettings": {
@@ -21,7 +21,7 @@
                 "pma": true
             },
             "importedAssetFilePath": "icons/image-x-generic.vasset",
-            "originalAssetFilePath": "icons/image-x-generic.png"
+            "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/image-x-generic.png"
         },
         {
             "importSettings": {
@@ -32,7 +32,7 @@
                 "pma": true
             },
             "importedAssetFilePath": "icons/default-folder.vasset",
-            "originalAssetFilePath": "icons/default-folder.png"
+            "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/default-folder.png"
         }
     ],
     "name": "New Project"

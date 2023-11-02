@@ -127,6 +127,7 @@ EditorImportSettings* EditorModule::GetEditorImportSettings() {
 
 void EditorModule::ImportAsset(Vin::StringView path) {
     std::filesystem::path assetPath{ path };
+    assetPath = std::filesystem::weakly_canonical(assetPath);
 
     Vin::AssetType type = GetType(PATH_TO_STRING(assetPath.extension()));
 
@@ -155,6 +156,7 @@ void EditorModule::ImportAsset(Vin::StringView path) {
 
 void EditorModule::ImportTextAsset(AssetTextImportSettings &textImportSettings, std::filesystem::path &assetPath) {
     std::filesystem::path relPath = std::filesystem::relative(assetPath, options.workingDir);
+    relPath = std::filesystem::weakly_canonical(relPath);
     AssetImporter<Vin::AssetType::Text> importer{};
     Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, textImportSettings);
     project->ImportTextAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), textImportSettings);
@@ -162,6 +164,7 @@ void EditorModule::ImportTextAsset(AssetTextImportSettings &textImportSettings, 
 
 void EditorModule::ImportTextureAsset(AssetTextureImportSettings &textureImportSettings, std::filesystem::path &assetPath) {
     std::filesystem::path relPath = std::filesystem::relative(assetPath, options.workingDir);
+    relPath = std::filesystem::weakly_canonical(relPath);
     AssetImporter<Vin::AssetType::Texture> importer{};
     Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, textureImportSettings);
     project->ImportTextureAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), textureImportSettings);

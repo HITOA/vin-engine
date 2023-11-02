@@ -94,7 +94,7 @@ void ContentBrowserWindow::Refresh(Vin::StringView path) {
             contentEntry.isDirectory = true;
             contents.push_back(contentEntry);
         } else {
-            std::filesystem::path curr{ std::filesystem::relative(entry, workingDir) };
+            std::filesystem::path curr{ std::filesystem::weakly_canonical(std::filesystem::relative(entry, workingDir)) };
             if (!editor->IsAssetImported(PATH_TO_STRING(curr)))
                 continue;
 
@@ -131,11 +131,11 @@ void ContentBrowserWindow::AddFilesDialog() {
     std::filesystem::path dir{ workingDir };
     dir /= currentDir;
     nfdpathset_t pathSet{};
-    nfdresult_t r = NFD_OpenDialogMultiple(NULL, PATH_TO_STRING(dir).c_str(), &pathSet);
+    nfdresult_t r = NFD_OpenDialogMultiple(NULL, PATH_TO_STRING(std::filesystem::weakly_canonical(dir)).c_str(), &pathSet);
     if (r == NFD_OKAY) {
         for (size_t i = 0; i < NFD_PathSet_GetCount(&pathSet); ++i) {
             std::filesystem::path currentPath{ NFD_PathSet_GetPath(&pathSet, i) };
-            currentPath = std::filesystem::relative(currentPath, workingDir);
+            currentPath = std::filesystem::weakly_canonical(std::filesystem::relative(currentPath, workingDir));
             if (memcmp(currentPath.c_str(), "../", 3) == 0) {
                 Vin::Logger::Err("File \"", (const char*)NFD_PathSet_GetPath(&pathSet, i), "\" not in the working directory. ");
                 continue;
@@ -153,6 +153,9 @@ void ContentBrowserWindow::SetInspectorToContentEntry(ContentEntry &entry) {
     rpath /= entry.name;
     std::filesystem::path apath{ workingDir };
     apath /= rpath;
+
+    rpath = std::filesystem::weakly_canonical(rpath);
+    apath = std::filesystem::weakly_canonical(apath);
 
     switch (entry.type) {
         case Vin::AssetType::Text: {
