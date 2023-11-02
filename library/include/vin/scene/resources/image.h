@@ -19,7 +19,7 @@ namespace Vin {
     struct ResourceLoader<Image> {
         Ref<Image> operator()(const Ref<IO::File>& file) {
             size_t size = file->GetSize();
-            void* buff = Vin::Core::MemoryManager::Allocate<Vin::Core::AllocationStrategy::SingleFrame>(size);
+            void* buff = Vin::Core::MemoryManager::GetInstance()->Allocate<Vin::Core::AllocationStrategy::SingleFrame>(size);
             file->ReadBytes((char*)buff, size);
 
             return Vin::MakeRef<Image>(buff, size);

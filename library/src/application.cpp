@@ -26,7 +26,7 @@ void Vin::App::Loop() {
             module->Get()->Update(curr - lastStep);
         for (auto module = modules.rbegin(); module != modules.rend(); ++module)
             module->Get()->LateUpdate(curr - lastStep);
-        Vin::Core::MemoryManager::SwapAndReset();
+        Vin::Core::MemoryManager::GetInstance()->SwapAndReset();
         lastStep = curr;
     }
 

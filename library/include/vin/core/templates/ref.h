@@ -29,7 +29,7 @@ namespace Vin {
                 counter->owners -= 1;
                 if (counter->owners <= 0) {
                     Core::Destroy(obj);
-                    Core::MemoryManager::Deallocate<strategy>(counter);
+                    Core::MemoryManager::GetInstance()->Deallocate<strategy>(counter);
                 }
             }
         }
@@ -85,7 +85,7 @@ namespace Vin {
     template<typename T, typename... Args, Core::AllocationStrategy strategy = Core::AllocationStrategy::Persistent>
     inline Ref<T, strategy> MakeRef(Args... args) {
         Ref<T, strategy> ref{};
-        ref.counter = (RefData*)Core::MemoryManager::Allocate<strategy>(sizeof(RefData) + sizeof(T)) ;
+        ref.counter = (RefData*)Core::MemoryManager::GetInstance()->Allocate<strategy>(sizeof(RefData) + sizeof(T)) ;
         ref.counter->owners = 1;
         ref.obj = (T*)(((char*)ref.counter) + sizeof(RefData));
         Core::Construct(ref.obj, args...);

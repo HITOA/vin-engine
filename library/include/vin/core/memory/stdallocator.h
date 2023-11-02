@@ -15,11 +15,11 @@ namespace Vin::Core {
         VinStdAllocator(const VinStdAllocator<U, strategy>&) noexcept {};
 
         [[nodiscard]] T* allocate(size_t n) {
-            return (T*)MemoryManager::Allocate<strategy>(sizeof(T) * n);
+            return (T*)MemoryManager::GetInstance()->Allocate<strategy>(sizeof(T) * n);
         }
 
         void deallocate(void* ptr, size_t) {
-            MemoryManager::Deallocate<strategy>(ptr);
+            MemoryManager::GetInstance()->Deallocate<strategy>(ptr);
         }
 
         template<class U>

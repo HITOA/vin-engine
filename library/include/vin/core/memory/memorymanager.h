@@ -31,8 +31,17 @@ namespace Vin::Core {
 
     class MemoryManager {
     public:
+        MemoryManager() = default;
+        ~MemoryManager() = default;
+
+        static inline MemoryManager* GetInstance() {
+            if (!instance)
+                instance = new MemoryManager{};
+            return instance;
+        }
+
         template<AllocationStrategy strategy>
-        static inline void* Allocate(size_t size) {
+        inline void* Allocate(size_t size) {
             switch (strategy) {
                 case AllocationStrategy::SingleFrame:
                     return singleFrameAllocator.Allocate(size);
@@ -46,7 +55,7 @@ namespace Vin::Core {
         }
 
         template<AllocationStrategy strategy>
-        static inline void* Reallocate(void* ptr, size_t newSize) {
+        inline void* Reallocate(void* ptr, size_t newSize) {
             switch (strategy) {
                 case AllocationStrategy::SingleFrame:
                     return singleFrameAllocator.Reallocate(ptr, newSize);
@@ -60,7 +69,7 @@ namespace Vin::Core {
         }
 
         template<AllocationStrategy strategy>
-        static inline void Deallocate(void* ptr) {
+        inline void Deallocate(void* ptr) {
             switch (strategy) {
                 case AllocationStrategy::SingleFrame:
                     return singleFrameAllocator.Deallocate(ptr);
@@ -73,8 +82,8 @@ namespace Vin::Core {
             }
         }
 
-        template<AllocationStrategy strategy>
-        static inline std::pmr::memory_resource* GetMemoryResource() {
+        /*template<AllocationStrategy strategy>
+        inline std::pmr::memory_resource* GetMemoryResource() {
             switch (strategy) {
                 case AllocationStrategy::SingleFrame:
                     return &singleFrameMemoryResource;
@@ -85,24 +94,26 @@ namespace Vin::Core {
                 default:
                     return nullptr;
             }
-        }
+        }*/
 
         /**
          * Swap Double Frame Allocator and Reset Single Frame Allocator
          */
-        static inline void SwapAndReset() {
+        inline void SwapAndReset() {
             doubleFrameAllocator.Swap();
             singleFrameAllocator.Reset();
         }
 
     private:
-        static SingleFrameAllocator singleFrameAllocator;
-        static DoubleFrameAllocator doubleFrameAllocator;
-        static PersistentAllocator persistentAllocator;
+        static MemoryManager* instance;
 
-        static MemoryResource<SingleFrameAllocator> singleFrameMemoryResource;
-        static MemoryResource<DoubleFrameAllocator> doubleFrameMemoryResource;
-        static MemoryResource<PersistentAllocator> persistentMemoryResource;
+        SingleFrameAllocator singleFrameAllocator;
+        DoubleFrameAllocator doubleFrameAllocator;
+        PersistentAllocator persistentAllocator;
+
+        //MemoryResource<SingleFrameAllocator> singleFrameMemoryResource;
+        //MemoryResource<DoubleFrameAllocator> doubleFrameMemoryResource;
+        //MemoryResource<PersistentAllocator> persistentMemoryResource;
     };
 }
 

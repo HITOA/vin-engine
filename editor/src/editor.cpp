@@ -17,7 +17,7 @@ EditorModule::EditorModule(EditorOptions& options) : options{ options } {
                                "Project file doesn't exists.", MessageType::Question, MessageButton::YesNo);
         switch (r) {
             case MessageResult::Yes:
-                project = Vin::MakeRef<Project>((workingDir / "project.vin").c_str());
+                project = Vin::MakeRef<Project>(PATH_TO_STRING(std::filesystem::path{ workingDir / "project.vin" }));
                 break;
             case MessageResult::No:
                 exit(0);
@@ -26,7 +26,7 @@ EditorModule::EditorModule(EditorOptions& options) : options{ options } {
                 break;
         }
     } else {
-        project = Vin::MakeRef<Project>((workingDir / "project.vin").c_str());
+        project = Vin::MakeRef<Project>(PATH_TO_STRING(std::filesystem::path{ workingDir / "project.vin" }));
     }
 }
 
