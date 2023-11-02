@@ -21,8 +21,17 @@ add_subdirectory(3rdparty/bgfx.cmake)
 add_subdirectory(3rdparty/glfw)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+if (MSVC)
+    set(CMAKE_CXX_FLAGS "/W4")
+else()
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+endif()
+
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+if (VIN_BUILD_WITH_WAYLAND)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lwayland-client -lwayland-egl")
+endif()
 
 add_library(vin_engine
         3rdparty/tlsf/tlsf.h
