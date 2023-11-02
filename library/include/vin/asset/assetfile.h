@@ -15,6 +15,9 @@ namespace Vin {
         size_t size;
     };
 
+    inline bool CheckMagic(AssetFileHeader& header) {
+        return !memcmp(header.magic, ASSET_FILE_MAGIC, 8);
+    }
 }
 
 #endif //VIN_ENGINE_ASSETFILE_H

@@ -10,7 +10,6 @@
 #include "msgbox.h"
 #include <fstream>
 
-
 EditorModule::EditorModule(EditorOptions& options) : options{ options } {
     std::filesystem::path workingDir{ options.workingDir };
     if (!std::filesystem::exists(workingDir / "project.vin")) {
@@ -48,6 +47,8 @@ void EditorModule::Initialize() {
     InitImguiWithBgfx();
     ImGui_ImplGlfw_InitForOther(windowModule->GetGlfwWindow(), true);
 
+    for (auto& window : editorWindows)
+        window.window->Initialize();
 }
 
 void EditorModule::Uninitialize() {
@@ -80,7 +81,6 @@ void EditorModule::RegisterEditorWindow(Vin::Ref<EditorWindow> window, Vin::Stri
 
     entry.name = path.substr(std::distance(std::rbegin(path), it));
     entry.window->editor = this;
-    entry.window->Initialize();
     editorWindows.push_back(entry);
 }
 

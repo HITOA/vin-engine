@@ -5,12 +5,19 @@ void InspectorTextAsset::Draw() {
 
 }
 
+
 void InspectorTextureAsset::Draw() {
     ImGui::TextUnformatted(assetPath.c_str());
 
     if (ImGui::BeginCombo("Import Preset", "...")) {
-        if (ImGui::Selectable("Default")) {
+        if (ImGui::Selectable("RGB Texture")) {
             importSettings = AssetTextureImportSettings{};
+        }
+
+        if (ImGui::Selectable("RGBA Texture")) {
+            importSettings = AssetTextureImportSettings{};
+            importSettings.pma = true;
+            importSettings.encodingFormat = TextureEncodingFormat::BC3;
         }
 
         if (ImGui::Selectable("Normal Map")) {

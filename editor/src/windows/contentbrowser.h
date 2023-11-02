@@ -26,7 +26,11 @@ private:
     Vin::StringView workingDir{};
     Vin::String currentDir{};
     Vin::Vector<ContentEntry> contents{};
-    float zoom{96};
+    float zoom{ 64 };
+
+    Vin::Ref<Vin::Texture> folderIcon{};
+    Vin::Ref<Vin::Texture> imageIcon{};
+    Vin::Ref<Vin::Texture> textIcon{};
 };
 
 #endif //VIN_ENGINE_CONTENTBROWSER_H

@@ -3,33 +3,33 @@
     "importedTextureAsset": [
         {
             "importSettings": {
-                "encodingFormat": 0,
+                "encodingFormat": 1,
                 "encodingQuality": 0,
                 "linear": false,
                 "mipmaps": true,
-                "pma": false
+                "pma": true
             },
             "importedAssetFilePath": "icons/text-x-generic.vasset",
             "originalAssetFilePath": "icons/text-x-generic.png"
         },
         {
             "importSettings": {
-                "encodingFormat": 0,
+                "encodingFormat": 1,
                 "encodingQuality": 0,
                 "linear": false,
                 "mipmaps": true,
-                "pma": false
+                "pma": true
             },
             "importedAssetFilePath": "icons/image-x-generic.vasset",
             "originalAssetFilePath": "icons/image-x-generic.png"
         },
         {
             "importSettings": {
-                "encodingFormat": 0,
+                "encodingFormat": 1,
                 "encodingQuality": 0,
                 "linear": false,
                 "mipmaps": true,
-                "pma": false
+                "pma": true
             },
             "importedAssetFilePath": "icons/default-folder.vasset",
             "originalAssetFilePath": "icons/default-folder.png"

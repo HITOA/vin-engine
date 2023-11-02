@@ -27,6 +27,7 @@ void Vin::Modules::RenderingModule::Initialize() {
     init.resolution.reset = BGFX_RESET_VSYNC;
     init.type = (bgfx::RendererType::Enum)renderingApi;
     init.vendorId = 0;
+    init.allocator = nullptr;
     bgfx::init(init);
 
     frameBufferWidth = width;

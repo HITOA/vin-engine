@@ -4,7 +4,8 @@
 #include <nfd.h>
 #include "msgbox.h"
 #include <filesystem>
-
+#include <vin/vin.h>
+#include <vin/vfs/native/nativefilesystem.h>
 #include "windows/console.h"
 #include "windows/contentbrowser.h"
 #include "windows/preferences.h"
@@ -72,6 +73,9 @@ int main(int argc, char** argv) {
             return 0;
         }
     }
+
+    Vin::VirtualFileSystem::AddFileSystem("/", Vin::MakeRef<Vin::IO::NativeFileSystem>());
+    Vin::VirtualFileSystem::AddFileSystem("/tmp", Vin::MakeRef<Vin::IO::NativeFileSystem>("/tmp"));
 
     Vin::Logger::Logger::AddLogOutput(&std::cout);
 

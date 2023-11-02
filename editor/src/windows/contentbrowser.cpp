@@ -6,6 +6,10 @@
 #include <nfd.h>
 
 void ContentBrowserWindow::Initialize() {
+    folderIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/default-folder.vasset");
+    imageIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/image-x-generic.vasset");
+    textIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/text-x-generic.vasset");
+
     workingDir = editor->GetWorkingDirectory();
     Refresh("");
 }
@@ -26,7 +30,7 @@ void ContentBrowserWindow::Draw(bool *open) {
 
         ImGui::SameLine();
 
-        ImGui::SliderFloat("Zoom", &zoom, 32, 256);
+        ImGui::SliderFloat("Zoom", &zoom, 32, 128);
 
         float width = ImGui::GetContentRegionAvail().x;
         int cCount = (int)(width / (zoom + 16.0f));
@@ -35,7 +39,27 @@ void ContentBrowserWindow::Draw(bool *open) {
 
         size_t i = 0;
         for (auto& entry : contents) {
-            ImGui::Button(entry.name, { zoom, zoom });
+            if (entry.isDirectory) {
+                ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
+                ImGui::ImageButton(entry.name, (ImTextureID)folderIcon->GetTextureHandle().idx, { zoom, zoom }, { 0, 0 }, { 1, 1 });
+                ImGui::PopStyleColor();
+            } else {
+                switch (entry.type) {
+                    case Vin::AssetType::Text:
+                        ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
+                        ImGui::ImageButton(entry.name, (ImTextureID)textIcon->GetTextureHandle().idx, { zoom, zoom }, { 0, 0 }, { 1, 1 });
+                        ImGui::PopStyleColor();
+                        break;
+                    case Vin::AssetType::Texture:
+                        ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
+                        ImGui::ImageButton(entry.name, (ImTextureID)imageIcon->GetTextureHandle().idx, { zoom, zoom }, { 0, 0 }, { 1, 1 });
+                        ImGui::PopStyleColor();
+                        break;
+                    default:
+                        ImGui::Button(entry.name, { zoom, zoom });
+                        break;
+                }
+            }
             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
                 if (entry.isDirectory) {
                     Refresh(currentDir + entry.name + "/");
@@ -44,7 +68,7 @@ void ContentBrowserWindow::Draw(bool *open) {
             if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
                 //TODO?
             }
-            if (ImGui::IsItemFocused()) {
+            if (ImGui::IsItemFocused() && !entry.isDirectory) {
                 SetInspectorToContentEntry(entry);
             }
 

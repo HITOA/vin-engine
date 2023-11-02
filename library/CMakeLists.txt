@@ -75,10 +75,14 @@ add_library(vin_engine
         src/timer.cpp
         include/vin/asset/assettype.h
         include/vin/asset/assetfile.h
+        include/vin/scene/resources/image.h
+        include/vin/scene/resources/texture.h
+        src/texture.cpp
+        src/image.cpp
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)
-target_link_libraries(vin_engine bgfx glfw glslang)
+target_link_libraries(vin_engine bgfx bimg glfw glslang)
 
 if (VIN_BUILD_NDEBUG)
     target_compile_definitions(vin_engine PUBLIC "VIN_BUILD_NDEBUG")

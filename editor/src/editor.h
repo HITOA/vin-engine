@@ -2,6 +2,7 @@
 #define VIN_ENGINE_EDITOR_H
 
 #include <vin/vin.h>
+#include <vin/scene/resources/texture.h>
 #include <bgfx/bgfx.h>
 #include "config/editorimportsettings.h"
 #include "project.h"
