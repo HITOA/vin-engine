@@ -133,8 +133,6 @@ inline MessageResult GetMessageResult(int result) {
             return MessageResult::Yes;
         case 7:
             return MessageResult::No;
-        case 1:
-            return MessageResult::Close;
         default:
             return MessageResult::None;
     }
