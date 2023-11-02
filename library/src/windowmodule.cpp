@@ -80,7 +80,7 @@ void* Vin::Modules::WindowModule::GetNativeDisplayHandle() {
     #endif
 #elif VIN_WIN32
 
-    return glfwGetWin32Display();
+    return glfwGetPrimaryMonitor();
 
 #endif
 }

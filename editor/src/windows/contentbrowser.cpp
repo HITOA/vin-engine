@@ -90,18 +90,18 @@ void ContentBrowserWindow::Refresh(Vin::StringView path) {
     for (auto const& entry : std::filesystem::directory_iterator{ dir }) {
         if (entry.is_directory()) {
             ContentEntry contentEntry{};
-            strcpy(contentEntry.name, entry.path().filename().c_str());
+            strcpy(contentEntry.name, PATH_TO_STRING(entry.path().filename()).c_str());
             contentEntry.isDirectory = true;
             contents.push_back(contentEntry);
         } else {
             std::filesystem::path curr{ std::filesystem::relative(entry, workingDir) };
-            if (!editor->IsAssetImported(curr.c_str()))
+            if (!editor->IsAssetImported(PATH_TO_STRING(curr)))
                 continue;
 
             ContentEntry contentEntry{};
-            strcpy(contentEntry.name, entry.path().filename().c_str());
+            strcpy(contentEntry.name, PATH_TO_STRING(entry.path().filename()).c_str());
             contentEntry.isDirectory = false;
-            contentEntry.type = GetType(entry.path().extension().c_str());
+            contentEntry.type = GetType(PATH_TO_STRING(entry.path().extension()));
             contents.push_back(contentEntry);
         }
     }
@@ -131,7 +131,7 @@ void ContentBrowserWindow::AddFilesDialog() {
     std::filesystem::path dir{ workingDir };
     dir /= currentDir;
     nfdpathset_t pathSet{};
-    nfdresult_t r = NFD_OpenDialogMultiple(NULL, dir.c_str(), &pathSet);
+    nfdresult_t r = NFD_OpenDialogMultiple(NULL, PATH_TO_STRING(dir).c_str(), &pathSet);
     if (r == NFD_OKAY) {
         for (size_t i = 0; i < NFD_PathSet_GetCount(&pathSet); ++i) {
             std::filesystem::path currentPath{ NFD_PathSet_GetPath(&pathSet, i) };
@@ -156,19 +156,19 @@ void ContentBrowserWindow::SetInspectorToContentEntry(ContentEntry &entry) {
 
     switch (entry.type) {
         case Vin::AssetType::Text: {
-            AssetTextImportSettings importSettings = editor->GetProject()->GetTextAssetImportSettings(rpath.c_str());
+            AssetTextImportSettings importSettings = editor->GetProject()->GetTextAssetImportSettings(PATH_TO_STRING(rpath));
             Vin::Ref<InspectorTextAsset> textAssetInspector{ Vin::MakeRef<InspectorTextAsset>() };
             textAssetInspector->importSettings = importSettings;
-            textAssetInspector->assetPath = apath.c_str();
+            textAssetInspector->assetPath = PATH_TO_STRING(apath);
             textAssetInspector->editor = editor;
             InspectorWindow::SetInspector(textAssetInspector);
             break;
         }
         case Vin::AssetType::Texture: {
-            AssetTextureImportSettings importSettings = editor->GetProject()->GetTextureAssetImportSettings(rpath.c_str());
+            AssetTextureImportSettings importSettings = editor->GetProject()->GetTextureAssetImportSettings(PATH_TO_STRING(rpath));
             Vin::Ref<InspectorTextureAsset> textAssetInspector{ Vin::MakeRef<InspectorTextureAsset>() };
             textAssetInspector->importSettings = importSettings;
-            textAssetInspector->assetPath = apath.c_str();
+            textAssetInspector->assetPath = PATH_TO_STRING(apath);
             textAssetInspector->editor = editor;
             InspectorWindow::SetInspector(textAssetInspector);
             break;

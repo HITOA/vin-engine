@@ -44,7 +44,7 @@ struct AssetImporter<Vin::AssetType::Text> {
         file.close();
         asset.close();
 
-        return assetPath.c_str();
+        return PATH_TO_STRING(assetPath);
     }
 };
 

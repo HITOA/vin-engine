@@ -118,6 +118,6 @@ Vin::String GetConfigDir() {
     if (!std::filesystem::exists(configDir))
         std::filesystem::create_directory(configDir);
 
-    return configDir.c_str();
+    return PATH_TO_STRING(configDir);
 #endif
 }

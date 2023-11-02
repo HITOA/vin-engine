@@ -128,7 +128,7 @@ EditorImportSettings* EditorModule::GetEditorImportSettings() {
 void EditorModule::ImportAsset(Vin::StringView path) {
     std::filesystem::path assetPath{ path };
 
-    Vin::AssetType type = GetType(assetPath.extension().c_str());
+    Vin::AssetType type = GetType(PATH_TO_STRING(assetPath.extension()));
 
     if (type == Vin::AssetType::None) {
         Vin::Logger::Err("Can't import \"", path, "\" : Unknown asset type.");
@@ -156,15 +156,15 @@ void EditorModule::ImportAsset(Vin::StringView path) {
 void EditorModule::ImportTextAsset(AssetTextImportSettings &textImportSettings, std::filesystem::path &assetPath) {
     std::filesystem::path relPath = std::filesystem::relative(assetPath, options.workingDir);
     AssetImporter<Vin::AssetType::Text> importer{};
-    Vin::String importedPath = importer(assetPath.c_str(), importSettings, textImportSettings);
-    project->ImportTextAsset(relPath.c_str(), std::filesystem::relative(importedPath, options.workingDir).c_str(), textImportSettings);
+    Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, textImportSettings);
+    project->ImportTextAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), textImportSettings);
 }
 
 void EditorModule::ImportTextureAsset(AssetTextureImportSettings &textureImportSettings, std::filesystem::path &assetPath) {
     std::filesystem::path relPath = std::filesystem::relative(assetPath, options.workingDir);
     AssetImporter<Vin::AssetType::Texture> importer{};
-    Vin::String importedPath = importer(assetPath.c_str(), importSettings, textureImportSettings);
-    project->ImportTextureAsset(relPath.c_str(), std::filesystem::relative(importedPath, options.workingDir).c_str(), textureImportSettings);
+    Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, textureImportSettings);
+    project->ImportTextureAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), textureImportSettings);
 }
 
 bool EditorModule::IsAssetImported(Vin::StringView rpath) {

@@ -13,6 +13,11 @@ namespace Vin {
         DependencyList(Ref<Ts>&... args) : fields{ &args... } {}
     };
 
+    template<>
+    struct DependencyList<> {
+        DependencyList() {};
+    };
+
 }
 
 #endif //VIN_ENGINE_DEPENDENCYLIST_H

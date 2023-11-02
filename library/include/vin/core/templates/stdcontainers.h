@@ -6,6 +6,8 @@
 #include <vector>
 #include <unordered_map>
 
+#define PATH_TO_STRING(name) name.string<char, std::char_traits<char>, Vin::Core::VinStdAllocator<char, Vin::Core::AllocationStrategy::Persistent>>()
+
 namespace Vin {
 
     /**

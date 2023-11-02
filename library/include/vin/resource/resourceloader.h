@@ -9,7 +9,7 @@ namespace Vin {
 
     template<typename T>
     struct ResourceLoader {
-        static_assert(false, "No resource loader for specified type.");
+        //static_assert(false, "No resource loader for specified type.");
     };
 
     //Example ResourceLoader

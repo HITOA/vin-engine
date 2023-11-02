@@ -36,7 +36,7 @@ namespace Vin {
 
         template<typename... Deps, size_t... Is>
         inline void InjectDependencies(DependencyList<Deps...>& dependencies, std::index_sequence<Is...>) {
-            int unused[] = { (InjectDependencies((Ref<Deps>*)dependencies.fields[Is], typeid(Ref<Deps>)), 1)... };
+            int unused[] = { -1, (InjectDependencies((Ref<Deps>*)dependencies.fields[Is], typeid(Ref<Deps>)), 1)... };
             (void)unused;
         }
 

@@ -39,7 +39,7 @@ struct AssetImporter<Vin::AssetType::Texture> {
         cmd += " -f \"";
         cmd += path;
         cmd += "\" -o \"";
-        cmd += filePath.c_str();
+        cmd += PATH_TO_STRING(filePath);
         cmd += "\" --as .dds ";
 
         switch (textureImportSettings.encodingFormat) {
@@ -106,9 +106,9 @@ struct AssetImporter<Vin::AssetType::Texture> {
         file.close();
         asset.close();
 
-        std::remove(filePath.c_str());
+        std::remove(PATH_TO_STRING(filePath).c_str());
 
-        return assetPath.c_str();
+        return PATH_TO_STRING(assetPath);
     }
 };
 
