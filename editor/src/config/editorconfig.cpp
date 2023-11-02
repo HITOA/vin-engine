@@ -94,7 +94,23 @@ Config DeserializeConfig(Vin::StringView data) {
 
 Vin::String GetConfigDir() {
 #ifdef VIN_WIN32
-    static const char* envV = "LOCALAPPDATA";
+    std::filesystem::path configDir{};
+
+    const char* baseDir = std::getenv("LOCALAPPDATA");
+
+    if (!baseDir) {
+        Vin::Logger::Err("Can't get config path for the editor");
+        return Vin::String{};
+    }
+
+    configDir = baseDir;
+    configDir /= "vin";
+
+    if (!std::filesystem::exists(configDir))
+        std::filesystem::create_directory(configDir);
+
+    return PATH_TO_STRING(configDir);
+
 #elif VIN_LINUX
     std::filesystem::path configDir{};
 
