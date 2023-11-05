@@ -59,12 +59,60 @@ void EditorModule::Uninitialize() {
 void EditorModule::Update(Vin::TimeStep dt) {
     Begin();
 
-    DrawDockSpace();
-    DrawMainMenuBar();
+    bool busy{ false };
+    Vin::StringView taskName{};
 
-    for (auto& entry : editorWindows)
-        if (entry.open)
-            entry.window->Draw(&entry.open);
+    {
+        std::lock_guard lockGuard{m};
+        if (!editorTasks.empty()) {
+            auto &task = editorTasks.front();
+            if (task.terminated) {
+                editorTasks.pop();
+                if (!editorTasks.empty()) {
+                    threadPool.Execute(editorTasks.front().job);
+                    busy = true;
+                    taskName = editorTasks.front().name;
+                }
+            } else {
+                busy = true;
+                taskName = task.name;
+            }
+        }
+    }
+
+    if (!busy) {
+        DrawDockSpace();
+        DrawMainMenuBar();
+
+        for (auto& entry : editorWindows)
+            if (entry.open)
+                entry.window->Draw(&entry.open);
+    } else {
+        ImGuiViewport *viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+        ImGui::Begin("Busy", nullptr,
+                     ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+                     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
+                     ImGuiWindowFlags_NoNavFocus);
+
+        ImGui::PopStyleVar(3);
+
+        ImVec2 windowWidth = ImGui::GetWindowSize();
+        float textWidth   = ImGui::CalcTextSize(taskName.data()).x;
+
+        ImGui::SetCursorPosX((windowWidth.x - textWidth) * 0.5f);
+        ImGui::SetCursorPosY((windowWidth.y) * 0.5f);
+        ImGui::Text("Busy doing task : %s", taskName.data());
+
+        ImGui::End();
+    }
 
     End();
 }
@@ -139,14 +187,20 @@ void EditorModule::ImportAsset(Vin::StringView path) {
     switch (type) {
         case Vin::AssetType::Text:
             {
-                AssetTextImportSettings textImportSettings{};
-                ImportTextAsset(textImportSettings, assetPath);
+                AddTask([this, assetPath](){
+                    AssetTextImportSettings textImportSettings{};
+                    std::filesystem::path p{assetPath};
+                    ImportTextAsset(textImportSettings, p);
+                }, "Importing Text");
                 break;
             }
         case Vin::AssetType::Texture:
             {
-                AssetTextureImportSettings textureImportSettings{};
-                ImportTextureAsset(textureImportSettings, assetPath);
+                AddTask([this, assetPath](){
+                    AssetTextureImportSettings textureImportSettings{};
+                    std::filesystem::path p{assetPath};
+                    ImportTextureAsset(textureImportSettings, p);
+                    }, "Importing Texture");
                 break;
             }
         default:
@@ -176,6 +230,21 @@ bool EditorModule::IsAssetImported(Vin::StringView rpath) {
 
 Vin::Ref<Project> EditorModule::GetProject() {
     return project;
+}
+
+void EditorModule::AddTask(std::function<void()> f, Vin::StringView name) {
+    editorTasks.push(EditorTask{});
+    auto& task = editorTasks.back();
+    task.name = name;
+    task.job = [this, &task, f](){
+        f();
+        std::lock_guard lockGuard{ m };
+        task.terminated = true;
+    };
+    if (editorTasks.size() == 1) {
+        threadPool.Execute(task.job);
+        //task.job();
+    }
 }
 
 void EditorModule::DrawDockSpace() {

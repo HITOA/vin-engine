@@ -6,9 +6,9 @@
 #define VIN_ENGINE_THREADPOOL_H
 
 #include <thread>
-#include <queue>
 #include <functional>
 #include <condition_variable>
+#include <vin/core/templates/stdcontainers.h>
 
 namespace Vin::Core {
 
@@ -28,8 +28,8 @@ namespace Vin::Core {
         bool terminate{ false };
         std::mutex mutex{};
         std::condition_variable cv{};
-        std::vector<std::thread> workers{};
-        std::queue<std::function<void()>> jobs{};
+        Vin::Vector<std::thread> workers{};
+        Vin::Queue<std::function<void()>> jobs{};
     };
 
 }

@@ -59,8 +59,10 @@ void InspectorTextureAsset::Draw() {
     ImGui::Separator();
 
     if (ImGui::Button("Apply")) {
-        std::filesystem::path path{ assetPath };
-        editor->ImportTextureAsset(importSettings, path);
+        editor->AddTask([this](){
+            std::filesystem::path path{ assetPath };
+            editor->ImportTextureAsset(importSettings, path);
+        }, "Reimporting Texture");
     }
 }
 

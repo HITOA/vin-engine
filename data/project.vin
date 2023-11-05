@@ -3,33 +3,33 @@
     "importedTextureAsset": [
         {
             "importSettings": {
-                "encodingFormat": 1,
+                "encodingFormat": 0,
                 "encodingQuality": 0,
                 "linear": false,
                 "mipmaps": true,
-                "pma": true
+                "pma": false
             },
             "importedAssetFilePath": "icons/text-x-generic.vasset",
             "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/text-x-generic.png"
         },
         {
             "importSettings": {
-                "encodingFormat": 1,
+                "encodingFormat": 0,
                 "encodingQuality": 0,
                 "linear": false,
                 "mipmaps": true,
-                "pma": true
+                "pma": false
             },
             "importedAssetFilePath": "icons/image-x-generic.vasset",
             "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/image-x-generic.png"
         },
         {
             "importSettings": {
-                "encodingFormat": 1,
+                "encodingFormat": 0,
                 "encodingQuality": 0,
                 "linear": false,
                 "mipmaps": true,
-                "pma": true
+                "pma": false
             },
             "importedAssetFilePath": "icons/default-folder.vasset",
             "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/default-folder.png"

@@ -3,6 +3,7 @@
 
 #include <vin/vin.h>
 #include <vin/scene/resources/texture.h>
+#include <vin/core/thread/threadpool.h>
 #include <bgfx/bgfx.h>
 #include "config/editorimportsettings.h"
 #include "project.h"
@@ -35,6 +36,12 @@ struct EditorOptions {
     Vin::String workingDir{};
 };
 
+struct EditorTask {
+    Vin::String name{ "Editor Task." };
+    std::function<void()> job{};
+    bool terminated{ false };
+};
+
 class EditorModule : public Vin::Module {
 public:
     Vin::DependencyList<Vin::Modules::WindowModule, Vin::Modules::RenderingModule> dependencies{ windowModule, renderingModule };
@@ -61,6 +68,8 @@ public:
 
     bool IsAssetImported(Vin::StringView rpath);
     Vin::Ref<Project> GetProject();
+
+    void AddTask(std::function<void()> f, Vin::StringView name);
 
 private:
     void DrawDockSpace();
@@ -91,6 +100,10 @@ private:
 
     EditorOptions options{};
     EditorImportSettings importSettings{};
+
+    Vin::Core::ThreadPool threadPool{};
+    Vin::Queue<EditorTask> editorTasks{};
+    std::mutex m{};
 };
 
 #endif //VIN_ENGINE_EDITOR_H
