@@ -37,6 +37,9 @@ void PreferencesWindow::Draw(bool *open) {
             case PreferenceTab::TextureImportSettings:
                 DrawTextureImportSettingsTab();
                 break;
+            case PreferenceTab::ShaderImportSettings:
+                DrawShaderImportSettingsTab();
+                break;
             default:
                 break;
         }
@@ -60,6 +63,26 @@ void PreferencesWindow::DrawTextureImportSettingsTab() {
             nfdresult_t  r = NFD_OpenDialog(NULL, NULL, &path);
             if (r == NFD_OKAY) {
                 importSettings->textureCompilerPath = path;
+                free(path);
+            }
+        }
+    }
+    ImGui::EndChild();
+}
+
+void PreferencesWindow::DrawShaderImportSettingsTab() {
+    EditorImportSettings* importSettings = editor->GetEditorImportSettings();
+
+    if (ImGui::BeginChild("Shader Import Settings")) {
+        ImGui::TextUnformatted("Shader Compiler : ");
+        ImGui::SameLine();
+        ImGui::InputText("##ShaderCompilerPath", &(importSettings->shaderCompilerPath));
+        ImGui::SameLine();
+        if (ImGui::Button("...")) {
+            nfdchar_t* path = nullptr;
+            nfdresult_t  r = NFD_OpenDialog(NULL, NULL, &path);
+            if (r == NFD_OKAY) {
+                importSettings->shaderCompilerPath = path;
                 free(path);
             }
         }

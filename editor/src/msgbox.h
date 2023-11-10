@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_MSGBOX_H
-#define VIN_ENGINE_MSGBOX_H
+#ifndef VIN_EDITOR_MSGBOX_H
+#define VIN_EDITOR_MSGBOX_H
 
 enum class MessageType {
     Info,
@@ -145,4 +145,4 @@ inline MessageResult Show(const char* msg, const char* title, MessageType type, 
 
 #endif
 
-#endif //VIN_ENGINE_MSGBOX_H
+#endif //VIN_EDITOR_MSGBOX_H

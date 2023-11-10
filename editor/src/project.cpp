@@ -48,6 +48,16 @@ void Project::LoadProjectFile() {
             importedTextureAsset.push_back(curr);
         }
     }
+
+    if (jsonProject.contains("importedShaderAsset")) {
+        for (auto& entry : jsonProject["importedShaderAsset"]) {
+            ImportedAssetEntry<AssetShaderImportSettings> curr{};
+            curr.originalAssetFilePath = entry["originalAssetFilePath"].get<std::string>();
+            curr.importedAssetFilePath = entry["importedAssetFilePath"].get<std::string>();
+            curr.importSettings.type = (Vin::ShaderType)entry["importSettings"]["shaderType"].get<int>();
+            importedShaderAsset.push_back(curr);
+        }
+    }
 }
 
 void Project::SaveProjectFile() {
@@ -78,8 +88,19 @@ void Project::SaveProjectFile() {
         jsonImportedTextureAssets += curr;
     }
 
+    nlohmann::json jsonImportedShaderAssets{};
+    for (auto& entry : importedShaderAsset) {
+        nlohmann::json curr{};
+        curr["originalAssetFilePath"] = entry.originalAssetFilePath;
+        curr["importedAssetFilePath"] = entry.importedAssetFilePath;
+        curr["importSettings"]["shaderType"] = entry.importSettings.type;
+
+        jsonImportedShaderAssets += curr;
+    }
+
     jsonProject["importedTextAsset"] = jsonImportedTextAssets;
     jsonProject["importedTextureAsset"] = jsonImportedTextureAssets;
+    jsonProject["importedShaderAsset"] = jsonImportedShaderAssets;
     std::fstream projectFile{ std::filesystem::path{ projectFilePath }, std::fstream::out | std::fstream::binary | std::fstream::trunc };
     projectFile << jsonProject.dump(4);
 }
@@ -138,6 +159,33 @@ AssetTextureImportSettings Project::GetTextureAssetImportSettings(Vin::StringVie
     return AssetTextureImportSettings{};
 }
 
+void Project::ImportShaderAsset(Vin::StringView originalAssetPath, Vin::StringView importedAssetPath,
+                                AssetShaderImportSettings &shaderImportSettings) {
+    auto it = std::find_if(importedShaderAsset.begin(), importedShaderAsset.end(), [&](ImportedAssetEntry<AssetShaderImportSettings>& entry){
+        return entry.originalAssetFilePath == originalAssetPath;
+    });
+    if (it != importedShaderAsset.end()) {
+        it->importedAssetFilePath = importedAssetPath;
+        it->importSettings = shaderImportSettings;
+    } else {
+        ImportedAssetEntry<AssetShaderImportSettings> entry{};
+        entry.originalAssetFilePath = originalAssetPath;
+        entry.importedAssetFilePath = importedAssetPath;
+        entry.importSettings = shaderImportSettings;
+        importedShaderAsset.push_back(entry);
+    }
+    SaveProjectFile();
+}
+
+AssetShaderImportSettings Project::GetShaderAssetImportSettings(Vin::StringView path) {
+    auto it = std::find_if(importedShaderAsset.begin(), importedShaderAsset.end(), [&](ImportedAssetEntry<AssetShaderImportSettings>& entry){
+        return entry.originalAssetFilePath == path;
+    });
+    if (it != importedShaderAsset.end())
+        return it->importSettings;
+    return AssetShaderImportSettings{};
+}
+
 bool Project::IsAssetImported(Vin::StringView path) {
     if (std::find_if(importedTextAsset.begin(), importedTextAsset.end(), [&](ImportedAssetEntry<AssetTextImportSettings>& entry){
         return entry.originalAssetFilePath == path;
@@ -148,6 +196,12 @@ bool Project::IsAssetImported(Vin::StringView path) {
     if (std::find_if(importedTextureAsset.begin(), importedTextureAsset.end(), [&](ImportedAssetEntry<AssetTextureImportSettings>& entry){
         return entry.originalAssetFilePath == path;
     }) != importedTextureAsset.end()) {
+        return true;
+    }
+
+    if (std::find_if(importedShaderAsset.begin(), importedShaderAsset.end(), [&](ImportedAssetEntry<AssetShaderImportSettings>& entry){
+        return entry.originalAssetFilePath == path;
+    }) != importedShaderAsset.end()) {
         return true;
     }
 

@@ -11,7 +11,7 @@ std::streamsize ConsoleWindow::xsputn(const char *s, std::streamsize n) {
 
     if (newstr.find("[Warning]") != std::string::npos)
         type = EntryData::Warning;
-    if (newstr.find("[ERROR]") != std::string::npos)
+    if (newstr.find("[Error]") != std::string::npos)
         type = EntryData::Error;
 
     if (items.size() <= currentItemsPos) {

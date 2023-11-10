@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_PREFERENCES_H
-#define VIN_ENGINE_PREFERENCES_H
+#ifndef VIN_EDITOR_PREFERENCES_H
+#define VIN_EDITOR_PREFERENCES_H
 
 #include "../editor.h"
 
@@ -14,9 +14,10 @@ public:
     void Draw(bool* open) final;
 
     void DrawTextureImportSettingsTab();
+    void DrawShaderImportSettingsTab();
 
 private:
     PreferenceTab currentTab{};
 };
 
-#endif //VIN_ENGINE_PREFERENCES_H
+#endif //VIN_EDITOR_PREFERENCES_H

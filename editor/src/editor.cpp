@@ -203,6 +203,21 @@ void EditorModule::ImportAsset(Vin::StringView path) {
                     }, "Importing Texture");
                 break;
             }
+            case Vin::AssetType::Shader:
+            {
+                AddTask([this, assetPath](){
+                    AssetShaderImportSettings shaderImportSettings{};
+                    std::filesystem::path p{assetPath};
+
+                    if (p.extension() == ".frag")
+                        shaderImportSettings.type = Vin::ShaderType::Fragment;
+                    if (p.extension() == ".vert")
+                        shaderImportSettings.type = Vin::ShaderType::Vertex;
+
+                    ImportShaderAsset(shaderImportSettings, p);
+                }, "Importing Shader");
+                break;
+            }
         default:
             break;
     }
@@ -222,6 +237,14 @@ void EditorModule::ImportTextureAsset(AssetTextureImportSettings &textureImportS
     AssetImporter<Vin::AssetType::Texture> importer{};
     Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, textureImportSettings);
     project->ImportTextureAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), textureImportSettings);
+}
+
+void EditorModule::ImportShaderAsset(AssetShaderImportSettings &shaderImportSettings, std::filesystem::path &assetPath) {
+    std::filesystem::path relPath = std::filesystem::relative(assetPath, options.workingDir);
+    relPath = std::filesystem::weakly_canonical(relPath);
+    AssetImporter<Vin::AssetType::Shader> importer{};
+    Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, shaderImportSettings);
+    project->ImportShaderAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), shaderImportSettings);
 }
 
 bool EditorModule::IsAssetImported(Vin::StringView rpath) {

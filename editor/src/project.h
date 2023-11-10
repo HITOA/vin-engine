@@ -1,9 +1,10 @@
-#ifndef VIN_ENGINE_PROJECT_H
-#define VIN_ENGINE_PROJECT_H
+#ifndef VIN_EDITOR_PROJECT_H
+#define VIN_EDITOR_PROJECT_H
 
 #include <vin/vin.h>
 #include "importer/assettext.h"
 #include "importer/assettexture.h"
+#include "importer/assetshader.h"
 
 template<typename T>
 struct ImportedAssetEntry {
@@ -27,6 +28,9 @@ public:
     void ImportTextureAsset(Vin::StringView originalAssetPath, Vin::StringView importedAssetPath, AssetTextureImportSettings& textureImportSettings);
     AssetTextureImportSettings GetTextureAssetImportSettings(Vin::StringView path);
 
+    void ImportShaderAsset(Vin::StringView originalAssetPath, Vin::StringView importedAssetPath, AssetShaderImportSettings& shaderImportSettings);
+    AssetShaderImportSettings GetShaderAssetImportSettings(Vin::StringView path);
+
     bool IsAssetImported(Vin::StringView path);
 
 private:
@@ -37,8 +41,9 @@ private:
 
     Vin::Vector<ImportedAssetEntry<AssetTextImportSettings>> importedTextAsset{};
     Vin::Vector<ImportedAssetEntry<AssetTextureImportSettings>> importedTextureAsset{};
+    Vin::Vector<ImportedAssetEntry<AssetShaderImportSettings>> importedShaderAsset{};
 
     Vin::String projectFilePath{};
 };
 
-#endif //VIN_ENGINE_PROJECT_H
+#endif //VIN_EDITOR_PROJECT_H

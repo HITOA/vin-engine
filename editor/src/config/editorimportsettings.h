@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_EDITORIMPORTSETTINGS_H
-#define VIN_ENGINE_EDITORIMPORTSETTINGS_H
+#ifndef VIN_EDITOR_EDITORIMPORTSETTINGS_H
+#define VIN_EDITOR_EDITORIMPORTSETTINGS_H
 
 #include <vin/vin.h>
 #include "editorconfig.h"
@@ -12,6 +12,7 @@ public:
     Vin::String textureCompilerPath{};
     Vin::String shaderCompilerPath{};
     Vin::String geometryCompilerPath{};
+
 };
 
-#endif //VIN_ENGINE_EDITORIMPORTSETTINGS_H
+#endif //VIN_EDITOR_EDITORIMPORTSETTINGS_H

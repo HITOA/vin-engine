@@ -5,8 +5,9 @@
 
 namespace Vin {
 
-    class ShaderSource {
+    class Shader {
     public:
+
     };
 
 }

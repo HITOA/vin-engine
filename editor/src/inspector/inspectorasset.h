@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_INSPECTORASSET_H
-#define VIN_ENGINE_INSPECTORASSET_H
+#ifndef VIN_EDITOR_INSPECTORASSET_H
+#define VIN_EDITOR_INSPECTORASSET_H
 
 #include "inspector.h"
 #include "../importer/assetimporter.h"
@@ -28,4 +28,4 @@ public:
     EditorModule* editor{};
 };
 
-#endif //VIN_ENGINE_INSPECTORASSET_H
+#endif //VIN_EDITOR_INSPECTORASSET_H

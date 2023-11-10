@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_EDITOR_H
-#define VIN_ENGINE_EDITOR_H
+#ifndef VIN_EDITOR_EDITOR_H
+#define VIN_EDITOR_EDITOR_H
 
 #include <vin/vin.h>
 #include <vin/scene/resources/texture.h>
@@ -65,6 +65,7 @@ public:
     void ImportAsset(Vin::StringView path);
     void ImportTextAsset(AssetTextImportSettings& textImportSettings, std::filesystem::path& assetPath);
     void ImportTextureAsset(AssetTextureImportSettings& textureImportSettings, std::filesystem::path& assetPath);
+    void ImportShaderAsset(AssetShaderImportSettings& shaderImportSettings, std::filesystem::path& assetPath);
 
     bool IsAssetImported(Vin::StringView rpath);
     Vin::Ref<Project> GetProject();
@@ -106,4 +107,4 @@ private:
     std::mutex m{};
 };
 
-#endif //VIN_ENGINE_EDITOR_H
+#endif //VIN_EDITOR_EDITOR_H

@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_ASSETTEXTURE_H
-#define VIN_ENGINE_ASSETTEXTURE_H
+#ifndef VIN_EDITOR_ASSETTEXTURE_H
+#define VIN_EDITOR_ASSETTEXTURE_H
 
 #include "assetimporter.h"
 #include <filesystem>
@@ -112,4 +112,4 @@ struct AssetImporter<Vin::AssetType::Texture> {
     }
 };
 
-#endif //VIN_ENGINE_ASSETTEXTURE_H
+#endif //VIN_EDITOR_ASSETTEXTURE_H

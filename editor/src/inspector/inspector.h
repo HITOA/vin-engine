@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_INSPECTORCONTENT_H
-#define VIN_ENGINE_INSPECTORCONTENT_H
+#ifndef VIN_EDITOR_INSPECTORCONTENT_H
+#define VIN_EDITOR_INSPECTORCONTENT_H
 
 #include "../editor.h"
 
@@ -10,4 +10,4 @@ public:
     virtual void Draw() = 0;
 };
 
-#endif //VIN_ENGINE_INSPECTOR_H
+#endif //VIN_EDITOR_INSPECTOR_H

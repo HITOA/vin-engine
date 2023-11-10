@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_IMGUIVIN_H
-#define VIN_ENGINE_IMGUIVIN_H
+#ifndef VIN_EDITOR_IMGUIVIN_H
+#define VIN_EDITOR_IMGUIVIN_H
 
 #pragma once
 
@@ -12,4 +12,4 @@ namespace ImGui
     IMGUI_API bool  InputTextWithHint(const char* label, const char* hint, Vin::String* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = nullptr, void* user_data = nullptr);
 }
 
-#endif //VIN_ENGINE_IMGUIVIN_H
+#endif //VIN_EDITOR_IMGUIVIN_H

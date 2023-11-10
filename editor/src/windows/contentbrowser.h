@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_CONTENTBROWSER_H
-#define VIN_ENGINE_CONTENTBROWSER_H
+#ifndef VIN_EDITOR_CONTENTBROWSER_H
+#define VIN_EDITOR_CONTENTBROWSER_H
 
 #include "../editor.h"
 
@@ -33,4 +33,4 @@ private:
     Vin::Ref<Vin::Texture> textIcon{};
 };
 
-#endif //VIN_ENGINE_CONTENTBROWSER_H
+#endif //VIN_EDITOR_CONTENTBROWSER_H

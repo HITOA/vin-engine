@@ -1,4 +1,20 @@
 {
+    "importedShaderAsset": [
+        {
+            "importSettings": {
+                "shaderType": 1
+            },
+            "importedAssetFilePath": "shaders/examplevertex.vasset",
+            "originalAssetFilePath": "shaders/examplevertex.vert"
+        },
+        {
+            "importSettings": {
+                "shaderType": 0
+            },
+            "importedAssetFilePath": "shaders/examplefragment.vasset",
+            "originalAssetFilePath": "shaders/examplefragment.frag"
+        }
+    ],
     "importedTextAsset": null,
     "importedTextureAsset": [
         {

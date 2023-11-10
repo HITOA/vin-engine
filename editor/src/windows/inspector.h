@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_INSPECTOR_H
-#define VIN_ENGINE_INSPECTOR_H
+#ifndef VIN_EDITOR_INSPECTOR_H
+#define VIN_EDITOR_INSPECTOR_H
 
 #include "../editor.h"
 #include "../inspector/inspector.h"
@@ -16,4 +16,4 @@ private:
     static Vin::Ref<Inspector> inspectorWindow;
 };
 
-#endif //VIN_ENGINE_INSPECTOR_H
+#endif //VIN_EDITOR_INSPECTOR_H

@@ -88,6 +88,7 @@ add_library(vin_engine
         include/vin/scene/resources/texture.h
         src/texture.cpp
         src/image.cpp
+        include/vin/asset/assetshader.h
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)

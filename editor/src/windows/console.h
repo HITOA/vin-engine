@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_CONSOLE_H
-#define VIN_ENGINE_CONSOLE_H
+#ifndef VIN_EDITOR_CONSOLE_H
+#define VIN_EDITOR_CONSOLE_H
 
 #include "../editor.h"
 #include <sstream>
@@ -31,4 +31,4 @@ private:
     std::ostream ostream{ this };
 };
 
-#endif //VIN_ENGINE_CONSOLE_H
+#endif //VIN_EDITOR_CONSOLE_H

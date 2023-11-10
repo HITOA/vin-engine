@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(vin_engine)
+project(vin_editor)
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -52,5 +52,7 @@ add_executable(vin_editor src/main.cpp
         src/inspector/inspector.h
         src/windows/inspector.cpp
         src/inspector/inspectorasset.h
-        src/inspector/inspectorasset.cpp)
+        src/inspector/inspectorasset.cpp
+        src/importer/assetshader.h
+)
 target_link_libraries(vin_editor vin_engine cxxopts imgui bx nativefiledialog)

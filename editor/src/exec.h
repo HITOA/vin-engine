@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_EXEC_H
-#define VIN_ENGINE_EXEC_H
+#ifndef VIN_EDITOR_EXEC_H
+#define VIN_EDITOR_EXEC_H
 
 #include <vin/vin.h>
 #include <stdio.h>
@@ -23,4 +23,4 @@ inline Vin::String Exec(const char* cmd) {
     return result;
 }
 
-#endif //VIN_ENGINE_EXEC_H
+#endif //VIN_EDITOR_EXEC_H
