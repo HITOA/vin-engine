@@ -89,10 +89,12 @@ add_library(vin_engine
         src/texture.cpp
         src/image.cpp
         include/vin/asset/assetshader.h
+        include/vin/asset/aggregateshader.h
+        src/shader.cpp
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)
-target_link_libraries(vin_engine bgfx bimg glfw glslang)
+target_link_libraries(vin_engine bgfx bimg bx glfw glslang)
 
 if (VIN_BUILD_NDEBUG)
     target_compile_definitions(vin_engine PUBLIC "VIN_BUILD_NDEBUG")

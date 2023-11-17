@@ -31,6 +31,7 @@ private:
     Vin::Ref<Vin::Texture> folderIcon{};
     Vin::Ref<Vin::Texture> imageIcon{};
     Vin::Ref<Vin::Texture> textIcon{};
+    Vin::Ref<Vin::Texture> shaderIcon{};
 };
 
 #endif //VIN_EDITOR_CONTENTBROWSER_H

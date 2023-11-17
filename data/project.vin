@@ -19,36 +19,47 @@
     "importedTextureAsset": [
         {
             "importSettings": {
-                "encodingFormat": 0,
+                "encodingFormat": 1,
                 "encodingQuality": 0,
                 "linear": false,
                 "mipmaps": true,
-                "pma": false
+                "pma": true
             },
             "importedAssetFilePath": "icons/text-x-generic.vasset",
             "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/text-x-generic.png"
         },
         {
             "importSettings": {
-                "encodingFormat": 0,
+                "encodingFormat": 1,
                 "encodingQuality": 0,
                 "linear": false,
                 "mipmaps": true,
-                "pma": false
+                "pma": true
             },
             "importedAssetFilePath": "icons/image-x-generic.vasset",
             "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/image-x-generic.png"
         },
         {
             "importSettings": {
-                "encodingFormat": 0,
+                "encodingFormat": 1,
                 "encodingQuality": 0,
                 "linear": false,
                 "mipmaps": true,
-                "pma": false
+                "pma": true
             },
             "importedAssetFilePath": "icons/default-folder.vasset",
             "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/default-folder.png"
+        },
+        {
+            "importSettings": {
+                "encodingFormat": 1,
+                "encodingQuality": 0,
+                "linear": false,
+                "mipmaps": true,
+                "pma": true
+            },
+            "importedAssetFilePath": "icons/text-x-shader.vasset",
+            "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/text-x-shader.png"
         }
     ],
     "name": "New Project"

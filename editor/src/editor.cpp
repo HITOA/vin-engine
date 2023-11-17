@@ -365,7 +365,7 @@ void EditorModule::InitImguiWithBgfx() {
 
 void EditorModule::ShutdownImguiWithBgfx() {
     bgfx::destroy(imguiFontTexture);
-    bgfx::destroy(imguiFontTexture);
+    bgfx::destroy(imguiFontUniform);
     bgfx::destroy(imguiProgram);
 }
 

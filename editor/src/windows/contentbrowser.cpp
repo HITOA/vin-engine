@@ -9,6 +9,7 @@ void ContentBrowserWindow::Initialize() {
     folderIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/default-folder.vasset");
     imageIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/image-x-generic.vasset");
     textIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/text-x-generic.vasset");
+    shaderIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/text-x-shader.vasset");
 
     workingDir = editor->GetWorkingDirectory();
     Refresh("");
@@ -53,6 +54,11 @@ void ContentBrowserWindow::Draw(bool *open) {
                     case Vin::AssetType::Texture:
                         ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
                         ImGui::ImageButton(entry.name, (ImTextureID)imageIcon->GetTextureHandle().idx, { zoom, zoom }, { 0, 0 }, { 1, 1 });
+                        ImGui::PopStyleColor();
+                        break;
+                    case Vin::AssetType::Shader:
+                        ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
+                        ImGui::ImageButton(entry.name, (ImTextureID)shaderIcon->GetTextureHandle().idx, { zoom, zoom }, { 0, 0 }, { 1, 1 });
                         ImGui::PopStyleColor();
                         break;
                     default:

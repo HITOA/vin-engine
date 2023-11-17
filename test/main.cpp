@@ -5,12 +5,87 @@
 #include <vin/vin.h>
 #include <vin/vfs/vfs.h>
 #include <vin/vfs/native/nativefilesystem.h>
+#include <vin/scene/resources/shader.h>
 
 #include <filesystem>
-#include <vin/resource/resourcemanager.h>
-#include <vin/core/logger/logger.h>
-#include <glslang/Public/ShaderLang.h>
-#include <glslang/Public/ResourceLimits.h>
+
+static float vertices[] = {
+    -1.0f,  1.0f,  1.0f, (float)0xFFFFFFFF,
+     1.0f,  1.0f,  1.0f, (float)0xFFFFFFFF ,
+    -1.0f, -1.0f,  1.0f, (float)0xFFFFFFFF ,
+     1.0f, -1.0f,  1.0f, (float)0xFFFFFFFF ,
+
+    -1.0f,  1.0f, -1.0f, (float)0xFFFFFFFF ,
+     1.0f,  1.0f, -1.0f, (float)0xFFFFFFFF ,
+    -1.0f, -1.0f, -1.0f, (float)0xFFFFFFFF ,
+     1.0f, -1.0f, -1.0f, (float)0xFFFFFFFF ,
+};
+
+static short indices[] = {
+        0, 2, 1,
+        1, 2, 3,
+        4, 5, 6,
+        5, 7, 6,
+        0, 4, 2,
+        4, 6, 2,
+        1, 3, 5,
+        5, 3, 7,
+        0, 1, 4,
+        4, 1, 5,
+        2, 6, 3,
+        6, 7, 3,
+};
+
+class TestModule : public Vin::Module {
+public:
+    Vin::Ref<Vin::Shader> vertexShader{};
+    Vin::Ref<Vin::Shader> fragmentShader{};
+    bgfx::ProgramHandle program{};
+    bgfx::VertexLayout layout{};
+
+    void Initialize() final {
+        vertexShader = Vin::ResourceManager::Load<Vin::Shader>("/data/shaders/examplevertex.vasset");
+        fragmentShader = Vin::ResourceManager::Load<Vin::Shader>("/data/shaders/examplefragment.vasset");
+
+        bgfx::ShaderHandle vertexHandle = vertexShader->GetShaderHandle();
+        bgfx::ShaderHandle fragmentHandle = fragmentShader->GetShaderHandle();
+
+        program = bgfx::createProgram(vertexHandle, fragmentHandle);
+
+        layout.begin();
+        layout.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float);
+        layout.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true);
+        layout.end();
+    };
+
+    void Update(Vin::TimeStep) final {
+        bgfx::TransientVertexBuffer tvb{};
+        bgfx::TransientIndexBuffer tib{};
+
+        uint32_t numVertices = sizeof(vertices) / sizeof(float) / 4;
+        uint32_t numIndices  = sizeof(indices) / sizeof(short);
+
+        if ( !bgfx::getAvailTransientVertexBuffer( numVertices, layout ) || !bgfx::getAvailTransientIndexBuffer( numIndices ) )
+        {
+            return;
+        }
+
+        bgfx::allocTransientVertexBuffer( &tvb, numVertices, layout );
+        bgfx::allocTransientIndexBuffer( &tib, numIndices );
+
+        memcpy( tvb.data, vertices, numVertices * sizeof( float ) * 4 );
+        memcpy( tib.data, indices, numIndices * sizeof( short ) );
+
+        uint64_t state = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA;
+        state |= BGFX_STATE_BLEND_FUNC( BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA );
+
+        bgfx::setState( state );
+
+        bgfx::setVertexBuffer( 0, &tvb, 0, numVertices );
+        bgfx::setIndexBuffer( &tib, 0, numIndices );
+        bgfx::submit(0, program);
+    }
+};
 
 int main() {
     //setbuf(stdout, 0);
@@ -22,83 +97,10 @@ int main() {
     Vin::VirtualFileSystem::AddFileSystem("/", Vin::MakeRef<Vin::IO::NativeFileSystem>());
     Vin::VirtualFileSystem::AddFileSystem("/tmp", Vin::MakeRef<Vin::IO::NativeFileSystem>("/tmp"));
 
-    Vin::Ref<Vin::String> shader = Vin::ResourceManager::Load<Vin::String>("/data/shaders/fs.glsl");
-
-
-    if (shader) {
-        const char* shsource = shader->c_str();
-
-        glslang::InitializeProcess();
-
-        glslang::TShader sh{ EShLanguage::EShLangFragment };
-        sh.setStrings(&shsource, 1);
-
-        sh.setEnvInput(glslang::EShSourceGlsl, EShLanguage::EShLangFragment, glslang::EShClientVulkan, 100);
-        sh.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_0);
-        sh.setEnvTarget(glslang::EshTargetSpv, glslang::EShTargetSpv_1_0);
-
-        sh.parse(GetDefaultResources(), 100, false, EShMessages{});
-
-        glslang::FinalizeProcess();
-    }
-
     Vin::App app{};
     app.AddModule<Vin::Modules::WindowModule>();
     app.AddModule<Vin::Modules::RenderingModule>();
+    app.AddModule<TestModule>();
     app.Run();
 
-    /*ASSERT(1 != 1, "OWO ERROR")
-
-    setbuf(stdout, 0);
-
-    if (!glfwInit()) {
-        std::cerr << "Couldn't initialize GLFW." << std::endl;
-        return -1;
-    }
-
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);
-
-    if (!window) {
-        std::cerr << "Coudln't Create Window." << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-
-    wl_surface* surface = glfwGetWaylandWindow(window);
-    if (!surface) {
-        std::cerr << "Can't get wayland surface" << std::endl;
-        return -1;
-    }
-
-    int width{};
-    int height{};
-    glfwGetFramebufferSize(window, &width, &height);
-
-    bgfx::Init init;
-    init.platformData.nwh = wl_egl_window_create(surface, 640, 480);
-    init.platformData.ndt = glfwGetWaylandDisplay();
-    init.platformData.type = bgfx::NativeWindowHandleType::Wayland;
-    //init.platformData.nwh = (void*)glfwGetX11Window(window);
-    //init.platformData.ndt = glfwGetX11Display();
-    init.resolution.width = 640;
-    init.resolution.height = 480;
-    init.resolution.reset = BGFX_RESET_VSYNC;
-    init.type = bgfx::RendererType::Vulkan;
-    init.vendorId = 0;
-    bgfx::init(init);
-
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-        glfwGetFramebufferSize(window, &width, &height);
-        bgfx::reset(width, height, BGFX_RESET_VSYNC);
-        bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
-        bgfx::setViewRect(0, 0, 0, width, height);
-        bgfx::touch(0);
-        bgfx::frame();
-    }
-
-    bgfx::shutdown();
-    glfwDestroyWindow(window);
-    glfwTerminate();*/
 }
