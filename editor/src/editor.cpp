@@ -49,6 +49,12 @@ void EditorModule::Initialize() {
 
     for (auto& window : editorWindows)
         window.window->Initialize();
+
+    listener = Vin::MakeRef<EditorFileWatcher>();
+    listener->editor = this;
+    std::string workingDir{ options.workingDir };
+    workingDirWatchId = fileWatcher.addWatch(workingDir, listener.Get(), true);
+    fileWatcher.watch();
 }
 
 void EditorModule::Uninitialize() {
@@ -247,8 +253,16 @@ void EditorModule::ImportShaderAsset(AssetShaderImportSettings &shaderImportSett
     project->ImportShaderAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), shaderImportSettings);
 }
 
+bool EditorModule::CanFileBeAsset(Vin::StringView ext) {
+    return GetType(ext) != Vin::AssetType::None;
+}
+
 bool EditorModule::IsAssetImported(Vin::StringView rpath) {
     return project->IsAssetImported(rpath);
+}
+
+void EditorModule::RemoveAssetFromProject(Vin::StringView rpath) {
+    project->RemoveAssetFromProject(rpath);
 }
 
 Vin::Ref<Project> EditorModule::GetProject() {

@@ -26,6 +26,10 @@ void PreferencesWindow::Draw(bool *open) {
                 if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
                     currentTab = PreferenceTab::ShaderImportSettings;
 
+                ImGui::TextUnformatted("General");
+                if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+                    currentTab = PreferenceTab::GeneralImportSettings;
+
                 ImGui::TreePop();
             }
         }
@@ -40,6 +44,8 @@ void PreferencesWindow::Draw(bool *open) {
             case PreferenceTab::ShaderImportSettings:
                 DrawShaderImportSettingsTab();
                 break;
+            case PreferenceTab::GeneralImportSettings:
+                DrawGeneralImportSettingsTab();
             default:
                 break;
         }
@@ -86,6 +92,17 @@ void PreferencesWindow::DrawShaderImportSettingsTab() {
                 free(path);
             }
         }
+    }
+    ImGui::EndChild();
+}
+
+void PreferencesWindow::DrawGeneralImportSettingsTab() {
+    EditorImportSettings* importSettings = editor->GetEditorImportSettings();
+
+    if (ImGui::BeginChild("General Import Settings")) {
+        ImGui::TextUnformatted("Import new file : ");
+        ImGui::SameLine();
+        ImGui::Checkbox("##ImportNewFileInWorkingDir", &(importSettings->importNewFileInWorkingDir));
     }
     ImGui::EndChild();
 }

@@ -12,6 +12,8 @@ void EditorImportSettings::Serialize(Config &config) {
     if (!geometryCompilerPath.empty())
         section.properties["GeometryCPath"] = geometryCompilerPath;
 
+    section.properties["ImportNewFileInWorkingDir"] = importNewFileInWorkingDir ? "true" : "false";
+
     if (!section.properties.empty())
         config.sections["ImportSettings"] = section;
 }
@@ -30,5 +32,13 @@ void EditorImportSettings::Deserialize(const Config &config) {
 
     if (section.properties.count("GeometryCPath"))
         geometryCompilerPath = section.properties.at("GeometryCPath");
+
+    if (section.properties.count("ImportNewFileInWorkingDir")) {
+        const Vin::String& value = section.properties.at("ImportNewFileInWorkingDir");
+        if (value == "true")
+            importNewFileInWorkingDir = true;
+        else
+            importNewFileInWorkingDir = false;
+    }
 
 }

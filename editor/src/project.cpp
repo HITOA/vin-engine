@@ -207,3 +207,25 @@ bool Project::IsAssetImported(Vin::StringView path) {
 
     return false;
 }
+
+template<typename T>
+inline void RemoveEntryIfExist(Vin::StringView path, T& entries, std::filesystem::path& workingDir) {
+    auto it = std::find_if(entries.begin(), entries.end(), [&](auto& entry){
+        return entry.originalAssetFilePath == path;
+    });
+    if (it != entries.end()) {
+        std::filesystem::path fullPath{ workingDir / it->importedAssetFilePath };
+        std::remove(PATH_TO_STRING(fullPath).c_str());
+        entries.erase(it);
+    }
+}
+
+void Project::RemoveAssetFromProject(Vin::StringView path) {
+    std::filesystem::path workingDir{ projectFilePath };
+    workingDir = workingDir.remove_filename();
+
+    RemoveEntryIfExist(path, importedTextAsset, workingDir);
+    RemoveEntryIfExist(path, importedTextureAsset, workingDir);
+    RemoveEntryIfExist(path, importedShaderAsset, workingDir);
+    SaveProjectFile();
+}

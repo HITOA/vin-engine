@@ -13,6 +13,8 @@ public:
     Vin::String shaderCompilerPath{};
     Vin::String geometryCompilerPath{};
 
+    bool importNewFileInWorkingDir{ false };
+
 };
 
 #endif //VIN_EDITOR_EDITORIMPORTSETTINGS_H

@@ -8,6 +8,7 @@
 #include "config/editorimportsettings.h"
 #include "project.h"
 #include "importer/assetimporter.h"
+#include "editorfilewatcher.h"
 
 #define EDITOR_GUI_VIEW_ID 200
 
@@ -67,7 +68,9 @@ public:
     void ImportTextureAsset(AssetTextureImportSettings& textureImportSettings, std::filesystem::path& assetPath);
     void ImportShaderAsset(AssetShaderImportSettings& shaderImportSettings, std::filesystem::path& assetPath);
 
+    bool CanFileBeAsset(Vin::StringView  ext);
     bool IsAssetImported(Vin::StringView rpath);
+    void RemoveAssetFromProject(Vin::StringView rpath);
     Vin::Ref<Project> GetProject();
 
     void AddTask(std::function<void()> f, Vin::StringView name);
@@ -98,9 +101,13 @@ private:
     bgfx::ProgramHandle imguiProgram{};
 
     Vin::Ref<Project> project{ nullptr, nullptr };
+    Vin::Ref<EditorFileWatcher> listener{ nullptr, nullptr };
 
     EditorOptions options{};
     EditorImportSettings importSettings{};
+
+    efsw::FileWatcher fileWatcher{};
+    efsw::WatchID workingDirWatchId{};
 
     Vin::Core::ThreadPool threadPool{};
     Vin::Queue<EditorTask> editorTasks{};

@@ -21,6 +21,7 @@ endif()
 add_subdirectory(3rdparty/cxxopts)
 add_subdirectory(3rdparty/imgui)
 add_subdirectory(3rdparty/nativefiledialog)
+add_subdirectory(3rdparty/efsw)
 
 add_executable(vin_editor src/main.cpp
         src/editor.h
@@ -54,5 +55,7 @@ add_executable(vin_editor src/main.cpp
         src/inspector/inspectorasset.h
         src/inspector/inspectorasset.cpp
         src/importer/assetshader.h
+        src/editorfilewatcher.h
+        src/editorfilewatcher.cpp
 )
-target_link_libraries(vin_editor vin_engine cxxopts imgui bx nativefiledialog)
+target_link_libraries(vin_editor vin_engine cxxopts imgui bx nativefiledialog efsw-static)

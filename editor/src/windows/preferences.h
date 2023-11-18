@@ -6,7 +6,8 @@
 enum class PreferenceTab {
     ProjectInfo,
     TextureImportSettings,
-    ShaderImportSettings
+    ShaderImportSettings,
+    GeneralImportSettings
 };
 
 class PreferencesWindow : public EditorWindow {
@@ -15,6 +16,7 @@ public:
 
     void DrawTextureImportSettingsTab();
     void DrawShaderImportSettingsTab();
+    void DrawGeneralImportSettingsTab();
 
 private:
     PreferenceTab currentTab{};

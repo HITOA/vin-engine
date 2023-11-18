@@ -32,6 +32,7 @@ public:
     AssetShaderImportSettings GetShaderAssetImportSettings(Vin::StringView path);
 
     bool IsAssetImported(Vin::StringView path);
+    void RemoveAssetFromProject(Vin::StringView path);
 
 private:
 

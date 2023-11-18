@@ -24,7 +24,7 @@ if(VIN_BUILD_TEST)
 endif()
 
 if(VIN_BUILD_BENCH)
-    add_subdirectory(${PROJECT_SOURCE_DIR}/bench)
+    #add_subdirectory(${PROJECT_SOURCE_DIR}/bench)
 endif()
 
 if(VIN_BUILD_EDITOR)
