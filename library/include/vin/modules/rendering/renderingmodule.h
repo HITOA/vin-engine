@@ -4,6 +4,7 @@
 #include <vin/application/module.h>
 #include <vin/modules/window/windowmodule.h>
 #include <vin/core/templates/ref.h>
+#include <vin/modules/rendering/renderpipeline.h>
 
 namespace Vin::Modules {
 
@@ -36,6 +37,9 @@ namespace Vin::Modules {
 
         RenderingApi GetRenderingApi();
 
+        void SetRenderPipeline(Ref<RenderPipeline> renderPipeline);
+        Ref<RenderPipeline> GetRenderPipeline();
+
         void Initialize() final;
         void Uninitialize() final;
 
@@ -44,6 +48,7 @@ namespace Vin::Modules {
     private:
         int frameBufferWidth{}, frameBufferHeight{};
         Ref<WindowModule> windowModule{};
+        Ref<RenderPipeline> renderPipeline{};
         RenderingApi renderingApi{ RenderingApi::Count };
     };
 

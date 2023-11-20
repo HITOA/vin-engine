@@ -14,6 +14,7 @@ namespace Vin {
     public:
         template<typename T>
         static Ref<T> Load(StringView path) {
+            //make path weakly canonical ?
             unsigned int hashedPath = Hash<StringView>(path);
 
             for (auto& handle : resources) {

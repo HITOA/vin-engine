@@ -42,7 +42,7 @@ namespace Vin {
                 Vin::Logger::Warn("Using Shader class for compute shader instead of the ComputeShader class.");
             }
 
-            Vin::Vector<char> data{};
+            Vin::Vector<char, Vin::Core::AllocationStrategy::SingleFrame> data{};
             ShaderCC::AggregateShaderFileHeader aggregateShaderFileHeader{};
             data.resize(sizeof(ShaderCC::AggregateShaderFileHeader));
 

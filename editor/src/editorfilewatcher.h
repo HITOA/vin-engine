@@ -1,5 +1,5 @@
-#ifndef VIN_ENGINE_EDITORFILEWATCHER_H
-#define VIN_ENGINE_EDITORFILEWATCHER_H
+#ifndef VIN_EDITOR_EDITORFILEWATCHER_H
+#define VIN_EDITOR_EDITORFILEWATCHER_H
 
 #include <vin/vin.h>
 #include <efsw/efsw.hpp>

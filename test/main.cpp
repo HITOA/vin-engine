@@ -8,6 +8,7 @@
 #include <vin/scene/resources/shader.h>
 
 #include <filesystem>
+#include <entt/entt.hpp>
 
 static float vertices[] = {
     -1.0f,  1.0f,  1.0f, (float)0xFFFFFFFF,

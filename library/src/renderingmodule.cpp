@@ -8,6 +8,14 @@ Vin::Modules::RenderingApi Vin::Modules::RenderingModule::GetRenderingApi() {
     return renderingApi;
 }
 
+void Vin::Modules::RenderingModule::SetRenderPipeline(Ref<RenderPipeline> renderPipeline) {
+    this->renderPipeline = renderPipeline;
+}
+
+Vin::Ref<Vin::Modules::RenderPipeline> Vin::Modules::RenderingModule::GetRenderPipeline() {
+    return renderPipeline;
+}
+
 void Vin::Modules::RenderingModule::Initialize() {
     ASSERT(windowModule, "RenderingModule need WindowModule ton initialize.")
 
@@ -47,6 +55,10 @@ void Vin::Modules::RenderingModule::Uninitialize() {
 void Vin::Modules::RenderingModule::LateUpdate(TimeStep) {
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
     bgfx::setViewRect(0, 0, 0, frameBufferWidth, frameBufferHeight);
+
+    if (renderPipeline)
+        renderPipeline->Render();
+
     bgfx::touch(0);
     bgfx::frame();
 }

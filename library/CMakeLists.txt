@@ -19,6 +19,8 @@ set(ENABLE_OPT OFF)
 
 add_subdirectory(3rdparty/bgfx.cmake)
 add_subdirectory(3rdparty/glfw)
+add_subdirectory(3rdparty/entt)
+add_subdirectory(3rdparty/glm)
 
 set(CMAKE_CXX_STANDARD 17)
 if (MSVC)
@@ -91,10 +93,17 @@ add_library(vin_engine
         include/vin/asset/assetshader.h
         include/vin/asset/aggregateshader.h
         src/shader.cpp
+        include/vin/scene/scene.h
+        include/vin/entt/entt.h
+        include/vin/scene/components/meshdata.h
+        include/vin/scene/components/transform.h
+        include/vin/scene/resources/mesh.h
+        include/vin/math/glm.h
+        include/vin/modules/rendering/renderpipeline.h
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)
-target_link_libraries(vin_engine bgfx bimg bx glfw glslang)
+target_link_libraries(vin_engine bgfx bimg bx glfw EnTT::EnTT glm::glm)
 
 if (VIN_BUILD_NDEBUG)
     target_compile_definitions(vin_engine PUBLIC "VIN_BUILD_NDEBUG")
