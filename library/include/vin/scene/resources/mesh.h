@@ -3,12 +3,37 @@
 
 #include <vin/core/templates/stdcontainers.h>
 #include <vin/resource/resourceloader.h>
+#include <bgfx/bgfx.h>
 
 namespace Vin {
 
-    class Mesh {
-    private:
+    struct Primitive {
+        uint32_t startVertex;
+        uint32_t startIndex;
+        uint32_t numVertices;
+        uint32_t numIndices;
+    };
 
+    template<Core::AllocationStrategy strategy = Core::AllocationStrategy::Persistent>
+    struct MeshData {
+        bgfx::VertexLayout vertexLayout{};
+        Vector<char, strategy> vertices{};
+        Vector<uint32_t, strategy> indices{};
+        Vector<Primitive, strategy> primitives{};
+    };
+
+    class Mesh {
+    public:
+        template<Core::AllocationStrategy strategy>
+        explicit Mesh(MeshData<strategy>& meshData) {
+
+        }
+
+    private:
+        bgfx::VertexLayout vertexLayout{};
+        bgfx::VertexBufferHandle vbo{};
+        bgfx::IndexBufferHandle ibo{};
+        Vector<Primitive> primitives{};
     };
 
     template<>

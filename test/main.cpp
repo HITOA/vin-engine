@@ -11,30 +11,21 @@
 #include <entt/entt.hpp>
 
 static float vertices[] = {
-    -1.0f,  1.0f,  1.0f, (float)0xFFFFFFFF,
-     1.0f,  1.0f,  1.0f, (float)0xFFFFFFFF ,
-    -1.0f, -1.0f,  1.0f, (float)0xFFFFFFFF ,
-     1.0f, -1.0f,  1.0f, (float)0xFFFFFFFF ,
+     0.0f,  0.0f,  0.0f, (float)0xFFFFFFFF,
+     0.5f,  0.0f,  0.0f, (float)0xFFFFFFFF ,
+     0.5f,  0.5f,  0.0f, (float)0xFFFFFFFF ,
+     0.0f,  0.5f,  0.0f, (float)0xFFFFFFFF ,
+     -0.5f,  0.0f,  0.0f, (float)0xFFFFFFFF ,
+     -0.5f,  -0.5f,  0.0f, (float)0xFFFFFFFF ,
+     0.0f,  -0.5f,  0.0f, (float)0xFFFFFFFF
 
-    -1.0f,  1.0f, -1.0f, (float)0xFFFFFFFF ,
-     1.0f,  1.0f, -1.0f, (float)0xFFFFFFFF ,
-    -1.0f, -1.0f, -1.0f, (float)0xFFFFFFFF ,
-     1.0f, -1.0f, -1.0f, (float)0xFFFFFFFF ,
 };
 
 static short indices[] = {
-        0, 2, 1,
-        1, 2, 3,
-        4, 5, 6,
-        5, 7, 6,
-        0, 4, 2,
-        4, 6, 2,
-        1, 3, 5,
-        5, 3, 7,
-        0, 1, 4,
-        4, 1, 5,
-        2, 6, 3,
-        6, 7, 3,
+        0, 1, 2,
+        0, 2, 3,
+        0, 4, 5,
+        0, 5, 6
 };
 
 class TestModule : public Vin::Module {
@@ -82,8 +73,8 @@ public:
 
         bgfx::setState( state );
 
-        bgfx::setVertexBuffer( 0, &tvb, 0, numVertices );
-        bgfx::setIndexBuffer( &tib, 0, numIndices );
+        bgfx::setVertexBuffer( 0, &tvb, 0, numVertices);
+        bgfx::setIndexBuffer( &tib, 0, numIndices);
         bgfx::submit(0, program);
     }
 };

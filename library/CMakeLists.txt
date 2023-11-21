@@ -95,11 +95,14 @@ add_library(vin_engine
         src/shader.cpp
         include/vin/scene/scene.h
         include/vin/entt/entt.h
-        include/vin/scene/components/meshdata.h
         include/vin/scene/components/transform.h
         include/vin/scene/resources/mesh.h
         include/vin/math/glm.h
         include/vin/modules/rendering/renderpipeline.h
+        include/vin/scene/resources/material.h
+        include/vin/scene/resources/program.h
+        src/program.cpp
+        src/material.cpp
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)

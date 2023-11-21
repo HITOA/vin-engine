@@ -56,8 +56,8 @@ void Vin::Modules::RenderingModule::LateUpdate(TimeStep) {
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
     bgfx::setViewRect(0, 0, 0, frameBufferWidth, frameBufferHeight);
 
-    if (renderPipeline)
-        renderPipeline->Render();
+    //if (renderPipeline)
+        //renderPipeline->Render();
 
     bgfx::touch(0);
     bgfx::frame();
