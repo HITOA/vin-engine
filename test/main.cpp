@@ -6,6 +6,8 @@
 #include <vin/vfs/vfs.h>
 #include <vin/vfs/native/nativefilesystem.h>
 #include <vin/scene/resources/shader.h>
+#include <vin/scene/resources/program.h>
+#include <vin/scene/resources/mesh.h>
 
 #include <filesystem>
 #include <entt/entt.hpp>
@@ -24,58 +26,66 @@ static float vertices[] = {
 static short indices[] = {
         0, 1, 2,
         0, 2, 3,
-        0, 4, 5,
-        0, 5, 6
 };
 
 class TestModule : public Vin::Module {
 public:
     Vin::Ref<Vin::Shader> vertexShader{};
     Vin::Ref<Vin::Shader> fragmentShader{};
-    bgfx::ProgramHandle program{};
+    Vin::Ref<Vin::Program> program{};
+    Vin::Ref<Vin::Material> material{};
     bgfx::VertexLayout layout{};
+    Vin::Ref<Vin::Mesh> mesh{};
 
     void Initialize() final {
         vertexShader = Vin::ResourceManager::Load<Vin::Shader>("/data/shaders/examplevertex.vasset");
         fragmentShader = Vin::ResourceManager::Load<Vin::Shader>("/data/shaders/examplefragment.vasset");
+        program = Vin::MakeRef<Vin::Program>(vertexShader, fragmentShader);
+        material = Vin::MakeRef<Vin::Material>(program);
 
-        bgfx::ShaderHandle vertexHandle = vertexShader->GetShaderHandle();
-        bgfx::ShaderHandle fragmentHandle = fragmentShader->GetShaderHandle();
+        Vin::MeshData<float, uint16_t, Vin::Core::AllocationStrategy::SingleFrame> meshData{};
 
-        program = bgfx::createProgram(vertexHandle, fragmentHandle);
+        meshData.vertexLayout.begin();
+        meshData.vertexLayout.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float);
+        meshData.vertexLayout.end();
 
-        layout.begin();
-        layout.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float);
-        layout.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true);
-        layout.end();
+        meshData.vertices = {
+                -0.5f,  0.5f,  0.5f,
+                 0.5f,  0.5f,  0.5f,
+                -0.5f, -0.5f,  0.5f,
+                 0.5f, -0.5f,  0.5f,
+                -0.5f,  0.5f, -0.5f,
+                 0.5f,  0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+                 0.5f, -0.5f, -0.5f
+        };
+
+        meshData.indices = {
+                0, 2, 1,
+                1, 2, 3,
+                4, 5, 6,
+                5, 7, 6,
+                0, 4, 2,
+                4, 6, 2,
+                1, 3, 5,
+                5, 3, 7,
+                0, 1, 4,
+                4, 1, 5,
+                2, 6, 3,
+                6, 7, 3,
+        };
+
+        meshData.primitives.push_back(Vin::Primitive{0, 8, 0, 36, material});
+
+        mesh = Vin::MakeRef<Vin::Mesh>(meshData);
     };
 
     void Update(Vin::TimeStep) final {
-        bgfx::TransientVertexBuffer tvb{};
-        bgfx::TransientIndexBuffer tib{};
-
-        uint32_t numVertices = sizeof(vertices) / sizeof(float) / 4;
-        uint32_t numIndices  = sizeof(indices) / sizeof(short);
-
-        if ( !bgfx::getAvailTransientVertexBuffer( numVertices, layout ) || !bgfx::getAvailTransientIndexBuffer( numIndices ) )
-        {
-            return;
+        for (const auto& primitive : *mesh) {
+            bgfx::setVertexBuffer( 0, mesh->GetVertexBufferHandle(), primitive.startVertex, primitive.numVertices);
+            bgfx::setIndexBuffer( mesh->GetIndexBufferHandle(), primitive.startIndex, primitive.numIndices);
+            bgfx::submit(0, primitive.material->GetProgramHandle());
         }
-
-        bgfx::allocTransientVertexBuffer( &tvb, numVertices, layout );
-        bgfx::allocTransientIndexBuffer( &tib, numIndices );
-
-        memcpy( tvb.data, vertices, numVertices * sizeof( float ) * 4 );
-        memcpy( tib.data, indices, numIndices * sizeof( short ) );
-
-        uint64_t state = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA;
-        state |= BGFX_STATE_BLEND_FUNC( BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA );
-
-        bgfx::setState( state );
-
-        bgfx::setVertexBuffer( 0, &tvb, 0, numVertices);
-        bgfx::setIndexBuffer( &tib, 0, numIndices);
-        bgfx::submit(0, program);
     }
 };
 

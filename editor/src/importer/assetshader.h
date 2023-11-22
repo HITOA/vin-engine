@@ -118,6 +118,8 @@ struct AssetImporter<Vin::AssetType::Shader> {
             memcpy(&shaderBgfxFooter[2 + 2 * i], &attribId, 2);
         }
 
+        bgfx::Attrib
+
         memset(shaderBgfxFooter.data() + shaderBgfxFooter.size() - 2, 0, 2);
 
         size_t bgfxAdditionalSize = shaderBgfxHeader.size() + shaderBgfxFooter.size();

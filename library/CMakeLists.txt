@@ -103,6 +103,7 @@ add_library(vin_engine
         include/vin/scene/resources/program.h
         src/program.cpp
         src/material.cpp
+        src/mesh.cpp
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)

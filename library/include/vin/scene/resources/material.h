@@ -9,8 +9,11 @@ namespace Vin {
     public:
         explicit Material(Ref<Program> program);
 
+        bgfx::ProgramHandle GetProgramHandle();
+
     private:
         Ref<Program> program{};
+        //Ref<Material> nextPass{}
     };
 
 }

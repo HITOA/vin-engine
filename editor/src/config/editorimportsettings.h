@@ -10,7 +10,10 @@ public:
     void Deserialize(const Config& config) final;
 
     Vin::String textureCompilerPath{};
+
     Vin::String shaderCompilerPath{};
+    Vin::String shaderLibraryPath{};
+
     Vin::String geometryCompilerPath{};
 
     bool importNewFileInWorkingDir{ false };

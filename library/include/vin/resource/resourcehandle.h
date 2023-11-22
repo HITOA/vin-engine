@@ -16,6 +16,7 @@ namespace Vin {
         Ref<char> ref;
         std::type_index typeIndex;
         unsigned int path;
+        //bool persistent;
     };
 
 }
