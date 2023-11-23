@@ -9,6 +9,9 @@ void EditorImportSettings::Serialize(Config &config) {
     if (!shaderCompilerPath.empty())
         section.properties["ShaderCPath"] = shaderCompilerPath;
 
+    if (!shaderLibraryPath.empty())
+        section.properties["ShaderLibraryPath"] = shaderLibraryPath;
+
     if (!geometryCompilerPath.empty())
         section.properties["GeometryCPath"] = geometryCompilerPath;
 
@@ -29,6 +32,9 @@ void EditorImportSettings::Deserialize(const Config &config) {
 
     if (section.properties.count("ShaderCPath"))
         shaderCompilerPath = section.properties.at("ShaderCPath");
+
+    if (section.properties.count("ShaderLibraryPath"))
+        shaderLibraryPath = section.properties.at("ShaderLibraryPath");
 
     if (section.properties.count("GeometryCPath"))
         geometryCompilerPath = section.properties.at("GeometryCPath");

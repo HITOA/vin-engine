@@ -23,11 +23,12 @@ void EditorFileWatcher::handleFileAction(efsw::WatchID watchid, const std::strin
                 editor->RemoveAssetFromProject(PATH_TO_STRING(relPath));
             }
             break;
-        /*case efsw::Actions::Modified:
-            std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Modified"
-                      << std::endl;
+        case efsw::Actions::Modified:
+            if (editor->IsAssetImported(PATH_TO_STRING(relPath))) {
+                editor->ImportAsset(PATH_TO_STRING(fullPath));
+            }
             break;
-        case efsw::Actions::Moved:
+        /*case efsw::Actions::Moved:
             std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Moved from ("
                       << oldFilename << ")" << std::endl;
             break;*/

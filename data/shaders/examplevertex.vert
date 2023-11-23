@@ -1,6 +1,9 @@
 #version 450
+#extension GL_GOOGLE_include_directive : require
 
-layout(location = 0) in vec3 a_position;
+#include <vin.glsl>
+
+VIN_POSITION vec3 a_position;
 
 void main() {
     gl_Position = vec4(a_position, 1.0);

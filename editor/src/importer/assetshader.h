@@ -37,7 +37,8 @@ struct AssetShaderImportSettings {
 
 template<>
 struct AssetImporter<Vin::AssetType::Shader> {
-    Vin::String operator()(Vin::StringView path, EditorImportSettings& editorImportSettings, AssetShaderImportSettings& shaderImportSettings) {
+    Vin::String operator()(Vin::StringView path, EditorImportSettings& editorImportSettings,
+            AssetShaderImportSettings& shaderImportSettings, Vin::StringView workingDir) {
         std::filesystem::path dirPath{ path };
         dirPath.remove_filename();
         std::filesystem::path filePath{ path };
@@ -65,6 +66,14 @@ struct AssetImporter<Vin::AssetType::Shader> {
                 cmd += "--compute ";
                 break;
         }
+
+        cmd += "--sysinclude \"";
+        cmd += editorImportSettings.shaderLibraryPath;
+        cmd += "\" ";
+
+        cmd += "--locinclude \"";
+        cmd += workingDir;
+        cmd += "\" ";
 
         Vin::String r = Exec(cmd.c_str());
         if (!r.empty()) {
@@ -117,8 +126,6 @@ struct AssetImporter<Vin::AssetType::Shader> {
             uint16_t attribId = attribIds[reflection["spirv"]["attributes"][i]["location"].get<int>()];
             memcpy(&shaderBgfxFooter[2 + 2 * i], &attribId, 2);
         }
-
-        bgfx::Attrib
 
         memset(shaderBgfxFooter.data() + shaderBgfxFooter.size() - 2, 0, 2);
 

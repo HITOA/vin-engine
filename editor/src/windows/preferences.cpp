@@ -64,7 +64,7 @@ void PreferencesWindow::DrawTextureImportSettingsTab() {
         ImGui::SameLine();
         ImGui::InputText("##TextureCompilerPath", &(importSettings->textureCompilerPath));
         ImGui::SameLine();
-        if (ImGui::Button("...")) {
+        if (ImGui::Button("...##TextureCompiler")) {
             nfdchar_t* path = nullptr;
             nfdresult_t  r = NFD_OpenDialog(NULL, NULL, &path);
             if (r == NFD_OKAY) {
@@ -84,11 +84,24 @@ void PreferencesWindow::DrawShaderImportSettingsTab() {
         ImGui::SameLine();
         ImGui::InputText("##ShaderCompilerPath", &(importSettings->shaderCompilerPath));
         ImGui::SameLine();
-        if (ImGui::Button("...")) {
+        if (ImGui::Button("...##ShaderCompiler")) {
             nfdchar_t* path = nullptr;
             nfdresult_t  r = NFD_OpenDialog(NULL, NULL, &path);
             if (r == NFD_OKAY) {
                 importSettings->shaderCompilerPath = path;
+                free(path);
+            }
+        }
+
+        ImGui::TextUnformatted("Shader Library : ");
+        ImGui::SameLine();
+        ImGui::InputText("##ShaderLibraryPath", &(importSettings->shaderLibraryPath));
+        ImGui::SameLine();
+        if (ImGui::Button("...##ShaderLibrary")) {
+            nfdchar_t* path = nullptr;
+            nfdresult_t  r = NFD_PickFolder(NULL, &path);
+            if (r == NFD_OKAY) {
+                importSettings->shaderLibraryPath = path;
                 free(path);
             }
         }
