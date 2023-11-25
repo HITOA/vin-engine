@@ -6,6 +6,10 @@
 #ifndef VIN_SHADER_UTILS
 #define VIN_SHADER_UTILS
 
+#if !defined(VIN_CONFIG_MAX_BONES)
+#	define VIN_CONFIG_MAX_BONES 32
+#endif
+
 //Vertex Attribute Location
 
 #define VIN_POSITION_LOCATION 0
@@ -56,5 +60,31 @@
 #define VIN_TEXCOORD7 layout (location = VIN_TEXCOORD7_LOCATION) in
 
 //Transform matrices
+
+uniform BgfxPredefinedUniforms {
+    vec4  u_viewRect;
+    vec4  u_viewTexel;
+    mat4  u_view;
+    mat4  u_invView;
+    mat4  u_proj;
+    mat4  u_invProj;
+    mat4  u_viewProj;
+    mat4  u_invViewProj;
+    mat4  u_model[VIN_CONFIG_MAX_BONES];
+    mat4  u_modelView;
+    mat4  u_modelViewProj;
+    vec4  u_alphaRef4;
+};
+
+#define VIN_VIEW_RECT u_viewRect
+#define VIN_VIEW_TEXEL u_viewTexel
+
+#define VIN_MATRIX_VIEW u_view
+#define VIN_MATRIX_INV_VIEW u_invView
+#define VIN_MATRIX_PROJ u_proj
+#define VIN_MATRIX_INV_PROJ u_invProj
+#define VIN_MATRIX_MODEL u_model
+#define VIN_MATRIX_MV u_modelView
+#define VIN_MATRIX_MVP u_modelViewProj
 
 #endif

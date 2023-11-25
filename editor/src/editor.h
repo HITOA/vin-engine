@@ -67,6 +67,7 @@ public:
     void ImportTextAsset(AssetTextImportSettings& textImportSettings, std::filesystem::path& assetPath);
     void ImportTextureAsset(AssetTextureImportSettings& textureImportSettings, std::filesystem::path& assetPath);
     void ImportShaderAsset(AssetShaderImportSettings& shaderImportSettings, std::filesystem::path& assetPath);
+    void ImportMeshAsset(AssetMeshImportSettings& meshImportSettings, std::filesystem::path& assetPath);
 
     bool CanFileBeAsset(Vin::StringView  ext);
     bool IsAssetImported(Vin::StringView rpath);

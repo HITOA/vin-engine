@@ -16,7 +16,6 @@ namespace Vin {
         Ref<Material> material{};
     };
 
-
     template<typename TVertex, typename TIndex = uint16_t, Core::AllocationStrategy strategy = Core::AllocationStrategy::Persistent>
     struct MeshData {
         using IndexType = TIndex;

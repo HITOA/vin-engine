@@ -5,6 +5,7 @@
 #include "importer/assettext.h"
 #include "importer/assettexture.h"
 #include "importer/assetshader.h"
+#include "importer/assetmesh.h"
 
 template<typename T>
 struct ImportedAssetEntry {

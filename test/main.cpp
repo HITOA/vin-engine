@@ -8,6 +8,7 @@
 #include <vin/scene/resources/shader.h>
 #include <vin/scene/resources/program.h>
 #include <vin/scene/resources/mesh.h>
+#include <vin/math/glm.h>
 
 #include <filesystem>
 #include <entt/entt.hpp>
@@ -30,16 +31,18 @@ static short indices[] = {
 
 class TestModule : public Vin::Module {
 public:
-    Vin::Ref<Vin::Shader> vertexShader{};
-    Vin::Ref<Vin::Shader> fragmentShader{};
     Vin::Ref<Vin::Program> program{};
     Vin::Ref<Vin::Material> material{};
     bgfx::VertexLayout layout{};
     Vin::Ref<Vin::Mesh> mesh{};
+    Vin::GLM::mat4 proj{};
+    Vin::GLM::mat4 view{};
+    Vin::GLM::mat4 model{};
+
 
     void Initialize() final {
-        vertexShader = Vin::ResourceManager::Load<Vin::Shader>("/data/shaders/examplevertex.vasset");
-        fragmentShader = Vin::ResourceManager::Load<Vin::Shader>("/data/shaders/examplefragment.vasset");
+        Vin::Ref<Vin::Shader> vertexShader = Vin::ResourceManager::Load<Vin::Shader>("/data/shaders/examplevertex.vasset");
+        Vin::Ref<Vin::Shader> fragmentShader = Vin::ResourceManager::Load<Vin::Shader>("/data/shaders/examplefragment.vasset");
         program = Vin::MakeRef<Vin::Program>(vertexShader, fragmentShader);
         material = Vin::MakeRef<Vin::Material>(program);
 
@@ -75,13 +78,37 @@ public:
                 6, 7, 3,
         };
 
+        /*meshData.vertices = {
+                -0.5f,  0.5f,  0.0f,
+                0.5f,  0.5f,  0.0f,
+                -0.5f, -0.5f,  0.0f,
+                0.5f, -0.5f,  0.0f,
+        };
+
+        meshData.indices = {
+                0, 1, 2,
+                1, 2, 3,
+        };*/
+
         meshData.primitives.push_back(Vin::Primitive{0, 8, 0, 36, material});
 
         mesh = Vin::MakeRef<Vin::Mesh>(meshData);
+
+        model = Vin::GLM::identity<Vin::GLM::mat4>();
+        model = Vin::GLM::translate(model, Vin::GLM::vec3{0.0f, 0.0f, -8.0f});
+        model = Vin::GLM::rotate(model, glm::radians(-55.0f), Vin::GLM::normalize(Vin::GLM::vec3{1.0f, 1.0f, 0.0f}));
+        view = Vin::GLM::identity<Vin::GLM::mat4>();
+        proj = Vin::GLM::identity<Vin::GLM::mat4>();
+        //view = Vin::GLM::transpose(view);
+        //proj = Vin::GLM::transpose(proj);
+        proj = Vin::GLM::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 1000.0f);
     };
 
     void Update(Vin::TimeStep) final {
         for (const auto& primitive : *mesh) {
+            bgfx::setTransform(&model[0][0]);
+            bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
+
             bgfx::setVertexBuffer( 0, mesh->GetVertexBufferHandle(), primitive.startVertex, primitive.numVertices);
             bgfx::setIndexBuffer( mesh->GetIndexBufferHandle(), primitive.startIndex, primitive.numIndices);
             bgfx::submit(0, primitive.material->GetProgramHandle());

@@ -224,6 +224,10 @@ void EditorModule::ImportAsset(Vin::StringView path) {
                 }, "Importing Shader");
                 break;
             }
+            case Vin::AssetType::Mesh:
+            {
+                break;
+            }
         default:
             break;
     }
@@ -251,6 +255,10 @@ void EditorModule::ImportShaderAsset(AssetShaderImportSettings &shaderImportSett
     AssetImporter<Vin::AssetType::Shader> importer{};
     Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, shaderImportSettings, options.workingDir);
     project->ImportShaderAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), shaderImportSettings);
+}
+
+void EditorModule::ImportMeshAsset(AssetMeshImportSettings &meshImportSettings, std::filesystem::path &assetPath) {
+
 }
 
 bool EditorModule::CanFileBeAsset(Vin::StringView ext) {

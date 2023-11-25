@@ -104,6 +104,8 @@ add_library(vin_engine
         src/program.cpp
         src/material.cpp
         src/mesh.cpp
+        include/vin/core/memory/memorylogger.h
+        include/vin/scene/components/rendermesh.h
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)

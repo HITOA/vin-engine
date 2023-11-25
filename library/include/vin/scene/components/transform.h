@@ -9,8 +9,6 @@ namespace Vin {
         GLM::vec3 position{ 0.0f };
         GLM::quat rotation{ GLM::identity<GLM::quat>() };
         GLM::vec3 scale{ 1.0f };
-        GLM::mat4 model{ GLM::identity<GLM::mat4>() };
-        bool dirty{ false };
     };
 
 }

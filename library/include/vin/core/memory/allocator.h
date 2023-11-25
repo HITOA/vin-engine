@@ -6,5 +6,6 @@
 #include <vin/core/memory/tlsfallocator.h>
 #include <vin/core/memory/doublebufferallocator.h>
 #include <vin/core/memory/segregator.h>
+#include <vin/core/memory/memorylogger.h>
 
 #endif //VIN_ENGINE_ALLOCATOR_H

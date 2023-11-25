@@ -7,6 +7,8 @@ namespace Vin {
         None,
         Texture,
         Shader,
+        Program,
+        Material,
         Mesh,
         Audio,
         Text

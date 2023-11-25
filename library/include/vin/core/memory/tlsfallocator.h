@@ -15,7 +15,7 @@ namespace Vin::Core {
     /**
      * Two Level Segregated Fit Allocator
      */
-    template<size_t PoolSize = 0x10000>
+    template<size_t PoolSize>
     class TLSFAllocator {
     public:
         TLSFAllocator() {

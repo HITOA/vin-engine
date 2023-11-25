@@ -8,9 +8,10 @@
 
 namespace Vin::Core {
 
-    using SingleFrameAllocator = StackAllocator<1 << 16, MEMORY_ALIGNMENT>;
-    using DoubleFrameAllocator = DoubleBufferAllocator<StackAllocator<1 << 16, MEMORY_ALIGNMENT>>;
-    using PersistentAllocator = TLSFAllocator<>;
+    using SingleFrameAllocator = StackAllocator<1 << 24, MEMORY_ALIGNMENT>;
+    using DoubleFrameAllocator = DoubleBufferAllocator<StackAllocator<1 << 24, MEMORY_ALIGNMENT>>;
+    using PersistentAllocator = TLSFAllocator<1 << 24>;
+    using SharedAllocator = Mallocator;
 
     enum class AllocationStrategy {
         None = 0,
@@ -49,6 +50,8 @@ namespace Vin::Core {
                     return doubleFrameAllocator.Allocate(size);
                 case AllocationStrategy::Persistent:
                     return persistentAllocator.Allocate(size);
+                case AllocationStrategy::Shared:
+                    return sharedAllocator.Allocate(size);
                 default:
                     return nullptr;
             }
@@ -63,6 +66,8 @@ namespace Vin::Core {
                     return doubleFrameAllocator.Reallocate(ptr, newSize);
                 case AllocationStrategy::Persistent:
                     return persistentAllocator.Reallocate(ptr, newSize);
+                case AllocationStrategy::Shared:
+                    return sharedAllocator.Reallocate(ptr, newSize);
                 default:
                     return nullptr;
             }
@@ -77,6 +82,8 @@ namespace Vin::Core {
                     return doubleFrameAllocator.Deallocate(ptr);
                 case AllocationStrategy::Persistent:
                     return persistentAllocator.Deallocate(ptr);
+                case AllocationStrategy::Shared:
+                    return sharedAllocator.Deallocate(ptr);
                 default:
                     return;
             }
@@ -107,9 +114,10 @@ namespace Vin::Core {
     private:
         static MemoryManager* instance;
 
-        SingleFrameAllocator singleFrameAllocator;
-        DoubleFrameAllocator doubleFrameAllocator;
-        PersistentAllocator persistentAllocator;
+        SingleFrameAllocator singleFrameAllocator{};
+        DoubleFrameAllocator doubleFrameAllocator{};
+        PersistentAllocator persistentAllocator{};
+        SharedAllocator sharedAllocator{};
 
         //MemoryResource<SingleFrameAllocator> singleFrameMemoryResource;
         //MemoryResource<DoubleFrameAllocator> doubleFrameMemoryResource;

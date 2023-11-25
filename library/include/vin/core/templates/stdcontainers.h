@@ -7,7 +7,8 @@
 #include <queue>
 #include <unordered_map>
 
-#define PATH_TO_STRING(name) name.string<char, std::char_traits<char>, Vin::Core::VinStdAllocator<char, Vin::Core::AllocationStrategy::Persistent>>()
+#define _PATH_TO_STRING(name, strategy) name.string<char, std::char_traits<char>, Vin::Core::VinStdAllocator<char, strategy>>()
+#define PATH_TO_STRING(name) _PATH_TO_STRING(name, Vin::Core::AllocationStrategy::Persistent)
 
 namespace Vin {
 
