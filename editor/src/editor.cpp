@@ -10,7 +10,11 @@
 #include "msgbox.h"
 #include <fstream>
 
-EditorModule::EditorModule(EditorOptions& options) : options{ options } {
+#include "importer/textureimporter.h"
+#include "importer/shaderimporter.h"
+#include "importer/meshimporter.h"
+
+EditorModule::EditorModule(EditorOptions& options) {
     std::filesystem::path workingDir{ options.workingDir };
     if (!std::filesystem::exists(workingDir / "project.vin")) {
         MessageResult r = Show("Project file doesn't exists in working directory, do you want to create one ?",
@@ -26,7 +30,7 @@ EditorModule::EditorModule(EditorOptions& options) : options{ options } {
                 break;
         }
     } else {
-        project = Vin::MakeRef<Project>(PATH_TO_STRING(std::filesystem::path{ workingDir / "project.vin" }));
+        project = Vin::MakeRef<Project>(options.workingDir);
     }
 }
 
@@ -52,9 +56,13 @@ void EditorModule::Initialize() {
 
     listener = Vin::MakeRef<EditorFileWatcher>();
     listener->editor = this;
-    std::string workingDir{ options.workingDir };
+    std::string workingDir{ project->GetWorkingDirectory() };
     workingDirWatchId = fileWatcher.addWatch(workingDir, listener.Get(), true);
     fileWatcher.watch();
+
+    importerManager.AddImporter<TextureImporter>(project);
+    importerManager.AddImporter<ShaderImporter>(project);
+    importerManager.AddImporter<MeshImporter>(project);
 }
 
 void EditorModule::Uninitialize() {
@@ -171,106 +179,33 @@ void EditorModule::LoadEditorConfig() {
     importSettings.Deserialize(config);
 }
 
-Vin::StringView EditorModule::GetWorkingDirectory() {
-    return options.workingDir;
+void EditorModule::ImportAsset(Vin::StringView path) {
+    Vin::Vector<Vin::AssetType> types{};
+    if (!importerManager.GetMatchingTypes(path, types)) {
+        Vin::Logger::Err("Couldn't import asset : ", path);
+        return;
+    }
+
+    if (types.size() == 1) {
+        Vin::Ref<AssetImporter> importer = importerManager.GetImporter(types[0]);
+        importer->ImportFromFile(path, importSettings);
+        project->SaveProject();
+    }
+}
+
+void EditorModule::ReimportAsset(AssetRegistryID id) {
+    AssetRegistryEntry& entry = project->GetAssetRegistry()->GetAsset(id);
+    if (entry.type != Vin::AssetType::None) {
+        Vin::Ref<AssetImporter> importer = importerManager.GetImporter(entry.type);
+        if (importer) {
+            importer->ReimportAsset(id, importSettings);
+            project->SaveProject();
+        }
+    }
 }
 
 EditorImportSettings* EditorModule::GetEditorImportSettings() {
     return &importSettings;
-}
-
-void EditorModule::ImportAsset(Vin::StringView path) {
-    std::filesystem::path assetPath{ path };
-    assetPath = std::filesystem::weakly_canonical(assetPath);
-
-    Vin::AssetType type = GetType(PATH_TO_STRING(assetPath.extension()));
-
-    if (type == Vin::AssetType::None) {
-        Vin::Logger::Err("Can't import \"", path, "\" : Unknown asset type.");
-        return;
-    }
-
-    switch (type) {
-        case Vin::AssetType::Text:
-            {
-                AddTask([this, assetPath](){
-                    AssetTextImportSettings textImportSettings{};
-                    std::filesystem::path p{assetPath};
-                    ImportTextAsset(textImportSettings, p);
-                }, "Importing Text");
-                break;
-            }
-        case Vin::AssetType::Texture:
-            {
-                AddTask([this, assetPath](){
-                    AssetTextureImportSettings textureImportSettings{};
-                    std::filesystem::path p{assetPath};
-                    ImportTextureAsset(textureImportSettings, p);
-                    }, "Importing Texture");
-                break;
-            }
-            case Vin::AssetType::Shader:
-            {
-                AddTask([this, assetPath](){
-                    AssetShaderImportSettings shaderImportSettings{};
-                    std::filesystem::path p{assetPath};
-
-                    if (p.extension() == ".frag")
-                        shaderImportSettings.type = Vin::ShaderType::Fragment;
-                    if (p.extension() == ".vert")
-                        shaderImportSettings.type = Vin::ShaderType::Vertex;
-
-                    ImportShaderAsset(shaderImportSettings, p);
-                }, "Importing Shader");
-                break;
-            }
-            case Vin::AssetType::Mesh:
-            {
-                break;
-            }
-        default:
-            break;
-    }
-}
-
-void EditorModule::ImportTextAsset(AssetTextImportSettings &textImportSettings, std::filesystem::path &assetPath) {
-    std::filesystem::path relPath = std::filesystem::relative(assetPath, options.workingDir);
-    relPath = std::filesystem::weakly_canonical(relPath);
-    AssetImporter<Vin::AssetType::Text> importer{};
-    Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, textImportSettings);
-    project->ImportTextAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), textImportSettings);
-}
-
-void EditorModule::ImportTextureAsset(AssetTextureImportSettings &textureImportSettings, std::filesystem::path &assetPath) {
-    std::filesystem::path relPath = std::filesystem::relative(assetPath, options.workingDir);
-    relPath = std::filesystem::weakly_canonical(relPath);
-    AssetImporter<Vin::AssetType::Texture> importer{};
-    Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, textureImportSettings);
-    project->ImportTextureAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), textureImportSettings);
-}
-
-void EditorModule::ImportShaderAsset(AssetShaderImportSettings &shaderImportSettings, std::filesystem::path &assetPath) {
-    std::filesystem::path relPath = std::filesystem::relative(assetPath, options.workingDir);
-    relPath = std::filesystem::weakly_canonical(relPath);
-    AssetImporter<Vin::AssetType::Shader> importer{};
-    Vin::String importedPath = importer(PATH_TO_STRING(assetPath), importSettings, shaderImportSettings, options.workingDir);
-    project->ImportShaderAsset(PATH_TO_STRING(relPath), PATH_TO_STRING(std::filesystem::relative(importedPath, options.workingDir)), shaderImportSettings);
-}
-
-void EditorModule::ImportMeshAsset(AssetMeshImportSettings &meshImportSettings, std::filesystem::path &assetPath) {
-
-}
-
-bool EditorModule::CanFileBeAsset(Vin::StringView ext) {
-    return GetType(ext) != Vin::AssetType::None;
-}
-
-bool EditorModule::IsAssetImported(Vin::StringView rpath) {
-    return project->IsAssetImported(rpath);
-}
-
-void EditorModule::RemoveAssetFromProject(Vin::StringView rpath) {
-    project->RemoveAssetFromProject(rpath);
 }
 
 Vin::Ref<Project> EditorModule::GetProject() {

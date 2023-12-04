@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <fstream>
 
-
+/*
 struct AssetTextImportSettings {
     bool compressed{ false };
 };
@@ -46,6 +46,6 @@ struct AssetImporter<Vin::AssetType::Text> {
 
         return PATH_TO_STRING(assetPath);
     }
-};
+};*/
 
 #endif //VIN_EDITOR_ASSETTEXT_H

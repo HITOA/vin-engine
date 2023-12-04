@@ -6,9 +6,10 @@
 #include <vin/core/thread/threadpool.h>
 #include <bgfx/bgfx.h>
 #include "config/editorimportsettings.h"
-#include "project.h"
 #include "importer/assetimporter.h"
+#include "importer/assetimportermanager.h"
 #include "editorfilewatcher.h"
+#include "project/project.h"
 
 #define EDITOR_GUI_VIEW_ID 200
 
@@ -59,19 +60,11 @@ public:
     void SaveEditorConfig();
     void LoadEditorConfig();
 
-    Vin::StringView GetWorkingDirectory();
+    void ImportAsset(Vin::StringView path);
+    void ReimportAsset(AssetRegistryID id);
 
     EditorImportSettings* GetEditorImportSettings();
 
-    void ImportAsset(Vin::StringView path);
-    void ImportTextAsset(AssetTextImportSettings& textImportSettings, std::filesystem::path& assetPath);
-    void ImportTextureAsset(AssetTextureImportSettings& textureImportSettings, std::filesystem::path& assetPath);
-    void ImportShaderAsset(AssetShaderImportSettings& shaderImportSettings, std::filesystem::path& assetPath);
-    void ImportMeshAsset(AssetMeshImportSettings& meshImportSettings, std::filesystem::path& assetPath);
-
-    bool CanFileBeAsset(Vin::StringView  ext);
-    bool IsAssetImported(Vin::StringView rpath);
-    void RemoveAssetFromProject(Vin::StringView rpath);
     Vin::Ref<Project> GetProject();
 
     void AddTask(std::function<void()> f, Vin::StringView name);
@@ -101,10 +94,10 @@ private:
     bgfx::UniformHandle imguiFontUniform{};
     bgfx::ProgramHandle imguiProgram{};
 
-    Vin::Ref<Project> project{ nullptr, nullptr };
-    Vin::Ref<EditorFileWatcher> listener{ nullptr, nullptr };
+    Vin::Ref<Project> project{};
+    Vin::Ref<EditorFileWatcher> listener{};
 
-    EditorOptions options{};
+    AssetImporterManager importerManager{};
     EditorImportSettings importSettings{};
 
     efsw::FileWatcher fileWatcher{};

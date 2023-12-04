@@ -4,10 +4,11 @@
 #include <vin.glsl>
 
 VIN_POSITION vec3 position;
+VIN_NORMAL vec3 normal;
 
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 out_normal;
 
 void main() {
     gl_Position = VIN_MATRIX_MVP * vec4(position, 1.0);
-    fragColor = position;
+    out_normal = normal;
 }

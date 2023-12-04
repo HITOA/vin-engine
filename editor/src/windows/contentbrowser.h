@@ -7,6 +7,7 @@ struct ContentEntry {
     char name[256]{};
     bool isDirectory{ false };
     Vin::AssetType type{};
+    AssetRegistryID id{};
 };
 
 class ContentBrowserWindow : public EditorWindow {

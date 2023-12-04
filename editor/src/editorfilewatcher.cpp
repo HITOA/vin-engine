@@ -5,7 +5,7 @@
 void EditorFileWatcher::handleFileAction(efsw::WatchID watchid, const std::string &dir, const std::string &filename,
                                          efsw::Action action, std::string oldFilename) {
 
-    std::filesystem::path fullPath{ dir };
+    /*std::filesystem::path fullPath{ dir };
     fullPath = std::filesystem::weakly_canonical(fullPath / filename);
     std::filesystem::path relPath{ std::filesystem::relative(fullPath, editor->GetWorkingDirectory()) };
 
@@ -15,7 +15,7 @@ void EditorFileWatcher::handleFileAction(efsw::WatchID watchid, const std::strin
     switch ( action ) {
         case efsw::Actions::Add:
             if (editor->GetEditorImportSettings()->importNewFileInWorkingDir) {
-                editor->ImportAsset(PATH_TO_STRING(fullPath));
+                //editor->ImportAsset(PATH_TO_STRING(fullPath));
             }
             break;
         case efsw::Actions::Delete:
@@ -25,14 +25,14 @@ void EditorFileWatcher::handleFileAction(efsw::WatchID watchid, const std::strin
             break;
         case efsw::Actions::Modified:
             if (editor->IsAssetImported(PATH_TO_STRING(relPath))) {
-                editor->ImportAsset(PATH_TO_STRING(fullPath));
+                //editor->ImportAsset(PATH_TO_STRING(fullPath));
             }
             break;
         /*case efsw::Actions::Moved:
             std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Moved from ("
                       << oldFilename << ")" << std::endl;
-            break;*/
+            break;
         default:
             return;
-    }
+    }*/
 }

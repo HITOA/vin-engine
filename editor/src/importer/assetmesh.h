@@ -4,10 +4,10 @@
 #include "assetimporter.h"
 #include <filesystem>
 #include <fstream>
-#include <assimp/Importer.hpp>
+/*#include <assimp/Importer.hpp>
 #include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
+#include <assimp/postprocess.h>*/
+/*
 struct AssetMeshImportSettings {
 };
 
@@ -40,5 +40,5 @@ struct AssetImporter<Vin::AssetType::Text> {
         return PATH_TO_STRING(assetPath);
     }
 };
-
+*/
 #endif

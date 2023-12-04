@@ -11,8 +11,19 @@ namespace Vin {
     struct AssetFileHeader {
         char magic[8];
         AssetType type;
-        //Size of the file MINUS size of the header
-        size_t size;
+        //Number of dependencies, will always be zero for shader, texture, text file...
+        uint8_t depCount;
+        //Size of this asset
+        uint64_t size;
+    };
+
+    struct AssetFileDependency {
+        bool isOrphan;
+        AssetType type;
+        /*If dep is orphan, offset will be non-zero referencing the dep within this file.
+         *If dep is not orphan, offset will be zero and id will be the path to the asset file.*/
+        uint64_t offset;
+        uint16_t idSize;
     };
 
     inline bool CheckMagic(AssetFileHeader& header) {

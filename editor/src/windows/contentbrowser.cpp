@@ -1,9 +1,9 @@
 #include "contentbrowser.h"
 #include "inspector.h"
-#include "../inspector/inspectorasset.h"
 #include <filesystem>
 #include <imgui.h>
 #include <nfd.h>
+#include "../inspector/textureinspector.h"
 
 void ContentBrowserWindow::Initialize() {
     folderIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/default-folder.vasset");
@@ -11,7 +11,7 @@ void ContentBrowserWindow::Initialize() {
     textIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/text-x-generic.vasset");
     shaderIcon = Vin::ResourceManager::Load<Vin::Texture>("/icons/text-x-shader.vasset");
 
-    workingDir = editor->GetWorkingDirectory();
+    workingDir = editor->GetProject()->GetWorkingDirectory();
     Refresh("");
 }
 
@@ -100,14 +100,16 @@ void ContentBrowserWindow::Refresh(Vin::StringView path) {
             contentEntry.isDirectory = true;
             contents.push_back(contentEntry);
         } else {
-            std::filesystem::path curr{ std::filesystem::weakly_canonical(std::filesystem::relative(entry, workingDir)) };
-            if (!editor->IsAssetImported(PATH_TO_STRING(curr)))
+            std::filesystem::path curr{ std::filesystem::relative(std::filesystem::weakly_canonical(entry), workingDir) };
+            AssetRegistryEntry& entry = editor->GetProject()->GetAssetRegistry()->GetAsset(PATH_TO_STRING(curr));
+            if (entry.type == Vin::AssetType::None)
                 continue;
 
             ContentEntry contentEntry{};
-            strcpy(contentEntry.name, PATH_TO_STRING(entry.path().filename()).c_str());
+            strcpy(contentEntry.name, PATH_TO_STRING(curr.filename()).c_str());
             contentEntry.isDirectory = false;
-            contentEntry.type = GetType(PATH_TO_STRING(entry.path().extension()));
+            contentEntry.type = entry.type;
+            contentEntry.id = PATH_TO_STRING(curr);
             contents.push_back(contentEntry);
         }
     }
@@ -165,21 +167,17 @@ void ContentBrowserWindow::SetInspectorToContentEntry(ContentEntry &entry) {
 
     switch (entry.type) {
         case Vin::AssetType::Text: {
-            AssetTextImportSettings importSettings = editor->GetProject()->GetTextAssetImportSettings(PATH_TO_STRING(rpath));
+            /*AssetTextImportSettings importSettings = editor->GetProject()->GetTextAssetImportSettings(PATH_TO_STRING(rpath));
             Vin::Ref<InspectorTextAsset> textAssetInspector{ Vin::MakeRef<InspectorTextAsset>() };
             textAssetInspector->importSettings = importSettings;
             textAssetInspector->assetPath = PATH_TO_STRING(apath);
             textAssetInspector->editor = editor;
-            InspectorWindow::SetInspector(textAssetInspector);
+            InspectorWindow::SetInspector(textAssetInspector);*/
             break;
         }
         case Vin::AssetType::Texture: {
-            AssetTextureImportSettings importSettings = editor->GetProject()->GetTextureAssetImportSettings(PATH_TO_STRING(rpath));
-            Vin::Ref<InspectorTextureAsset> textAssetInspector{ Vin::MakeRef<InspectorTextureAsset>() };
-            textAssetInspector->importSettings = importSettings;
-            textAssetInspector->assetPath = PATH_TO_STRING(apath);
-            textAssetInspector->editor = editor;
-            InspectorWindow::SetInspector(textAssetInspector);
+            Vin::Ref<TextureInspector> inspector = Vin::MakeRef<TextureInspector>(entry.id, editor);
+            InspectorWindow::SetInspector(inspector);
             break;
         }
         default:

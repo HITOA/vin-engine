@@ -10,7 +10,7 @@ namespace Vin::Core {
 
     using SingleFrameAllocator = StackAllocator<1 << 24, MEMORY_ALIGNMENT>;
     using DoubleFrameAllocator = DoubleBufferAllocator<StackAllocator<1 << 24, MEMORY_ALIGNMENT>>;
-    using PersistentAllocator = TLSFAllocator<1 << 24>;
+    using PersistentAllocator = TLSFAllocator<1 << 28>;
     using SharedAllocator = Mallocator;
 
     enum class AllocationStrategy {

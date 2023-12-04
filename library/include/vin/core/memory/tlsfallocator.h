@@ -39,7 +39,12 @@ namespace Vin::Core {
             return ptr;
         }
         inline void* Reallocate(void* ptr, size_t newSize) {
-            return tlsf_realloc(tlsf, ptr, newSize);
+            void* newptr = tlsf_realloc(tlsf, ptr, newSize);;
+            if (!newptr) {
+                AddPool();
+                newptr = tlsf_realloc(tlsf, ptr, newSize);;
+            }
+            return newptr;
         }
         inline void Deallocate(void* ptr) {
             tlsf_free(tlsf, ptr);

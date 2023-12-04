@@ -35,6 +35,7 @@ public:
     Vin::Ref<Vin::Material> material{};
     bgfx::VertexLayout layout{};
     Vin::Ref<Vin::Mesh> mesh{};
+    Vin::Ref<Vin::Mesh> importedMesh{};
     Vin::GLM::mat4 proj{};
     Vin::GLM::mat4 view{};
     Vin::GLM::mat4 model{};
@@ -46,6 +47,8 @@ public:
         program = Vin::MakeRef<Vin::Program>(vertexShader, fragmentShader);
         material = Vin::MakeRef<Vin::Material>(program);
 
+        importedMesh = Vin::ResourceManager::Load<Vin::Mesh>("/data/mesh/sponza.vasset");
+
         Vin::MeshData<float, uint16_t, Vin::Core::AllocationStrategy::SingleFrame> meshData{};
 
         meshData.vertexLayout.begin();
@@ -53,29 +56,69 @@ public:
         meshData.vertexLayout.end();
 
         meshData.vertices = {
-                -0.5f,  0.5f,  0.5f,
-                 0.5f,  0.5f,  0.5f,
-                -0.5f, -0.5f,  0.5f,
-                 0.5f, -0.5f,  0.5f,
-                -0.5f,  0.5f, -0.5f,
-                 0.5f,  0.5f, -0.5f,
-                -0.5f, -0.5f, -0.5f,
-                 0.5f, -0.5f, -0.5f
+                -1.000000, -1.000000, 1.000000,
+                -1.000000, 1.000000, 1.000000,
+                -1.000000, 1.000000, -1.000000,
+                -1.000000, -1.000000, -1.000000,
+                -1.000000, -1.000000, -1.000000,
+                -1.000000, 1.000000, -1.000000,
+                1.000000, 1.000000, -1.000000,
+                1.000000, -1.000000, -1.000000,
+                1.000000, -1.000000, -1.000000,
+                1.000000, 1.000000, -1.000000,
+                1.000000, 1.000000, 1.000000,
+                1.000000, -1.000000, 1.000000,
+                1.000000, -1.000000, 1.000000,
+                1.000000, 1.000000, 1.000000,
+                -1.000000, 1.000000, 1.000000,
+                -1.000000, -1.000000, 1.000000,
+                -1.000000, -1.000000, -1.000000,
+                1.000000, -1.000000, -1.000000,
+                1.000000, -1.000000, 1.000000,
+                -1.000000, -1.000000, 1.000000,
+                1.000000, 1.000000, -1.000000,
+                -1.000000, 1.000000, -1.000000,
+                -1.000000, 1.000000, 1.000000,
+                1.000000, 1.000000, 1.000000
         };
 
         meshData.indices = {
-                0, 2, 1,
-                1, 2, 3,
-                4, 5, 6,
-                5, 7, 6,
-                0, 4, 2,
-                4, 6, 2,
-                1, 3, 5,
-                5, 3, 7,
-                0, 1, 4,
-                4, 1, 5,
-                2, 6, 3,
-                6, 7, 3,
+                0,
+                1,
+                2,
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                4,
+                6,
+                7,
+                8,
+                9,
+                10,
+                8,
+                10,
+                11,
+                12,
+                13,
+                14,
+                12,
+                14,
+                15,
+                16,
+                17,
+                18,
+                16,
+                18,
+                19,
+                20,
+                21,
+                22,
+                20,
+                22,
+                23
         };
 
         /*meshData.vertices = {
@@ -95,23 +138,37 @@ public:
         mesh = Vin::MakeRef<Vin::Mesh>(meshData);
 
         model = Vin::GLM::identity<Vin::GLM::mat4>();
-        model = Vin::GLM::translate(model, Vin::GLM::vec3{0.0f, 0.0f, -8.0f});
-        model = Vin::GLM::rotate(model, glm::radians(-55.0f), Vin::GLM::normalize(Vin::GLM::vec3{1.0f, 1.0f, 0.0f}));
+        model = Vin::GLM::rotate(model, glm::radians(90.0f), Vin::GLM::normalize(Vin::GLM::vec3{0.0f, 1.0f, 0.0f}));
+        model = Vin::GLM::translate(model, Vin::GLM::vec3{0.0f, 0.0f, 0.0f});
         view = Vin::GLM::identity<Vin::GLM::mat4>();
+        //view = Vin::GLM::rotate(view, glm::radians(15.0f), Vin::GLM::normalize(Vin::GLM::vec3{1.0f, 0.0f, 0.0f}));
+        view = Vin::GLM::translate(view, Vin::GLM::vec3{ 0.0f, -100.0f, -200.0f });
         proj = Vin::GLM::identity<Vin::GLM::mat4>();
         //view = Vin::GLM::transpose(view);
         //proj = Vin::GLM::transpose(proj);
-        proj = Vin::GLM::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 1000.0f);
+
+        proj = Vin::GLM::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 10000.0f);
     };
 
-    void Update(Vin::TimeStep) final {
-        for (const auto& primitive : *mesh) {
+    void Update(Vin::TimeStep dt) final {
+        //Vin::Logger::Log((float)dt.GetSecond());
+
+        /*for (const auto& primitive : *mesh) {
             bgfx::setTransform(&model[0][0]);
             bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
 
             bgfx::setVertexBuffer( 0, mesh->GetVertexBufferHandle(), primitive.startVertex, primitive.numVertices);
             bgfx::setIndexBuffer( mesh->GetIndexBufferHandle(), primitive.startIndex, primitive.numIndices);
-            bgfx::submit(0, primitive.material->GetProgramHandle());
+            bgfx::submit(0, material->GetProgramHandle());
+        }*/
+
+        for (const auto& primitive : *importedMesh) {
+            bgfx::setTransform(&model[0][0]);
+            bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
+
+            bgfx::setVertexBuffer( 0, importedMesh->GetVertexBufferHandle(), primitive.startVertex, primitive.numVertices);
+            bgfx::setIndexBuffer( importedMesh->GetIndexBufferHandle(), primitive.startIndex, primitive.numIndices);
+            bgfx::submit(0, material->GetProgramHandle());
         }
     }
 };

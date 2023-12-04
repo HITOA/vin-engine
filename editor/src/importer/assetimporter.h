@@ -2,27 +2,24 @@
 #define VIN_EDITOR_ASSETIMPORTER_H
 
 #include <vin/vin.h>
+#include "../project/project.h"
 #include "../config/editorimportsettings.h"
 
-inline Vin::AssetType GetType(Vin::StringView ext) {
-    static const char* textExt = ".txt";
-    static const char* textureExt = ".bmp.dds.exr.gif.jpg.jpeg.hdr.ktx.png.psd.pvr.tga";
-    static const char* shaderExt = ".glsl.compute.frag.vert";
-    static const char* meshExt = ".obj.gtlf.glb.3mf.dae.blend.bvh.3ds.ase.fbx.ply.dxf.ifc.iqm.nff.smd.vta.mdl.md2.md3.pk3.mdc.md5mesh.md5anim.md5camera.x.q3o.q3s.raw.ac.ac3d.stl.dxf.irrmesh.irr.off.ter.mdl.hmp.ogex.ms3D.lwa.lws.lxo.csm.ply.cob.scn.xgl";
+class AssetImporter {
+public:
+    virtual ~AssetImporter() = default;
 
-    if (std::string{ textExt }.find(ext) != std::string::npos)
-        return Vin::AssetType::Text;
-    if (std::string{ textureExt }.find(ext) != std::string::npos)
-        return Vin::AssetType::Texture;
-    if (std::string{ shaderExt }.find(ext) != std::string::npos)
-        return Vin::AssetType::Shader;
-    if (std::string{ meshExt }.find(ext) != std::string::npos)
-        return Vin::AssetType::Mesh;
+    [[nodiscard]] virtual Vin::AssetType GetType() const = 0;
+    //Check if file match the importer
+    [[nodiscard]] virtual bool Match(Vin::StringView path) const = 0;
+    //Import asset from file.
+    virtual AssetRegistryID ImportFromFile(Vin::StringView path, const EditorImportSettings& editorImportSettings) = 0;
+    //Import asset from memory. This will produce orphan asset.
+    virtual AssetRegistryID ImportFromMemory(char* data, size_t size, Vin::Vector<char>& out, const EditorImportSettings& editorImportSettings) = 0;
+    virtual bool ReimportAsset(AssetRegistryID assetRegistryId, const EditorImportSettings& editorImportSettings) = 0;
 
-    return Vin::AssetType::None;
-}
-
-template<Vin::AssetType type>
-struct AssetImporter {};
+public:
+    Vin::Ref<Project> project{};
+};
 
 #endif //VIN_EDITOR_ASSETIMPORTER_H

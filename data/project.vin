@@ -1,66 +1,128 @@
 {
-    "importedShaderAsset": [
+    "Assets": [
         {
-            "importSettings": {
-                "shaderType": 1
+            "Id": "mesh/BoomBox.glb",
+            "Metadata": {
+                "Import Settings": {
+                    "Generate UV": true,
+                    "Include Bitangent": false,
+                    "Include Tangent": true,
+                    "Optimize Mesh": true
+                },
+                "Imported Asset Path": "mesh/BoomBox.vasset"
             },
-            "importedAssetFilePath": "shaders/examplevertex.vasset",
-            "originalAssetFilePath": "shaders/examplevertex.vert"
+            "Orphan": false,
+            "Type": 5
         },
         {
-            "importSettings": {
-                "shaderType": 0
+            "Id": "mesh/cube.obj",
+            "Metadata": {
+                "Import Settings": {
+                    "Generate UV": true,
+                    "Include Bitangent": false,
+                    "Include Tangent": true,
+                    "Optimize Mesh": true
+                },
+                "Imported Asset Path": "mesh/cube.vasset"
             },
-            "importedAssetFilePath": "shaders/examplefragment.vasset",
-            "originalAssetFilePath": "shaders/examplefragment.frag"
+            "Orphan": false,
+            "Type": 5
+        },
+        {
+            "Id": "mesh/sponza.obj",
+            "Metadata": {
+                "Import Settings": {
+                    "Generate UV": true,
+                    "Include Bitangent": false,
+                    "Include Tangent": true,
+                    "Optimize Mesh": true
+                },
+                "Imported Asset Path": "mesh/sponza.vasset"
+            },
+            "Orphan": false,
+            "Type": 5
+        },
+        {
+            "Id": "icons/default-folder.png",
+            "Metadata": {
+                "Import Settings": {
+                    "Encoding Format": 1,
+                    "Encoding Quality": 0,
+                    "Linear": false,
+                    "Mips": true,
+                    "Premultiply Alpha": true
+                },
+                "Imported Asset Path": "icons/default-folder.vasset"
+            },
+            "Orphan": false,
+            "Type": 1
+        },
+        {
+            "Id": "icons/image-x-generic.png",
+            "Metadata": {
+                "Import Settings": {
+                    "Encoding Format": 1,
+                    "Encoding Quality": 0,
+                    "Linear": false,
+                    "Mips": true,
+                    "Premultiply Alpha": true
+                },
+                "Imported Asset Path": "icons/image-x-generic.vasset"
+            },
+            "Orphan": false,
+            "Type": 1
+        },
+        {
+            "Id": "icons/text-x-generic.png",
+            "Metadata": {
+                "Import Settings": {
+                    "Encoding Format": 1,
+                    "Encoding Quality": 0,
+                    "Linear": false,
+                    "Mips": true,
+                    "Premultiply Alpha": true
+                },
+                "Imported Asset Path": "icons/text-x-generic.vasset"
+            },
+            "Orphan": false,
+            "Type": 1
+        },
+        {
+            "Id": "icons/text-x-shader.png",
+            "Metadata": {
+                "Import Settings": {
+                    "Encoding Format": 1,
+                    "Encoding Quality": 0,
+                    "Linear": false,
+                    "Mips": true,
+                    "Premultiply Alpha": true
+                },
+                "Imported Asset Path": "icons/text-x-shader.vasset"
+            },
+            "Orphan": false,
+            "Type": 1
+        },
+        {
+            "Id": "shaders/examplevertex.vert",
+            "Metadata": {
+                "Import Settings": {
+                    "Type": 1
+                },
+                "Imported Asset Path": "shaders/examplevertex.vasset"
+            },
+            "Orphan": false,
+            "Type": 2
+        },
+        {
+            "Id": "shaders/examplefragment.frag",
+            "Metadata": {
+                "Import Settings": {
+                    "Type": 0
+                },
+                "Imported Asset Path": "shaders/examplefragment.vasset"
+            },
+            "Orphan": false,
+            "Type": 2
         }
-    ],
-    "importedTextAsset": null,
-    "importedTextureAsset": [
-        {
-            "importSettings": {
-                "encodingFormat": 1,
-                "encodingQuality": 0,
-                "linear": false,
-                "mipmaps": true,
-                "pma": true
-            },
-            "importedAssetFilePath": "icons/text-x-generic.vasset",
-            "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/text-x-generic.png"
-        },
-        {
-            "importSettings": {
-                "encodingFormat": 1,
-                "encodingQuality": 0,
-                "linear": false,
-                "mipmaps": true,
-                "pma": true
-            },
-            "importedAssetFilePath": "icons/image-x-generic.vasset",
-            "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/image-x-generic.png"
-        },
-        {
-            "importSettings": {
-                "encodingFormat": 1,
-                "encodingQuality": 0,
-                "linear": false,
-                "mipmaps": true,
-                "pma": true
-            },
-            "importedAssetFilePath": "icons/default-folder.vasset",
-            "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/default-folder.png"
-        },
-        {
-            "importSettings": {
-                "encodingFormat": 1,
-                "encodingQuality": 0,
-                "linear": false,
-                "mipmaps": true,
-                "pma": true
-            },
-            "importedAssetFilePath": "icons/text-x-shader.vasset",
-            "originalAssetFilePath": "/mnt/SSD1TO/Project/vin-engine/cmake-build-debug/editor/icons/text-x-shader.png"
-        }
-    ],
-    "name": "New Project"
+    ]
 }
