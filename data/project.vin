@@ -43,6 +43,28 @@
             "Type": 5
         },
         {
+            "Id": "shaders/default.shader",
+            "Metadata": {
+                "Imported Asset Path": "shaders/default.vasset",
+                "Program": {
+                    "NAME": "Default lit",
+                    "PROPERTY": null,
+                    "SOMEBLOCKFIELD": {
+                        "SomeFieldInABlock": [
+                            "An",
+                            "array",
+                            "of",
+                            5.0,
+                            "value"
+                        ]
+                    },
+                    "SOMESTRINGFIELD": "Some String"
+                }
+            },
+            "Orphan": false,
+            "Type": 3
+        },
+        {
             "Id": "icons/default-folder.png",
             "Metadata": {
                 "Import Settings": {

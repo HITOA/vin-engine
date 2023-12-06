@@ -12,6 +12,7 @@
 
 #include "importer/textureimporter.h"
 #include "importer/shaderimporter.h"
+#include "importer/programimporter.h"
 #include "importer/meshimporter.h"
 
 EditorModule::EditorModule(EditorOptions& options) {
@@ -62,6 +63,7 @@ void EditorModule::Initialize() {
 
     importerManager.AddImporter<TextureImporter>(project);
     importerManager.AddImporter<ShaderImporter>(project);
+    importerManager.AddImporter<ProgramImporter>(project);
     importerManager.AddImporter<MeshImporter>(project);
 }
 

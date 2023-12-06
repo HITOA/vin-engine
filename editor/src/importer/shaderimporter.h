@@ -10,6 +10,9 @@ public:
     struct ImportSettings : Vin::Serializable {
         Vin::ShaderType type{ Vin::ShaderType::Compute };
 
+        ImportSettings() = default;
+        explicit ImportSettings(Vin::ShaderType type) : type{ type } {};
+
         [[nodiscard]] nlohmann::json Serialize() const final;
         void Deserialize(const nlohmann::json& data) final;
     };
@@ -24,7 +27,7 @@ public:
     AssetRegistryID ImportFromMemory(char* data, size_t size, Vin::Vector<char>& out, const EditorImportSettings& editorImportSettings) final;
     bool ReimportAsset(AssetRegistryID assetRegistryId, const EditorImportSettings& editorImportSettings) final;
 
-private:
+public:
     size_t CompileShader(Vin::StringView path, const EditorImportSettings& editorImportSettings, const ImportSettings& shaderImportSettings, Vin::Vector<char>& out);
     void ProcessShaderCode(Vin::Vector<char>& out, nlohmann::json& reflection, const char* source, size_t size, Vin::ShaderType type, bool glslRenameAttribute = false);
 

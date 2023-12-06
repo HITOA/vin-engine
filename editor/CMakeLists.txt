@@ -67,5 +67,7 @@ add_executable(vin_editor src/main.cpp
         src/importer/shaderimporter.cpp
         src/importer/meshimporter.h
         src/importer/meshimporter.cpp
+        src/importer/programimporter.h
+        src/importer/programimporter.cpp
 )
 target_link_libraries(vin_editor vin_engine cxxopts imgui bx nativefiledialog efsw-static assimp)
