@@ -340,6 +340,9 @@ void ShaderImporter::ProcessShaderCode(Vin::Vector<char> &out, nlohmann::json &r
     shaderBgfxFooter[0] = 0;
     shaderBgfxFooter[1] = (char)attributeCount;
 
+    static uint16_t attribs[18]{};
+    memset((char*)attribs, 0, sizeof(attribs));
+
     for (int i = 0; i < attributeCount; ++i) {
         if (glslRenameAttribute) {
             const char* attribName = attribNames[reflection["attributes"][i]["location"].get<int>()];
@@ -348,7 +351,17 @@ void ShaderImporter::ProcessShaderCode(Vin::Vector<char> &out, nlohmann::json &r
                                            attribName);
         }
         uint16_t attribId = attribIds[reflection["attributes"][i]["location"].get<int>()];
-        memcpy(&shaderBgfxFooter[2 + 2 * i], &attribId, 2);
+        attribs[reflection["attributes"][i]["location"].get<int>()] = attribId;
+        //memcpy(&shaderBgfxFooter[2 + 2 * i], &attribId, 2);
+    }
+
+    //Fix, if attribute are not ordered by location it will not work on vulkan
+    int i = 0;
+    for (uint16_t attrib : attribs) {
+        if (attrib != 0) {
+            memcpy(&shaderBgfxFooter[2 + 2 * i], &attrib, 2);
+            ++i;
+        }
     }
 
     memcpy(shaderBgfxFooter.data() + shaderBgfxFooter.size() - 2, &bsize, 2);

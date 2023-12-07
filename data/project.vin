@@ -48,17 +48,12 @@
                 "Imported Asset Path": "shaders/default.vasset",
                 "Program": {
                     "NAME": "Default lit",
-                    "PROPERTY": null,
-                    "SOMEBLOCKFIELD": {
-                        "SomeFieldInABlock": [
-                            "An",
-                            "array",
-                            "of",
-                            5.0,
-                            "value"
+                    "PROPERTY": {
+                        "Color": [
+                            "color",
+                            "color"
                         ]
-                    },
-                    "SOMESTRINGFIELD": "Some String"
+                    }
                 }
             },
             "Orphan": false,

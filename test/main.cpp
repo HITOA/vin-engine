@@ -81,7 +81,7 @@ int main() {
 
     Vin::App app{};
     app.AddModule<Vin::Modules::WindowModule>();
-    app.AddModule<Vin::Modules::RenderingModule>(Vin::Modules::RenderingApi::Count);
+    app.AddModule<Vin::Modules::RenderingModule>(Vin::Modules::RenderingApi::Vulkan);
     app.AddModule<TestModule>();
     app.Run();
 
