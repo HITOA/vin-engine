@@ -22,6 +22,8 @@ add_subdirectory(3rdparty/glfw)
 add_subdirectory(3rdparty/entt)
 add_subdirectory(3rdparty/glm)
 
+find_package(Vulkan REQUIRED)
+
 set(CMAKE_CXX_STANDARD 17)
 if (MSVC)
     set(CMAKE_CXX_FLAGS "/W4")
@@ -109,13 +111,24 @@ add_library(vin_engine
         include/vin/json/serializable.h
         include/vin/core/templates/scratch.h
         include/vin/scene/resources/scenedata.h
+        include/vin/core/templates/concurrentcircularqueue.h
+        include/vin/rendering/renderer.h
+        include/vin/rendering/vulkanrenderer.h
+        src/vulkanrenderer.cpp
+        include/vin/core/templates/fixedvector.h
+        include/vin/core/templates/containerbase.h
+        src/renderer.cpp
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)
-target_link_libraries(vin_engine bgfx bimg bx glfw EnTT::EnTT glm::glm)
+target_link_libraries(vin_engine bgfx bimg bx glfw EnTT::EnTT glm::glm ${Vulkan_LIBRARIES})
 
 if (VIN_BUILD_NDEBUG)
     target_compile_definitions(vin_engine PUBLIC "VIN_BUILD_NDEBUG")
+endif()
+
+if (APPLE)
+    target_compile_definitions(vin_engine PUBLIC "VIN_OSX")
 endif()
 
 if (UNIX AND NOT APPLE)

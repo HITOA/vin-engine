@@ -12,13 +12,18 @@ namespace Vin {
     }
 
     template<>
-    inline unsigned int Hash<StringView>(StringView& v) {
+    inline unsigned int Hash<const StringView>(const StringView& v) {
         static unsigned int hash = 2166136261U;
         for (auto& c : v) {
             hash ^= c;
             hash *= 16777619U;
         }
         return hash;
+    }
+
+    template<>
+    inline unsigned int Hash<StringView>(StringView& v) {
+        return Hash<const StringView>(v);
     }
 
 }

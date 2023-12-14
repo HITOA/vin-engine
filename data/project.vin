@@ -1,66 +1,29 @@
 {
     "Assets": [
         {
-            "Id": "mesh/BoomBox.glb",
+            "Id": "shaders/examplefragment.frag",
             "Metadata": {
                 "Import Settings": {
-                    "Generate UV": true,
-                    "Include Bitangent": false,
-                    "Include Tangent": true,
-                    "Optimize Mesh": true
+                    "Type": 0
                 },
-                "Imported Asset Path": "mesh/BoomBox.vasset"
+                "Imported Asset Path": "shaders/examplefragment.vasset"
             },
             "Orphan": false,
-            "Type": 5
+            "Type": 2
         },
         {
-            "Id": "mesh/cube.obj",
+            "Id": "shaders/examplevertex.vert",
             "Metadata": {
                 "Import Settings": {
-                    "Generate UV": true,
-                    "Include Bitangent": false,
-                    "Include Tangent": true,
-                    "Optimize Mesh": true
+                    "Type": 1
                 },
-                "Imported Asset Path": "mesh/cube.vasset"
+                "Imported Asset Path": "shaders/examplevertex.vasset"
             },
             "Orphan": false,
-            "Type": 5
+            "Type": 2
         },
         {
-            "Id": "mesh/sponza.obj",
-            "Metadata": {
-                "Import Settings": {
-                    "Generate UV": true,
-                    "Include Bitangent": false,
-                    "Include Tangent": true,
-                    "Optimize Mesh": true
-                },
-                "Imported Asset Path": "mesh/sponza.vasset"
-            },
-            "Orphan": false,
-            "Type": 5
-        },
-        {
-            "Id": "shaders/default.shader",
-            "Metadata": {
-                "Imported Asset Path": "shaders/default.vasset",
-                "Program": {
-                    "NAME": "Default lit",
-                    "PROPERTY": {
-                        "Color": [
-                            "color",
-                            "color"
-                        ]
-                    }
-                }
-            },
-            "Orphan": false,
-            "Type": 3
-        },
-        {
-            "Id": "icons/default-folder.png",
+            "Id": "icons/text-x-shader.png",
             "Metadata": {
                 "Import Settings": {
                     "Encoding Format": 1,
@@ -69,22 +32,7 @@
                     "Mips": true,
                     "Premultiply Alpha": true
                 },
-                "Imported Asset Path": "icons/default-folder.vasset"
-            },
-            "Orphan": false,
-            "Type": 1
-        },
-        {
-            "Id": "icons/image-x-generic.png",
-            "Metadata": {
-                "Import Settings": {
-                    "Encoding Format": 1,
-                    "Encoding Quality": 0,
-                    "Linear": false,
-                    "Mips": true,
-                    "Premultiply Alpha": true
-                },
-                "Imported Asset Path": "icons/image-x-generic.vasset"
+                "Imported Asset Path": "icons/text-x-shader.vasset"
             },
             "Orphan": false,
             "Type": 1
@@ -105,7 +53,7 @@
             "Type": 1
         },
         {
-            "Id": "icons/text-x-shader.png",
+            "Id": "icons/image-x-generic.png",
             "Metadata": {
                 "Import Settings": {
                     "Encoding Format": 1,
@@ -114,32 +62,84 @@
                     "Mips": true,
                     "Premultiply Alpha": true
                 },
-                "Imported Asset Path": "icons/text-x-shader.vasset"
+                "Imported Asset Path": "icons/image-x-generic.vasset"
             },
             "Orphan": false,
             "Type": 1
         },
         {
-            "Id": "shaders/examplevertex.vert",
+            "Id": "icons/default-folder.png",
             "Metadata": {
                 "Import Settings": {
-                    "Type": 1
+                    "Encoding Format": 1,
+                    "Encoding Quality": 0,
+                    "Linear": false,
+                    "Mips": true,
+                    "Premultiply Alpha": true
                 },
-                "Imported Asset Path": "shaders/examplevertex.vasset"
+                "Imported Asset Path": "icons/default-folder.vasset"
             },
             "Orphan": false,
-            "Type": 2
+            "Type": 1
         },
         {
-            "Id": "shaders/examplefragment.frag",
+            "Id": "shaders/default.shader",
             "Metadata": {
-                "Import Settings": {
-                    "Type": 0
-                },
-                "Imported Asset Path": "shaders/examplefragment.vasset"
+                "Imported Asset Path": "shaders/default.vasset",
+                "Program": {
+                    "NAME": "Default lit",
+                    "PROPERTY": {
+                        "Color": [
+                            "color",
+                            "color"
+                        ]
+                    }
+                }
             },
             "Orphan": false,
-            "Type": 2
+            "Type": 3
+        },
+        {
+            "Id": "mesh/sponza.obj",
+            "Metadata": {
+                "Import Settings": {
+                    "Generate UV": true,
+                    "Include Bitangent": false,
+                    "Include Tangent": true,
+                    "Optimize Mesh": true
+                },
+                "Imported Asset Path": "mesh/sponza.vasset"
+            },
+            "Orphan": false,
+            "Type": 5
+        },
+        {
+            "Id": "mesh/cube.obj",
+            "Metadata": {
+                "Import Settings": {
+                    "Generate UV": true,
+                    "Include Bitangent": false,
+                    "Include Tangent": true,
+                    "Optimize Mesh": true
+                },
+                "Imported Asset Path": "mesh/cube.vasset"
+            },
+            "Orphan": false,
+            "Type": 5
+        },
+        {
+            "Id": "mesh/BoomBox.glb",
+            "Metadata": {
+                "Import Settings": {
+                    "Generate UV": true,
+                    "Include Bitangent": false,
+                    "Include Tangent": true,
+                    "Optimize Mesh": true
+                },
+                "Imported Asset Path": "mesh/BoomBox.vasset"
+            },
+            "Orphan": false,
+            "Type": 5
         }
     ]
 }

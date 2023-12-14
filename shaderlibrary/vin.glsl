@@ -61,7 +61,7 @@
 
 //Transform matrices
 
-uniform BgfxPredefinedUniforms {
+uniform VinBgfxPredefinedUniforms {
     vec4  u_viewRect;
     vec4  u_viewTexel;
     mat4  u_view;

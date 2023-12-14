@@ -8,34 +8,11 @@
 
 namespace Vin::Modules {
 
-    /**
-     * BGFX RenderingApi
-     */
-    enum class RenderingApi {
-        Noop,         //!< No rendering.
-        Agc,          //!< AGC
-        Direct3D9,    //!< Direct3D 9.0
-        Direct3D11,   //!< Direct3D 11.0
-        Direct3D12,   //!< Direct3D 12.0
-        Gnm,          //!< GNM
-        Metal,        //!< Metal
-        Nvn,          //!< NVN
-        OpenGLES,     //!< OpenGL ES 2.0+
-        OpenGL,       //!< OpenGL 2.1+
-        Vulkan,       //!< Vulkan
-        WebGPU,       //!< WebGPU
-
-        Count
-    };
-
     class RenderingModule : public Module {
     public:
         DependencyList<WindowModule> dependencies{ windowModule };
 
         RenderingModule() = default;
-        explicit RenderingModule(RenderingApi renderingApi);
-
-        RenderingApi GetRenderingApi();
 
         void SetRenderPipeline(Ref<RenderPipeline> renderPipeline);
         Ref<RenderPipeline> GetRenderPipeline();
@@ -49,7 +26,6 @@ namespace Vin::Modules {
         int frameBufferWidth{}, frameBufferHeight{};
         Ref<WindowModule> windowModule{};
         Ref<RenderPipeline> renderPipeline{};
-        RenderingApi renderingApi{ RenderingApi::Count };
     };
 
 }

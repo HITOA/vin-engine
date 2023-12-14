@@ -120,6 +120,10 @@ void ContentBrowserWindow::DrawContentBrowserPopup() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
     if (ImGui::BeginPopup("ContentBrowserPopup")) {
 
+        if (ImGui::Button("New")) {
+
+        }
+
         if (ImGui::Button("Add File(s)")) {
             AddFilesDialog();
             ImGui::CloseCurrentPopup();
