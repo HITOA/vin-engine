@@ -8,6 +8,7 @@ option(VIN_BUILD_NDEBUG "Disable debugging information" OFF)
 option(VIN_BUILD_TEST "Build vin test app" ON)
 option(VIN_BUILD_BENCH "Build vin benchmark" ON)
 option(VIN_BUILD_EDITOR "Build vin editor" ON)
+option(VIN_BUILD_TOOLS "Build vin tools" ON)
 
 if (WIN32)
     add_compile_definitions(VIN_WIN32)
@@ -29,4 +30,8 @@ endif()
 
 if(VIN_BUILD_EDITOR)
     add_subdirectory(${PROJECT_SOURCE_DIR}/editor)
+endif()
+
+if(VIN_BUILD_TOOLS)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/tools)
 endif()

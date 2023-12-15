@@ -3,7 +3,6 @@
 
 #include <vin/core/templates/stdcontainers.h>
 #include <vin/resource/resourceloader.h>
-#include <bimg/bimg.h>
 
 namespace Vin {
 
@@ -12,7 +11,6 @@ namespace Vin {
         Image(void* data, size_t size); //Create Image by passing directly image data.
         ~Image();
     private:
-        bimg::ImageContainer* imageContainer{};
     };
 
     template<>

@@ -7,13 +7,12 @@
 #include <vin/asset/assetshader.h>
 #include <vin/asset/aggregateshader.h>
 #include <vin/core/logger/logger.h>
-#include <bgfx/bgfx.h>
 
 #define BGFX_SHADER_HEADER_SIZE 18
 
 namespace Vin {
 
-    class Shader {
+    /*class Shader {
     public:
         explicit Shader(const bgfx::Memory* data);
         ~Shader();
@@ -104,7 +103,7 @@ namespace Vin {
 
             return Vin::MakeRef<Shader>(buff);
         }
-    };
+    };*/
 
 }
 

@@ -2,11 +2,10 @@
 #define VIN_ENGINE_PROGRAM_H
 
 #include <vin/scene/resources/shader.h>
-#include <bgfx/bgfx.h>
 
 namespace Vin {
 
-    class Program {
+    /*class Program {
     public:
         Program(Ref<Shader> vertexShader, Ref<Shader> fragmentShader);
 
@@ -99,7 +98,7 @@ namespace Vin {
 
             return program;
         }
-    };
+    };*/
 
 }
 

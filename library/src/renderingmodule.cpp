@@ -19,8 +19,9 @@ void Vin::Modules::RenderingModule::Initialize() {
     RendererInitInfo initInfo{};
     initInfo.nativeWindowHandle = windowModule->GetNativeWindowHandle();
     initInfo.nativeDisplayHandle = windowModule->GetNativeDisplayHandle();
+    initInfo.flags = 0;
 
-    RenderingApi::Init(initInfo);
+    Renderer::Init(initInfo);
 
     /*bgfx::Init init;
     init.platformData.nwh = windowModule->GetNativeWindowHandle();
@@ -50,7 +51,7 @@ void Vin::Modules::RenderingModule::Initialize() {
 
 void Vin::Modules::RenderingModule::Uninitialize() {
     //bgfx::shutdown();
-    RenderingApi::Terminate();
+    Renderer::Terminate();
 }
 
 void Vin::Modules::RenderingModule::LateUpdate(TimeStep) {
@@ -62,5 +63,4 @@ void Vin::Modules::RenderingModule::LateUpdate(TimeStep) {
 
     bgfx::touch(0);
     bgfx::frame();*/
-    RenderingApi::Present();
 }

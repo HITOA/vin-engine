@@ -1,5 +1,5 @@
 #include <vin/scene/resources/mesh.h>
-
+/*
 Vin::Mesh::~Mesh() {
     bgfx::destroy(vbo);
     bgfx::destroy(ibo);
@@ -39,4 +39,4 @@ Vin::Vector<Vin::Primitive>::const_iterator Vin::Mesh::cbegin() const {
 
 Vin::Vector<Vin::Primitive>::const_iterator Vin::Mesh::cend() const {
     return primitives.cend();
-}
+}*/

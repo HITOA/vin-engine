@@ -1,6 +1,6 @@
 #include <vin/scene/resources/material.h>
 #include <vin/core/templates/hash.h>
-
+/*
 Vin::Material::Material(Ref<Vin::Program> program) : program{ program } {
 
 }
@@ -112,4 +112,4 @@ void Vin::Material::SetTexture(const Vin::StringView& name, const Vin::Ref<Vin::
         textures[textureCount].tex = texture;
         ++textureCount;
     }
-}
+}*/

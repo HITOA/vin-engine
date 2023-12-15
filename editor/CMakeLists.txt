@@ -71,5 +71,6 @@ add_executable(vin_editor src/main.cpp
         src/importer/programimporter.cpp
         src/importer/materialimporter.h
         src/importer/materialimporter.cpp
+        ../tools/shadercompiler/main.cpp
 )
 target_link_libraries(vin_editor vin_engine cxxopts imgui bx nativefiledialog efsw-static assimp)

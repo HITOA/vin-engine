@@ -3,12 +3,11 @@
 
 #include <vin/core/templates/stdcontainers.h>
 #include <vin/resource/resourceloader.h>
-#include <bgfx/bgfx.h>
 #include <vin/scene/resources/material.h>
 
 namespace Vin {
 
-    struct Primitive {
+    /*struct Primitive {
         uint32_t startVertex;
         uint32_t numVertices;
         uint32_t startIndex;
@@ -139,7 +138,7 @@ namespace Vin {
 
             return Vin::MakeRef<Mesh>(vertexLayout, vertexBuffer, indexBuffer, primitives, isIndices32);
         }
-    };
+    };*/
 }
 
 #endif //VIN_ENGINE_MESH_H

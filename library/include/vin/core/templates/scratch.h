@@ -61,13 +61,23 @@ namespace Vin {
     class ScratchReader {
     public:
         ScratchReader() = delete;
-        ScratchReader(uint8_t* buffer, size_t size) : buffer{ buffer }, size{ size } {};
+        ScratchReader(uint8_t* buffer, size_t size) : size{ size }, buffer{ buffer } {};
 
         template<typename T>
         T Read() {
+            ASSERT(cursor + sizeof(T) < size, "Out of range.");
             T v = *(T*)(buffer + cursor);
             cursor += sizeof(T);
             return v;
+        }
+
+        void Skip(size_t offset) {
+            ASSERT(cursor + offset < size, "Out of range.");
+            cursor += offset;
+        }
+
+        uint8_t* GetData() {
+            return buffer + cursor;
         }
 
     private:

@@ -11,6 +11,7 @@
 #include <vin/scene/resources/texture.h>
 #include <vin/math/glm.h>
 #include <vin/rendering/renderer.h>
+#include <fstream>
 
 #include <filesystem>
 #include <entt/entt.hpp>
@@ -33,16 +34,51 @@ static short indices[] = {
 
 class TestModule : public Vin::Module {
 public:
-    Vin::Ref<Vin::Material> material{};
+    /*Vin::Ref<Vin::Material> material{};
     Vin::Ref<Vin::Mesh> importedMesh{};
     Vin::GLM::mat4 proj{};
     Vin::GLM::mat4 view{};
     Vin::GLM::mat4 model{};
     Vin::GLM::vec4 data{ 1.0, 0.0, 1.0, 1.0 };
-    Vin::Ref<Vin::Texture> texture{};
+    Vin::Ref<Vin::Texture> texture{};*/
+    Vin::ShaderHandle vertexShader{};
+    Vin::ShaderHandle fragmentShader{};
 
     void Initialize() final {
-        Vin::Ref<Vin::Program> program = Vin::ResourceManager::Load<Vin::Program>("/data/shaders/default.vasset");
+        std::filesystem::path vertexShaderPath{ "/mnt/SSD1TO/Project/testShader/outputvertex.spirv" };
+        std::filesystem::path fragmentShaderPath{ "/mnt/SSD1TO/Project/testShader/outputfragment.spirv" };
+
+        std::fstream vertexShaderFile{ vertexShaderPath, std::ios_base::binary | std::ios_base::in };
+
+        vertexShaderFile.ignore( std::numeric_limits<std::streamsize>::max() );
+        size_t size = vertexShaderFile.gcount();
+        vertexShaderFile.clear();
+        vertexShaderFile.seekg(0, std::ios_base::beg);
+
+        std::vector<char> vertexData{};
+        vertexData.resize(size + 1);
+        vertexShaderFile.read(vertexData.data(), vertexData.size());
+        vertexShaderFile.close();
+        vertexData[size] = 0;
+
+        vertexShader = Vin::Renderer::LoadShader(vertexData.data(), vertexData.size());
+
+        std::fstream fragmentShaderFile{ fragmentShaderPath, std::ios_base::binary | std::ios_base::in };
+
+        fragmentShaderFile.ignore( std::numeric_limits<std::streamsize>::max() );
+        size = fragmentShaderFile.gcount();
+        fragmentShaderFile.clear();
+        fragmentShaderFile.seekg(0, std::ios_base::beg);
+
+        std::vector<char> fragmentData{};
+        fragmentData.resize(size + 1);
+        fragmentShaderFile.read(fragmentData.data(), fragmentData.size());
+        fragmentShaderFile.close();
+        fragmentData[size] = 0;
+
+        fragmentShader = Vin::Renderer::LoadShader(fragmentData.data(), fragmentData.size());
+
+        /*Vin::Ref<Vin::Program> program = Vin::ResourceManager::Load<Vin::Program>("/data/shaders/default.vasset");
         material = Vin::MakeRef<Vin::Material>(program);
         material->SetVec4("colorA", Vin::GLM::vec4{0.0, 1.0, 1.0, 1.0});
         material->SetVec4("colorB", Vin::GLM::vec4{1.0, 1.0, 0.0, 1.0});
@@ -61,11 +97,11 @@ public:
         //view = Vin::GLM::transpose(view);
         //proj = Vin::GLM::transpose(proj);
 
-        proj = Vin::GLM::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 10000.0f);
+        proj = Vin::GLM::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 10000.0f);*/
     };
 
     void Update(Vin::TimeStep dt) final {
-        material->UpdateUniforms();
+        /*material->UpdateUniforms();
 
         for (const auto& primitive : *importedMesh) {
             bgfx::setTransform(&model[0][0]);
@@ -75,7 +111,7 @@ public:
             bgfx::setIndexBuffer( importedMesh->GetIndexBufferHandle(), primitive.startIndex, primitive.numIndices);
 
             bgfx::submit(0, material->GetProgramHandle());
-        }
+        }*/
     }
 };
 
@@ -92,7 +128,7 @@ int main() {
     Vin::App app{};
     app.AddModule<Vin::Modules::WindowModule>();
     app.AddModule<Vin::Modules::RenderingModule>();
-    //app.AddModule<TestModule>();
+    app.AddModule<TestModule>();
     app.Run();
 
    /* Vin::RendererInitInfo initInfo{};

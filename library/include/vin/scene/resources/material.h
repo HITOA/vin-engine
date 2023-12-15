@@ -6,7 +6,7 @@
 #include <vin/math/glm.h>
 
 namespace Vin {
-    struct MaterialProperty {
+    /*struct MaterialProperty {
         bgfx::UniformHandle handle{};
         bgfx::UniformType::Enum type{};
         uint32_t name{};
@@ -47,7 +47,7 @@ namespace Vin {
         MaterialProperty properties[16];
         uint16_t textureCount{ 0 };
         MaterialTexture textures[16];
-    };
+    };*/
 
 }
 

@@ -5,11 +5,10 @@
 #include <vin/resource/resourceloader.h>
 #include <vin/asset/assetfile.h>
 #include <vin/core/logger/logger.h>
-#include <bgfx/bgfx.h>
 
 namespace Vin {
 
-    class Texture {
+    /*class Texture {
     public:
         explicit Texture(const bgfx::Memory* data); //Create texture by passing directly texture data (DDS, KTX or PVR)
         ~Texture();
@@ -44,7 +43,7 @@ namespace Vin {
 
             return Vin::MakeRef<Texture>(buff);
         }
-    };
+    };*/
 
 }
 

@@ -17,7 +17,6 @@ endif()
 
 set(ENABLE_OPT OFF)
 
-add_subdirectory(3rdparty/bgfx.cmake)
 add_subdirectory(3rdparty/glfw)
 add_subdirectory(3rdparty/entt)
 add_subdirectory(3rdparty/glm)
@@ -113,15 +112,13 @@ add_library(vin_engine
         include/vin/scene/resources/scenedata.h
         include/vin/core/templates/concurrentcircularqueue.h
         include/vin/rendering/renderer.h
-        include/vin/rendering/vulkanrenderer.h
-        src/vulkanrenderer.cpp
         include/vin/core/templates/fixedvector.h
         include/vin/core/templates/containerbase.h
         src/renderer.cpp
 )
 target_include_directories(vin_engine PUBLIC include/)
 target_include_directories(vin_engine PUBLIC 3rdparty/tlsf)
-target_link_libraries(vin_engine bgfx bimg bx glfw EnTT::EnTT glm::glm ${Vulkan_LIBRARIES})
+target_link_libraries(vin_engine glfw EnTT::EnTT glm::glm ${Vulkan_LIBRARIES})
 
 if (VIN_BUILD_NDEBUG)
     target_compile_definitions(vin_engine PUBLIC "VIN_BUILD_NDEBUG")
