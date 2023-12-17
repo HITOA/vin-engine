@@ -9,6 +9,7 @@
 #include <atomic>
 #include <vin/core/templates/fixedvector.h>
 #include <vin/core/templates/scratch.h>
+#include <vin/core/templates/hash.h>
 
 #if defined(VIN_WIN32)
 #define VK_USE_PLATFORM_WIN32_KHR
@@ -34,19 +35,30 @@
 
 #define VIN_VULKAN_MAX_SHADER_COUNT 256
 #define VIN_VULKAN_MAX_PROGRAM_COUNT 256
+#define VIN_VULKAN_MAX_TEXTURE_COUNT 1024
 #define VIN_VULKAN_MAX_FRAMEBUFFER_COUNT 256
+
+#define VIN_VULKAN_MAX_PIPELINE_COUNT 256
 
 struct RendererCommand {
     enum Enum {
         Terminate,
         Initialize,
         Reset,
-        LoadShader
+        LoadShader,
+        CreateProgram,
+        CreateFramebuffer
     };
 
     RendererCommand::Enum type{};
     void* data{ nullptr };
     std::function<void(void*)> freer{ nullptr };
+};
+
+template<typename T>
+struct IdxCreationInfo {
+    uint32_t idx{};
+    T creationInfo{};
 };
 
 struct ShaderLoadingInfo {
@@ -55,10 +67,10 @@ struct ShaderLoadingInfo {
     uint32_t idx{};
 };
 
-struct Framebuffer {
-    VkImage images[8];
-    VkFramebuffer framebuffer{ VK_NULL_HANDLE };
-    VkRenderPass renderPass{};
+struct ProgramCreationInfo {
+    uint32_t idx{};
+    uint32_t vertexShader{};
+    uint32_t fragmentShader{};
 };
 
 struct Shader {
@@ -68,8 +80,26 @@ struct Shader {
 };
 
 struct Program {
-    uint32_t shaders[8]{};
+    uint32_t vertexShader{ VIN_INVALID_HANDLE };
+    uint32_t fragmentShader{ VIN_INVALID_HANDLE };
+
     VkPipelineLayout pipelineLayout{};
+};
+
+struct Texture {
+    VkImage image{ VK_NULL_HANDLE };
+    VkDeviceMemory memory{ VK_NULL_HANDLE };
+    VkImageView view{ VK_NULL_HANDLE };
+};
+
+struct Framebuffer {
+    uint32_t attachementCount{ 0 };
+    uint32_t attachements[8]{}; //TextureIdx
+    uint32_t width{};
+    uint32_t height{};
+    bool isDepthStencilPresent{ false };
+    VkFramebuffer framebuffer{ VK_NULL_HANDLE };
+    VkRenderPass renderPass{ VK_NULL_HANDLE };
 };
 
 struct RendererState {
@@ -103,9 +133,11 @@ struct RendererState {
 
     Shader shaders[VIN_VULKAN_MAX_SHADER_COUNT]{};
     Program programs[VIN_VULKAN_MAX_PROGRAM_COUNT]{};
+    Texture textures[VIN_VULKAN_MAX_TEXTURE_COUNT]{};
     Framebuffer framebuffers[VIN_VULKAN_MAX_FRAMEBUFFER_COUNT]{};
 
-    //Cached VkPipeline?, will be flushed
+    VkPipelineCache pipelineCache{ VK_NULL_HANDLE };
+    std::unordered_map<uint32_t, VkPipeline> pipelines{};
 };
 
 bool stateInitialized{ false };
@@ -134,6 +166,73 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
     }
 
     return VK_FALSE;
+}
+
+uint32_t FindMemoryType(uint32_t filter, VkMemoryPropertyFlags flags) {
+    VkPhysicalDeviceMemoryProperties memoryProperties{};
+    vkGetPhysicalDeviceMemoryProperties(state.physicalDevice, &memoryProperties);
+
+    for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++) {
+        if ((filter & (1 << i)) && (memoryProperties.memoryTypes[i].propertyFlags & flags) == flags) {
+            return i;
+        }
+    }
+
+    ASSERT(false, "Can't find suitable memory.");
+    return 0;
+}
+
+VkImageView CreateImageView(VkImage image, VkFormat format, VkImageViewType type, VkImageAspectFlags aspectFlags, uint32_t mipLevels = 1) {
+    VkImageViewCreateInfo viewCreateInfo{};
+    viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewCreateInfo.image = image;
+    viewCreateInfo.viewType = type;
+    viewCreateInfo.format = format;
+    viewCreateInfo.subresourceRange.aspectMask = aspectFlags;
+    viewCreateInfo.subresourceRange.baseMipLevel = 0;
+    viewCreateInfo.subresourceRange.levelCount = mipLevels;
+    viewCreateInfo.subresourceRange.baseArrayLayer = 0;
+    viewCreateInfo.subresourceRange.layerCount = 1;
+
+    VkImageView view{};
+    ASSERT(vkCreateImageView(state.device, &viewCreateInfo, nullptr, &view) == VK_SUCCESS, "Can't create image view.");
+
+    return view;
+}
+
+void CreateTexture(uint32_t textureIdx, VkFormat format, VkExtent3D size,
+                   VkImageUsageFlags usage, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT, bool cubeMap = false, uint32_t mipLevels = 1, VkImageType type = VK_IMAGE_TYPE_2D) {
+    Texture* texture = &state.textures[textureIdx];
+
+    VkImageCreateInfo imageCreateInfo{};
+    imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    imageCreateInfo.imageType = type;
+    imageCreateInfo.extent = size;
+    imageCreateInfo.mipLevels = mipLevels;
+    imageCreateInfo.arrayLayers = 1;
+    imageCreateInfo.format = format;
+    imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+    imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    imageCreateInfo.usage = usage;
+    imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+    imageCreateInfo.flags = 0;
+
+    ASSERT(vkCreateImage(state.device, &imageCreateInfo, nullptr, &texture->image) == VK_SUCCESS, "Can't create texture.");
+
+    VkMemoryRequirements memRequirements{};
+    vkGetImageMemoryRequirements(state.device, texture->image, &memRequirements);
+
+    VkMemoryAllocateInfo allocateInfo{};
+    allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocateInfo.allocationSize = memRequirements.size;
+    allocateInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+    ASSERT(vkAllocateMemory(state.device, &allocateInfo, nullptr, &texture->memory) == VK_SUCCESS, "Can't allocate memory for texture.");
+
+    vkBindImageMemory(state.device, texture->image, texture->memory, 0);
+
+    texture->view = CreateImageView(texture->image, format, cubeMap ? VK_IMAGE_VIEW_TYPE_CUBE : (VkImageViewType)type, aspectFlags);
 }
 
 bool CheckLayerSupport(const char *layerName) {
@@ -297,6 +396,138 @@ void CreateSwapchain() {
     }*/
 }
 
+VkPipeline CreatePipeline(Program* program, Framebuffer* framebuffer) {
+    VkDynamicState dynamicStates[] = {};
+
+    VkPipelineDynamicStateCreateInfo dynamicStateInfo{};
+    dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamicStateInfo.dynamicStateCount = sizeof(dynamicStates) / sizeof(VkDynamicState);
+    dynamicStateInfo.pDynamicStates = dynamicStates;
+
+    VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+    vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    vertexInputInfo.vertexBindingDescriptionCount = 0;
+    vertexInputInfo.pVertexBindingDescriptions = nullptr;
+    vertexInputInfo.vertexAttributeDescriptionCount = 0;
+    vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
+    inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+    VkViewport viewport{};
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = framebuffer->width == 0 ? state.swapchainExtent.width : framebuffer->width;
+    viewport.height = framebuffer->height == 0 ? state.swapchainExtent.height : framebuffer->height;
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+
+    VkRect2D scissor{};
+    scissor.offset = {0, 0};
+    scissor.extent = state.swapchainExtent;
+
+    VkPipelineViewportStateCreateInfo viewportStateInfo{};
+    viewportStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportStateInfo.viewportCount = 1;
+    viewportStateInfo.pViewports = &viewport;
+    viewportStateInfo.scissorCount = 1;
+    viewportStateInfo.pScissors = &scissor;
+
+    VkPipelineRasterizationStateCreateInfo rasterizerStateInfo{};
+    rasterizerStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+    rasterizerStateInfo.depthClampEnable = VK_FALSE;
+    rasterizerStateInfo.rasterizerDiscardEnable = VK_FALSE;
+    rasterizerStateInfo.polygonMode = VK_POLYGON_MODE_FILL;
+    rasterizerStateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+    rasterizerStateInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+    rasterizerStateInfo.depthBiasEnable = VK_FALSE;
+    rasterizerStateInfo.depthBiasConstantFactor = 0.0f;
+    rasterizerStateInfo.depthBiasClamp = 0.0f;
+    rasterizerStateInfo.depthBiasSlopeFactor = 0.0f;
+
+    VkPipelineMultisampleStateCreateInfo multisamplingStateInfo{};
+    multisamplingStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+    multisamplingStateInfo.sampleShadingEnable = VK_FALSE;
+    multisamplingStateInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+    multisamplingStateInfo.minSampleShading = 1.0f;
+    multisamplingStateInfo.pSampleMask = nullptr;
+    multisamplingStateInfo.alphaToCoverageEnable = VK_FALSE;
+    multisamplingStateInfo.alphaToOneEnable = VK_FALSE;
+
+    VkPipelineDepthStencilStateCreateInfo depthStencilStateInfo{};
+    depthStencilStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+    depthStencilStateInfo.depthTestEnable = VK_TRUE;
+    depthStencilStateInfo.depthWriteEnable = VK_TRUE;
+    depthStencilStateInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+    depthStencilStateInfo.depthBoundsTestEnable = VK_FALSE;
+    depthStencilStateInfo.stencilTestEnable = VK_FALSE;
+
+    VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+    colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    colorBlendAttachment.blendEnable = VK_FALSE;
+    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+    colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+    colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+    colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+    colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+    VkPipelineColorBlendStateCreateInfo colorBlendingStateInfo{};
+    colorBlendingStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    colorBlendingStateInfo.logicOpEnable = VK_FALSE;
+    colorBlendingStateInfo.logicOp = VK_LOGIC_OP_COPY;
+    colorBlendingStateInfo.attachmentCount = 1;
+    colorBlendingStateInfo.pAttachments = &colorBlendAttachment;
+
+    Vin::FixedVector<VkPipelineShaderStageCreateInfo, 8> stages{};
+    if (program->vertexShader)
+        stages.TryPush(state.shaders[program->vertexShader].shaderStageInfo);
+    if (program->fragmentShader)
+        stages.TryPush(state.shaders[program->fragmentShader].shaderStageInfo);
+
+
+    VkGraphicsPipelineCreateInfo pipelineCreateInfo{};
+    pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    pipelineCreateInfo.stageCount = stages.GetCount();
+    pipelineCreateInfo.pStages = stages.GetData();
+    pipelineCreateInfo.pVertexInputState = &vertexInputInfo;
+    pipelineCreateInfo.pInputAssemblyState = &inputAssemblyInfo;
+    pipelineCreateInfo.pViewportState = &viewportStateInfo;
+    pipelineCreateInfo.pRasterizationState = &rasterizerStateInfo;
+    pipelineCreateInfo.pMultisampleState = &multisamplingStateInfo;
+    pipelineCreateInfo.pDepthStencilState = &depthStencilStateInfo;
+    pipelineCreateInfo.pColorBlendState = &colorBlendingStateInfo;
+    pipelineCreateInfo.pDynamicState = &dynamicStateInfo;
+    pipelineCreateInfo.layout = program->pipelineLayout;
+    pipelineCreateInfo.renderPass = framebuffer->renderPass;
+    pipelineCreateInfo.subpass = 0;
+    pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
+    pipelineCreateInfo.basePipelineIndex = -1;
+
+    VkPipeline pipeline{};
+
+    ASSERT(vkCreateGraphicsPipelines(state.device, state.pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipeline) == VK_SUCCESS, "can't create graphics pipeline.");
+    return pipeline;
+}
+
+VkPipeline GetPipeline(uint32_t programIdx, uint32_t framebufferIdx) {
+    Program* program = &state.programs[programIdx];
+    Framebuffer* framebuffer = &state.framebuffers[framebufferIdx];
+
+    uint32_t pipelineHash{ 0 };
+    Vin::HashCombine(pipelineHash, programIdx);
+    Vin::HashCombine(pipelineHash, framebufferIdx);
+
+    if (state.pipelines.count(pipelineHash))
+        return state.pipelines[pipelineHash];
+
+    VkPipeline pipeline = CreatePipeline(program, framebuffer);
+    state.pipelines[pipelineHash] = pipeline;
+    return pipeline;
+}
+
 //Destroy & Rebuild Swapchain, Framebuffer, Graphics Pipeline... (For surface format & size change)
 void Reset() {
     //if (state.swapchain != VK_NULL_HANDLE)
@@ -441,7 +672,135 @@ void LoadShader(ShaderLoadingInfo* shaderLoadingInfo) {
     shader->shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     shader->shaderStageInfo.stage = (VkShaderStageFlagBits)stage;
     shader->shaderStageInfo.module = shader->shaderModule;
-    shader->shaderStageInfo.pName = shader->entrypointName;
+    shader->shaderStageInfo.pName = "main";
+}
+
+void CreateProgram(ProgramCreationInfo* creationInfo) {
+    Program* program = &state.programs[creationInfo->idx];
+
+    program->vertexShader = creationInfo->vertexShader;
+    program->fragmentShader = creationInfo->fragmentShader;
+
+    VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo{};
+    pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    pipelineLayoutCreateInfo.setLayoutCount = 0;
+    pipelineLayoutCreateInfo.pSetLayouts = nullptr;
+    pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
+    pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
+
+    ASSERT(vkCreatePipelineLayout(state.device, &pipelineLayoutCreateInfo, nullptr, &program->pipelineLayout) == VK_SUCCESS,
+           "Can't create pipeline layout.");
+}
+
+VkFormat FramebufferAttachmentFormatToVkFormat(Vin::FramebufferAttachmentDescription::Format format) {
+    switch (format) {
+        default:
+            return VK_FORMAT_R8G8B8A8_SRGB;
+    }
+}
+
+void CreateFramebuffer(IdxCreationInfo<Vin::FramebufferCreationInfo>* creationInfo) {
+    Framebuffer* framebuffer = &state.framebuffers[creationInfo->idx];
+    framebuffer->attachementCount = 0;
+
+    uint32_t colorAttachmentCount{ 0 };
+    bool isDepthAttachmentPresent{ false };
+
+    VkAttachmentDescription attachmentDescriptions[8]{};
+
+    VkAttachmentReference colorAttachmentsReference[8]{};
+    VkAttachmentReference depthAttachmentReference{};
+
+    VkImageView attachmentView[8]{};
+
+    for (uint32_t i = 0; i < VIN_VULKAN_MAX_TEXTURE_COUNT && framebuffer->attachementCount < creationInfo->creationInfo.attachmentCount; ++i) {
+        if (state.textures[i].image == VK_NULL_HANDLE) {
+            framebuffer->attachements[framebuffer->attachementCount] = i;
+            state.textures[i].image = (VkImage)1;
+            ++framebuffer->attachementCount;
+        }
+    }
+
+    framebuffer->width = creationInfo->creationInfo.width;
+    framebuffer->height = creationInfo->creationInfo.height;
+
+    VkExtent3D extent{};
+    extent.width = creationInfo->creationInfo.width == 0 ? state.swapchainExtent.width : creationInfo->creationInfo.width;
+    extent.height = creationInfo->creationInfo.height == 0 ? state.swapchainExtent.height : creationInfo->creationInfo.height;
+    extent.depth = 1;
+
+    for (uint32_t i = 0; i < framebuffer->attachementCount; ++i) {
+        Vin::FramebufferAttachmentDescription* description = &creationInfo->creationInfo.attachments[i];
+        VkFormat format{};
+        VkImageUsageFlagBits usage = description->isDepthBuffer ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        uint32_t aspectFlagBits{ 0 };
+
+        if (description->isDepthBuffer) {
+            format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+            aspectFlagBits |= VK_IMAGE_ASPECT_DEPTH_BIT;
+            ASSERT(!isDepthAttachmentPresent, "Framebuffer can't have two depth attachment.");
+            isDepthAttachmentPresent = true;
+
+            attachmentDescriptions[i].format = format;
+            attachmentDescriptions[i].samples = VK_SAMPLE_COUNT_1_BIT;
+            attachmentDescriptions[i].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+            attachmentDescriptions[i].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            attachmentDescriptions[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+            attachmentDescriptions[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            attachmentDescriptions[i].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+            attachmentDescriptions[i].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+            depthAttachmentReference.attachment = i;
+            depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        } else {
+            format = FramebufferAttachmentFormatToVkFormat(description->format);
+            aspectFlagBits |= VK_IMAGE_ASPECT_COLOR_BIT;
+
+            attachmentDescriptions[i].format = format;
+            attachmentDescriptions[i].samples = VK_SAMPLE_COUNT_1_BIT;
+            attachmentDescriptions[i].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+            attachmentDescriptions[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+            attachmentDescriptions[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+            attachmentDescriptions[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            attachmentDescriptions[i].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+            attachmentDescriptions[i].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+            colorAttachmentsReference[colorAttachmentCount].attachment = i;
+            colorAttachmentsReference[colorAttachmentCount].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            ++colorAttachmentCount;
+        }
+
+        CreateTexture(framebuffer->attachements[i], format, extent, usage, (VkImageAspectFlagBits)aspectFlagBits);
+        attachmentView[i] = state.textures[i].view;
+    }
+
+    framebuffer->isDepthStencilPresent = isDepthAttachmentPresent;
+
+    VkSubpassDescription subpass{};
+    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpass.colorAttachmentCount = colorAttachmentCount;
+    subpass.pColorAttachments = colorAttachmentsReference;
+    subpass.pDepthStencilAttachment = isDepthAttachmentPresent ? &depthAttachmentReference : nullptr;
+
+    VkRenderPassCreateInfo renderPassCreateInfo{};
+    renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    renderPassCreateInfo.attachmentCount = framebuffer->attachementCount;
+    renderPassCreateInfo.pAttachments = attachmentDescriptions;
+    renderPassCreateInfo.subpassCount = 1;
+    renderPassCreateInfo.pSubpasses = &subpass;
+
+    ASSERT(vkCreateRenderPass(state.device, &renderPassCreateInfo, nullptr, &framebuffer->renderPass) == VK_SUCCESS, "Can't create render pass.");
+
+    VkFramebufferCreateInfo framebufferCreateInfo{};
+    framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    framebufferCreateInfo.renderPass = framebuffer->renderPass;
+    framebufferCreateInfo.attachmentCount = framebuffer->attachementCount;
+    framebufferCreateInfo.pAttachments = attachmentView;
+    framebufferCreateInfo.width = extent.width;
+    framebufferCreateInfo.height = extent.height;
+    framebufferCreateInfo.layers = 1;
+
+    ASSERT(vkCreateFramebuffer(state.device, &framebufferCreateInfo, nullptr, &framebuffer->framebuffer) == VK_SUCCESS, "Can't create framebuffer.");
 }
 
 void Terminate() {
@@ -482,6 +841,12 @@ void RendererThreadMain() {
                 break;
             case RendererCommand::LoadShader:
                 LoadShader((ShaderLoadingInfo*)command.data);
+                break;
+            case RendererCommand::CreateProgram:
+                CreateProgram((ProgramCreationInfo*)command.data);
+                break;
+            case RendererCommand::CreateFramebuffer:
+                CreateFramebuffer((IdxCreationInfo<Vin::FramebufferCreationInfo>*)command.data);
                 break;
             default:
                 break;
@@ -545,4 +910,72 @@ Vin::ShaderHandle Vin::Renderer::LoadShader(char* data, size_t size) {
         }
     }
     return handle;
+}
+
+Vin::ProgramHandle Vin::Renderer::CreateProgram(Vin::ShaderHandle vsh, Vin::ShaderHandle fsh) {
+    ProgramHandle handle = VIN_INVALID_HANDLE;
+    for (uint32_t i = 0; i < VIN_VULKAN_MAX_PROGRAM_COUNT; ++i) {
+        if (state.programs[i].pipelineLayout == VK_NULL_HANDLE) {
+            handle = i;
+            state.programs[i].pipelineLayout = (VkPipelineLayout)1;
+            break;
+        }
+    }
+    if (handle != VIN_INVALID_HANDLE) {
+        RendererCommand command{};
+        command.type = RendererCommand::CreateProgram;
+        command.data = state.allocator.Allocate(sizeof(ProgramCreationInfo));
+        command.freer = freer;
+
+        ProgramCreationInfo* programCreationInfo = (ProgramCreationInfo*)command.data;
+        programCreationInfo->idx = handle;
+        programCreationInfo->vertexShader = vsh;
+        programCreationInfo->fragmentShader = fsh;
+
+        if (state.commandQueue.TryPush(command) != Vin::ContainerStatus::Success) {
+            command.freer(command.data);
+            state.programs[handle].pipelineLayout = (VkPipelineLayout)VK_NULL_HANDLE;
+            return VIN_INVALID_HANDLE;
+        }
+    }
+    return handle;
+}
+
+Vin::FramebufferHandle Vin::Renderer::CreateFramebuffer(const Vin::FramebufferCreationInfo &creationInfo) {
+    FramebufferHandle handle = VIN_INVALID_HANDLE;
+    for (uint32_t i = 0; i < VIN_VULKAN_MAX_FRAMEBUFFER_COUNT; ++i) {
+        if (state.framebuffers[i].framebuffer == VK_NULL_HANDLE) {
+            handle = i;
+            state.framebuffers[i].framebuffer = (VkFramebuffer)1;
+            break;
+        }
+    }
+    if (handle != VIN_INVALID_HANDLE) {
+        RendererCommand command{};
+        command.type = RendererCommand::CreateFramebuffer;
+        command.data = state.allocator.Allocate(sizeof(IdxCreationInfo<Vin::FramebufferCreationInfo>));
+        IdxCreationInfo<Vin::FramebufferCreationInfo>* idxCreationInfo = (IdxCreationInfo<Vin::FramebufferCreationInfo>*)command.data;
+        idxCreationInfo->creationInfo = creationInfo;
+        idxCreationInfo->idx = handle;
+        command.freer = freer;
+
+        if (state.commandQueue.TryPush(command) != Vin::ContainerStatus::Success) {
+            command.freer(command.data);
+            state.framebuffers[handle].framebuffer = (VkFramebuffer)VK_NULL_HANDLE;
+            return VIN_INVALID_HANDLE;
+        }
+    }
+    return handle;
+}
+
+Vin::TextureHandle Vin::Renderer::GetFramebufferAttachment(Vin::FramebufferHandle framebuffer, uint32_t idx) {
+
+}
+
+void Vin::Renderer::SetRenderTarget(Vin::FramebufferHandle framebuffer) {
+
+}
+
+void Vin::Renderer::Present(Vin::FramebufferHandle framebuffer) {
+
 }

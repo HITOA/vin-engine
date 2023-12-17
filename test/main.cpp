@@ -43,6 +43,8 @@ public:
     Vin::Ref<Vin::Texture> texture{};*/
     Vin::ShaderHandle vertexShader{};
     Vin::ShaderHandle fragmentShader{};
+    Vin::ProgramHandle program{};
+    Vin::FramebufferHandle framebuffer{};
 
     void Initialize() final {
         std::filesystem::path vertexShaderPath{ "/mnt/SSD1TO/Project/testShader/outputvertex.spirv" };
@@ -77,6 +79,15 @@ public:
         fragmentData[size] = 0;
 
         fragmentShader = Vin::Renderer::LoadShader(fragmentData.data(), fragmentData.size());
+
+        program = Vin::Renderer::CreateProgram(vertexShader, fragmentShader);
+
+        Vin::FramebufferCreationInfo framebufferCreationInfo{};
+        framebufferCreationInfo.attachmentCount = 2;
+        framebufferCreationInfo.attachments[0].format = Vin::FramebufferAttachmentDescription::RGBA32;
+        framebufferCreationInfo.attachments[1].isDepthBuffer = true;
+
+        framebuffer = Vin::Renderer::CreateFramebuffer(framebufferCreationInfo);
 
         /*Vin::Ref<Vin::Program> program = Vin::ResourceManager::Load<Vin::Program>("/data/shaders/default.vasset");
         material = Vin::MakeRef<Vin::Material>(program);

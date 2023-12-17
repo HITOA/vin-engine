@@ -12,6 +12,16 @@ namespace Vin {
     }
 
     template<>
+    inline unsigned int Hash<const unsigned int>(const unsigned int& v) {
+        return v;
+    }
+
+    template<>
+    inline unsigned int Hash<unsigned int>(unsigned int& v) {
+        return v;
+    }
+
+    template<>
     inline unsigned int Hash<const StringView>(const StringView& v) {
         static unsigned int hash = 2166136261U;
         for (auto& c : v) {
@@ -26,6 +36,10 @@ namespace Vin {
         return Hash<const StringView>(v);
     }
 
+    template<typename T>
+    inline void HashCombine(unsigned int& hash, T& v) {
+        hash ^= Hash<T>(v) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+    }
 }
 
 #endif //VIN_ENGINE_HASH_H
